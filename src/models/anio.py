@@ -1,6 +1,4 @@
-
-from datetime import date
-from database.connection import db
+from ..database.connection import db
 
 class Anio(db.Model):
     __tablename__ = 'Anios'

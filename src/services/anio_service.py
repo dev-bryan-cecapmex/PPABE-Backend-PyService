@@ -1,6 +1,5 @@
-
-from models.anio import Anio
-from database.connection import db
+from ..models.anio import Anio
+from ..database.connection import db
 
 class AnioServicie:
     @staticmethod

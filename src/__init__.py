@@ -1,11 +1,12 @@
 from flask import Flask
 from config import Config
-from database.connection import db
+from .database.connection import db
 
 # Rutas
-from routes.root import root_bp
-from routes.public import public_bp
-from routes.private import private_bp
+from .routes.root import root_bp
+from .routes.public import public_bp
+from .routes.private import private_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -18,7 +19,3 @@ def create_app():
     app.register_blueprint(private_bp, url_prefix="/private")
     
     return app
-
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)

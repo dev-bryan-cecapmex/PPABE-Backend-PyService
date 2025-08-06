@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from services.anio_service import AnioServicie
+from ..services.anio_service import AnioServicie
 
 public_bp = Blueprint('public', __name__)
 
