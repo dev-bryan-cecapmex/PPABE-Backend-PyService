@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 import polars as pl 
 import io 
+import uuid
 
 from ..services.beneficiarios_service   import BeneficiariosService
 from ..services.search_service          import SearchService
@@ -60,20 +61,39 @@ def uploder_file():
         # for row in results: 
         #     BeneficiariosService.add_beneficiario(row[0])
             
-        Logger.add_to_log("info", results)
+        # Logger.add_to_log("info", results)
         
         for row in results:
             id_dependecia = SearchService.search_dependencia(row[2]['Dependencia'])
-            Logger.add_to_log("info", row[2]['Dependencia'])
-            Logger.add_to_log("info", id_dependecia)
+            # Logger.add_to_log("info", row[2]['Dependencia'])
+            # Logger.add_to_log("info", id_dependecia)
             
             if id_dependecia:
-                id_programa = SearchService.search_programas(row[2]['Programa'], id_dependecia)
-                Logger.add_to_log("info", row[2]['Programa'])
-                Logger.add_to_log("info", id_programa)
+                id_programa = SearchService.search_programa(row[2]['Programa'], id_dependecia)
+                # Logger.add_to_log("info", row[2]['Programa'])
+                # Logger.add_to_log("info", id_programa)
                 
-                
-            
+                if id_programa:
+                    id_componente = SearchService.search_componente(row[2]['Componente'], id_programa)
+                    # Logger.add_to_log("info", row[2]['Componente'])
+                    # Logger.add_to_log("info", id_componente)
+                    
+                    if id_componente:
+                        is_beneficiario_exists = SearchService.search_exitencia(row[0]['Curp'],row[0]['RFC'])
+                        # Logger.add_to_log("info", 'Curp')
+                        # Logger.add_to_log("info", row[0]['Curp'])
+                        # Logger.add_to_log("info", 'RFC')
+                        # Logger.add_to_log("info", row[0]['RFC'])
+                        # Logger.add_to_log("info", is_beneficiario_exists)
+                        
+                        if is_beneficiario_exists:
+                    
+                            Logger.add_to_log("info", f"Existe - UUID: {is_beneficiario_exists}")
+                            Logger.add_to_log("info", row)
+                        else:
+                            id_beneficiario = str(uuid.uuid4())
+                            Logger.add_to_log("info", f"No existe - Nuevo UUID: { id_beneficiario }")
+                            Logger.add_to_log("info", row)
         
         return jsonify({
             'success': True,
