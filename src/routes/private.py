@@ -90,11 +90,20 @@ def uploder_file():
                     
                             Logger.add_to_log("info", f"Existe - UUID: {is_beneficiario_exists}")
                             Logger.add_to_log("info", row)
+                            
+                            # Insertar en Contacto 
+                            # Inset en Apoyo
+                            
                         else:
                             id_beneficiario = str(uuid.uuid4())
                             Logger.add_to_log("info", f"No existe - Nuevo UUID: { id_beneficiario }")
                             Logger.add_to_log("info", row)
-        
+                            # Inserta beneficiario 
+                            #BeneficiariosService.add_beneficiario(id_beneficiario, row[0])
+
+                            # Insertar en Contacto 
+                            # Inset en Apoyo
+
         return jsonify({
             'success': True,
             'message': 'Info to Excel File',

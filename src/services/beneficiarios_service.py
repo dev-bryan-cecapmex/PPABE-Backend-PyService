@@ -3,8 +3,9 @@ from ..database.connection import db
 
 class BeneficiariosService:
     @staticmethod
-    def add_beneficiario(data):
+    def add_beneficiario(id_beneficiario, data):
         new_beneficiario = Beneficiarios(
+            id              = id_beneficiario,
             CURP            = data.get("Curp"),
             RFC	            = data.get("RFC"),
             nombre	        = data.get("Nombre"),
