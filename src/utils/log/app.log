@@ -1,16 +1,62 @@
-2025-08-13 12:53:31 | INFO | Existe - UUID: 10fb1562-baa8-4e79-b2fb-0c0cc37d5615
-2025-08-13 12:53:31 | INFO | [{'Curp': 'GAGG011109HNLRMRA4', 'RFC': 'GAGG0912312FA', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': None, 'Telefono': None, 'Telefono 2': None, 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': None, 'Tipo de Beneficio': None, 'Monto': None}]
-2025-08-13 12:53:31 | INFO | Existe - UUID: 8774aa91-ecf8-4be5-bcf4-061ace316c2e
-2025-08-13 12:53:31 | INFO | [{'Curp': 'XXXXXXXXXXXXXXXXXX', 'RFC': '', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': '', 'Telefono': None, 'Telefono 2': '', 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'REPRESENTACIÓN JURÍDICA DEL TRABAJADOR ANTE LA J.L.C.A.', 'Accion': None, 'Tipo de Beneficio': '', 'Monto': None}]
-2025-08-13 12:53:31 | INFO | Existe - UUID: e94b7968-c25c-4b81-962f-988d0df49558
-2025-08-13 12:53:31 | INFO | [{'Curp': 'TESTTESTTEST123456', 'RFC': 'AASS000000DDA', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': None, 'Telefono': None, 'Telefono 2': None, 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'VINCULACIÓN LABORAL REALIZADA', 'Accion': None, 'Tipo de Beneficio': None, 'Monto': None}]
-2025-08-13 12:53:31 | INFO | No existe - Nuevo UUID: ed4c8afd-4572-4e8b-b908-e44f508fe379
-2025-08-13 12:53:31 | INFO | [{'Curp': 'AUTB990224HNLGDR08', 'RFC': '', 'Nombre': 'Bryan', 'Apellido paterno': 'Aguirre', 'Apellido Materno': 'Tudon', 'Fecha de Nacimiento': ' 24/02/1999'}, {'Correo': 'bryan_tudon@outlook.com', 'Telefono': 8117867721, 'Telefono 2': None, 'Estado (catálogo)': 'Nuevo León', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Colonia': 'Ignacio Zaragoza', 'Calle': 'Ejecito Liberal', 'Numero': 916}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'AYUDAS SOCIALES A INSTITUCIONES SIN FINES DE LUCRO', 'Tipo de Beneficio': 'Apoyo Económico', 'Monto': 2}]
-2025-08-13 12:53:53 | INFO | Existe - UUID: 10fb1562-baa8-4e79-b2fb-0c0cc37d5615
-2025-08-13 12:53:53 | INFO | [{'Curp': 'GAGG011109HNLRMRA4', 'RFC': 'GAGG0912312FA', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': None, 'Telefono': None, 'Telefono 2': None, 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': None, 'Tipo de Beneficio': None, 'Monto': None}]
-2025-08-13 12:53:53 | INFO | Existe - UUID: 8774aa91-ecf8-4be5-bcf4-061ace316c2e
-2025-08-13 12:53:53 | INFO | [{'Curp': 'XXXXXXXXXXXXXXXXXX', 'RFC': '', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': '', 'Telefono': None, 'Telefono 2': '', 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'REPRESENTACIÓN JURÍDICA DEL TRABAJADOR ANTE LA J.L.C.A.', 'Accion': None, 'Tipo de Beneficio': '', 'Monto': None}]
-2025-08-13 12:53:53 | INFO | Existe - UUID: e94b7968-c25c-4b81-962f-988d0df49558
-2025-08-13 12:53:53 | INFO | [{'Curp': 'TESTTESTTEST123456', 'RFC': 'AASS000000DDA', 'Nombre': None, 'Apellido paterno': None, 'Apellido Materno': None, 'Fecha de Nacimiento': None}, {'Correo': None, 'Telefono': None, 'Telefono 2': None, 'Estado (catálogo)': None, 'Municipio Dirección (catálogo)': None, 'Colonia': None, 'Calle': None, 'Numero': None}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'VINCULACIÓN LABORAL REALIZADA', 'Accion': None, 'Tipo de Beneficio': None, 'Monto': None}]
-2025-08-13 12:53:53 | INFO | No existe - Nuevo UUID: 03cb441c-a28b-4faf-b787-cbc44f4d82c6
-2025-08-13 12:53:53 | INFO | [{'Curp': 'AUTB990224HNLGDR08', 'RFC': '', 'Nombre': 'Bryan', 'Apellido paterno': 'Aguirre', 'Apellido Materno': 'Tudon', 'Fecha de Nacimiento': ' 24/02/1999'}, {'Correo': 'bryan_tudon@outlook.com', 'Telefono': 8117867721, 'Telefono 2': None, 'Estado (catálogo)': 'Nuevo León', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Colonia': 'Ignacio Zaragoza', 'Calle': 'Ejecito Liberal', 'Numero': 916}, {'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'AYUDAS SOCIALES A INSTITUCIONES SIN FINES DE LUCRO', 'Tipo de Beneficio': 'Apoyo Económico', 'Monto': 2}]
+|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|
+2025-08-15 11:08:56 | INFO | Se dara de alta el usario
+2025-08-15 11:08:56 | INFO | Se dara de alta el usario
+2025-08-15 11:08:56 | INFO | Ya existe, no se dara de alta y el ID del usuario:e94b7968-c25c-4b81-962f-988d0df49558
+2025-08-15 11:08:56 | INFO | Se dara de alta el usario
+|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|2025-08-15 11:16:50 | INFO | ('cccwasdasdasd', 'asdasdasdasd')
+2025-08-15 11:20:43 | INFO | ('cccwasdasdasd', 'asdasdasdasd')
+2025-08-15 11:20:43 | INFO | {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('AUTB990224HNLGDR08', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-08-15 11:20:43 | INFO | Se dara de alta el usario
+2025-08-15 11:20:43 | INFO | ('XXXXXXXXXXXXXXXXXX', '')
+2025-08-15 11:20:43 | INFO | {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('AUTB990224HNLGDR08', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-08-15 11:20:43 | INFO | Se dara de alta el usario
+2025-08-15 11:20:43 | INFO | ('TESTTESTTEST123456', 'AASS000000DDA')
+2025-08-15 11:20:43 | INFO | {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('AUTB990224HNLGDR08', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-08-15 11:20:43 | INFO | Ya existe, no se dara de alta y el ID del usuario:e94b7968-c25c-4b81-962f-988d0df49558
+2025-08-15 11:20:43 | INFO | ('AUTB990224HNLGDR08', 'AAAA000000AAA')
+2025-08-15 11:20:43 | INFO | {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('AUTB990224HNLGDR08', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-08-15 11:20:43 | INFO | Ya existe, no se dara de alta y el ID del usuario:8774aa91-ecf8-4be5-bcf4-061ace316c2e
+|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|x|
+2025-08-15 11:16:50 | INFO | ('cccwasdasdasd', 'asdasdasdasd')
+2025-08-15 16:21:34 | INFO | x CURP cccwasdasdasd - RFC asdasdasdasd
+2025-08-15 16:21:34 | INFO | 1 Existen ambos
+2025-08-15 16:21:34 | INFO | Se dara de alta el usario
+
+2025-08-15 16:21:34 | INFO | x CURP XXXXXXXXXXXXXXXXXX - RFC None
+2025-08-15 16:21:34 | INFO | 1 Existen el CURP
+2025-08-15 16:21:34 | INFO | Se dara de alta el usario
+
+2025-08-15 16:21:34 | INFO | x CURP None - RFC AASS000000DDA
+2025-08-15 16:21:34 | INFO | 1 Existe el RFC
+2025-08-15 16:21:34 | INFO | Ya existe, no se dara de alta y el ID del usuario:e94b7968-c25c-4b81-962f-988d0df49558
+
+2025-08-15 16:21:34 | INFO | x CURP AUTB990224HNLGDR08 - RFC None
+2025-08-15 16:21:34 | INFO | 1 Existen el CURP
+2025-08-15 16:21:34 | INFO | Ya existe, no se dara de alta y el ID del usuario:8774aa91-ecf8-4be5-bcf4-061ace316c2e
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+2025-08-18 09:55:07 | INFO | x CURP GAGB950623HDFRZN08 - RFC GAGB950623
+2025-08-18 09:55:07 | INFO | 1 Dos datos pasados por parametro: CRUP - RFC
+2025-08-18 09:55:07 | INFO | Se dara de alta el usario
+2025-08-18 09:55:07 | INFO | No existe - Nuevo UUID: 0e83e95a-1747-4fea-b50d-471fbb0a54d4
+2025-08-18 09:55:07 | INFO | {'Curp': 'GAGB950623HDFRZN08', 'Nombre': 'Gabriela', 'Apellido paterno': 'Gómez', 'Apellido Materno': 'Barrera', 'Fecha de Nacimiento': datetime.date(1995, 6, 23), 'Estado (catálogo)': 'Ciudad de México', 'Estado Civil': 'Concubinato', 'Sexo': 'Mujer', 'Calle': 'Av. Reforma', 'Numero': 123, 'Colonia': 'Juárez', 'Municipio Dirección (catálogo)': 'Cerralvo', 'Telefono': 5523456789, 'Telefono 2': None, 'Correo': 'gabriela.gomez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'APOYO EN ESPECIE', 'Fecha de Registro': None, 'Monto': 5000, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'GAGB950623', 'Regimen Capital': None, 'Actividad': None, 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-08-18 09:55:07 | INFO | x CURP RLMJ880412HNLVRS07 - RFC RLMJ880412
+2025-08-18 09:55:07 | INFO | 1 Dos datos pasados por parametro: CRUP - RFC
+2025-08-18 09:55:07 | INFO | Se dara de alta el usario
+2025-08-18 09:55:07 | INFO | No existe - Nuevo UUID: 0032a113-3237-4f6f-a89c-c640b7fd347b
+2025-08-18 09:55:07 | INFO | {'Curp': 'RLMJ880412HNLVRS07', 'Nombre': 'Raúl', 'Apellido paterno': 'López', 'Apellido Materno': 'Morales', 'Fecha de Nacimiento': datetime.date(1988, 4, 12), 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Divorciado (a)', 'Sexo': 'Hombre', 'Calle': 'Calle Hidalgo', 'Numero': 45, 'Colonia': 'Centro', 'Municipio Dirección (catálogo)': 'Agualeguas', 'Telefono': 8187654321, 'Telefono 2': '', 'Correo': 'raul.lopez@email.com', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'REPRESENTACIÓN JURÍDICA DEL TRABAJADOR ANTE LA J.L.C.A.', 'Accion': None, 'Fecha de Registro': None, 'Monto': 25000, 'Tipo de Beneficio': 'Beca alimentos', 'RFC': 'RLMJ880412', 'Regimen Capital': '', 'Actividad': '', 'Nombre Comercial': '', 'Razón Social': '', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-08-18 09:55:07 | INFO | x CURP MTLR010305MGRPRS05 - RFC MTLR010305
+2025-08-18 09:55:07 | INFO | 1 Dos datos pasados por parametro: CRUP - RFC
+2025-08-18 09:55:07 | INFO | Se dara de alta el usario
+2025-08-18 09:55:07 | INFO | No existe - Nuevo UUID: eed3e7fb-875e-4527-89c4-5a2f6c83435f
+2025-08-18 09:55:07 | INFO | {'Curp': 'MTLR010305MGRPRS05', 'Nombre': 'Mariana', 'Apellido paterno': 'Torres', 'Apellido Materno': 'Ramírez', 'Fecha de Nacimiento': datetime.date(2001, 3, 5), 'Estado (catálogo)': 'Guerrero', 'Estado Civil': 'Viudo (a)', 'Sexo': 'Mujer', 'Calle': 'Calle Morelos', 'Numero': 89, 'Colonia': 'San Pedro', 'Municipio Dirección (catálogo)': 'Aramberri', 'Telefono': 7442233445, 'Telefono 2': None, 'Correo': 'mariana.torres@email.co', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'VINCULACIÓN LABORAL REALIZADA', 'Accion': 'SERVICIOS DE ALBERGUE O ESTANCIA TEMPORAL', 'Fecha de Registro': None, 'Monto': 12000, 'Tipo de Beneficio': 'Becas académica', 'RFC': 'MTLR010305', 'Regimen Capital': None, 'Actividad': None, 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-08-18 09:55:07 | INFO | x CURP HCRD790718HMNRRS03 - RFC HCRD790718
+2025-08-18 09:55:07 | INFO | 1 Dos datos pasados por parametro: CRUP - RFC
+2025-08-18 09:55:07 | INFO | Se dara de alta el usario
+2025-08-18 09:55:07 | INFO | No existe - Nuevo UUID: fb4a08d4-733d-4ed1-9065-4a05f5bd42b2
+2025-08-18 09:55:07 | INFO | {'Curp': 'HCRD790718HMNRRS03', 'Nombre': 'Héctor', 'Apellido paterno': 'Ramírez', 'Apellido Materno': 'Díaz', 'Fecha de Nacimiento': datetime.date(1979, 7, 18), 'Estado (catálogo)': 'Michoacán de Ocampo', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Av. Lázaro C.', 'Numero': 678, 'Colonia': 'Industrial', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 4433344556, 'Telefono 2': None, 'Correo': 'hector.ramirez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'AYUDAS SOCIALES A INSTITUCIONES SIN FINES DE LUCRO', 'Fecha de Registro': 'Sistema', 'Monto': 800, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'HCRD790718', 'Regimen Capital': None, 'Actividad': None, 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-08-18 09:55:07 | WARNING | Programa no encontrado - DEFENSA DEL TRABAJO
+2025-08-18 09:55:07 | WARNING | Componente no encontrado - ASESORIAS BRINDADAS
+2025-08-18 09:55:07 | INFO | Se encontraron 2 registros con errores
+2025-08-18 09:55:07 | INFO | {'Curp': 'VLSA920910MDFRLS04', 'Nombre': 'Valeria', 'Apellido paterno': 'Sánchez', 'Apellido Materno': 'Flores', 'Fecha de Nacimiento': datetime.date(1992, 9, 10), 'Estado (catálogo)': 'Jalisco', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Mujer', 'Calle': 'Av. Juárez', 'Numero': 150, 'Colonia': 'Americana', 'Municipio Dirección (catálogo)': 'Bustamante', 'Telefono': 3332233445, 'Telefono 2': None, 'Correo': 'valeria.sanchez@email.com', 'Programa': 'DEFENSA DEL TRABAJO', 'Componente': 'CURSOS DE CAPACITACIÓN PARA EL TRABAJO IMPARTIDOS', 'Accion': 'AYUDAS SOCIALES A INSTITUCIONES SIN FINES DE LUCRO', 'Fecha de Registro': None, 'Monto': 3000, 'Tipo de Beneficio': 'Gastos de traslado y gastos médicos', 'RFC': 'VLSA920910', 'Regimen Capital': None, 'Actividad': None, 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-08-18 09:55:07 | INFO | {'Curp': 'AUTB990224HNLGDR08', 'Nombre': 'Bryan ', 'Apellido paterno': 'Aguirre ', 'Apellido Materno': 'Tudon', 'Fecha de Nacimiento': datetime.date(1999, 2, 24), 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Ejercito Liberal', 'Numero': 916, 'Colonia': 'Ignacio Zaragoza', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 1231212321, 'Telefono 2': None, 'Correo': 'bryan@hotmail.com', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'ASESORIAS BRINDADAS', 'Accion': 'APOYO EN ESPECIE A PERSONAS SUJETAS A ASISTENCIA SOCIAL', 'Fecha de Registro': None, 'Monto': 100000, 'Tipo de Beneficio': 'Beca alimentos', 'RFC': 'ADASD3DAS', 'Regimen Capital': None, 'Actividad': None, 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
