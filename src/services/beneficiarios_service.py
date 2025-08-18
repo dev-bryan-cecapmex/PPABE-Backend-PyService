@@ -1,6 +1,9 @@
 from ..models.beneficiarios import Beneficiarios
 from ..database.connection import db
 
+# Logger
+from ..utils.Logger import Logger
+
 class BeneficiariosService:
     @staticmethod
     def add_beneficiario(id_beneficiario, data):
@@ -19,3 +22,13 @@ class BeneficiariosService:
         result = new_beneficiario.to_dict()
         db.session.commit()
         return result
+    
+    @staticmethod
+    def bulk_insert(rows):
+        try:
+            db.session.bulk_insert_mappings(Beneficiarios,rows)
+            db.session.commit()
+            return {"Nuevos Beneficiarios": len(rows)}
+        except Exception as ex:
+            db.session.rollback()
+            Logger.add_to_log("error", f"Error bulk_insert beneficiarios: {ex}")

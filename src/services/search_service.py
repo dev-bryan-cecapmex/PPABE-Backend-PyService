@@ -3,7 +3,10 @@ from ..models.dependencias  import Dependencias
 from ..models.programas     import Programas
 from ..models.componentes   import Componentes
 
+from ..models.sexos         import Sexos
+
 from ..models.beneficiarios import Beneficiarios
+
 
 from ..database.connection  import db
 
@@ -55,6 +58,16 @@ class SearchService:
     #     return result.id if result else False
     
     @staticmethod
+    def get_sexo_map():
+        sexos = (
+            Sexos.query
+            .with_entities( Sexos.nombre, Sexos.id)
+            .filter(Sexos.deleted == 0)
+            .all()
+        )
+        return {nombre: id_sex for nombre, id_sex in sexos}
+    
+    @staticmethod
     def get_dependencias_map():
         dependencias = (
             Dependencias.query
@@ -90,7 +103,7 @@ class SearchService:
         beneficiarios = (
             Beneficiarios.query
             .with_entities( Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
-            .filter(Componentes.deleted == 0)
+            .filter(Beneficiarios.deleted == 0)
             .all()
         )
         return {( curp, rfc ) : id_ben for curp, rfc, id_ben in beneficiarios}
