@@ -3,7 +3,13 @@ from ..models.dependencias  import Dependencias
 from ..models.programas     import Programas
 from ..models.componentes   import Componentes
 
-from ..models.sexos         import Sexos
+from ..models.sexos             import Sexos
+from ..models.estados           import Estados
+from ..models.municipios        import Municipios
+from ..models.colonias          import Colonias
+from ..models.estados_civiles   import EstadosCiviles
+
+
 
 from ..models.beneficiarios import Beneficiarios
 
@@ -11,51 +17,6 @@ from ..models.beneficiarios import Beneficiarios
 from ..database.connection  import db
 
 class SearchService:
-    
-    # @staticmethod
-    # def search_dependencia(name_dependencia): 
-    #     result = (
-    #         Dependencias.query
-    #         .with_entities(Dependencias.id)
-    #         .filter(Dependencias.nombre == name_dependencia)
-    #         .first()
-    #     )
-        
-    #     return result.id if result else None
-
-    # @staticmethod
-    # def search_programa(name_programa, id_dependencia):
-    #     result = (
-    #         Programas.query
-    #         .with_entities(Programas.id)
-    #         .filter((Programas.nombre == name_programa) & (Programas.idDependencia == id_dependencia))
-    #         .first()
-    #     )
-        
-    #     return result.id if result else None
-    
-    # @staticmethod
-    # def search_componente(name_componente, id_Programa):
-    #     result = (
-    #         Componentes.query
-    #         .with_entities(Componentes.id)
-    #         .filter((Componentes.nombre == name_componente) & (Componentes.idPrograma == id_Programa))
-    #         .first()
-    #     )
-        
-    #     return result.id if result else None
-    
-    # @staticmethod
-    # def search_exitencia(curp,rfc):
-    #     result = (
-    #         Beneficiarios.query
-    #         .with_entities(Beneficiarios.id)
-    #         .filter(
-    #             (Beneficiarios.CURP == curp) | (Beneficiarios.RFC == rfc))
-    #         .first()
-    #     )
-        
-    #     return result.id if result else False
     
     @staticmethod
     def get_sexo_map():
@@ -66,6 +27,46 @@ class SearchService:
             .all()
         )
         return {nombre: id_sex for nombre, id_sex in sexos}
+    
+    @staticmethod
+    def get_estado_map():
+        estados = (
+            Estados.query
+            .with_entities( Estados.nombre, Estados.id )
+            .filter(Estados.deleted == 0)
+            .all()
+        )
+        return {nombre:id_est for nombre, id_est in estados}
+    
+    @staticmethod
+    def get_municipio_map():
+        municipios = (
+            Municipios.query
+            .with_entities(Municipios.nombre, Municipios.idEstado, Municipios.id)
+            .filter(Municipios.deleted == 0)
+            .all()
+        )
+        return {nombre:[id_mun,id_est] for nombre, id_mun, id_est in municipios}
+        
+    @staticmethod
+    def get_colonia_map():
+        colonias = (
+            Colonias.query
+            .with_entities(Colonias.nombre, Colonias.id, Colonias.idMunicipio)
+            .filter(Colonias.deleted == 0)
+            .all()
+        )
+        return {nombre:[id_col, id_mun] for nombre, id_col, id_mun in colonias}
+    
+    @staticmethod
+    def get_estado_civil_map():
+        estados_civiles = (
+            EstadosCiviles.query
+            .with_entities( EstadosCiviles.nombre, EstadosCiviles.id)
+            .filter(EstadosCiviles.deleted == 0)
+            .all()
+        )
+        return {nombre: id_est_civ for nombre, id_est_civ in estados_civiles}
     
     @staticmethod
     def get_dependencias_map():

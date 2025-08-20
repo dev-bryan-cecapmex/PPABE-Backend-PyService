@@ -37,8 +37,16 @@ class ExcelService:
             
             results         = list(zip(group_one_df,group_tow_df,group_tree_df))
             
-            sexo_map        = SearchService.get_sexo_map()
+            sexos_map               = SearchService.get_sexo_map()
+            estados_map             = SearchService.get_estado_map()
+            municipios_map          = SearchService.get_municipio_map()
+            colonias_map            = SearchService.get_colonia_map()
+            estados_civiles_map     = SearchService.get_estado_civil_map()
             
+            Logger.add_to_log("debug", estados_map)
+            Logger.add_to_log("debug", f"Municipios\n{municipios_map}")
+            Logger.add_to_log("debug", f"Colonias\n{colonias_map}")
+            Logger.add_to_log("debug", f"Estado Civil\n {estados_civiles_map}")
             # Datos de la DB
             dependencias_map    = SearchService.get_dependencias_map()
             programas_map       = SearchService.get_programas_map()
@@ -57,8 +65,31 @@ class ExcelService:
             
             for row in rows:
                 # Busqueda de id de Sexo
-                id_sexo         = sexo_map.get(row['Sexo']) 
-                row['Sexo']     = id_sexo
+                id_sexo         = sexos_map.get(row['Sexo']) 
+                id_estado       = estados_map.get(row['Estado (catálogo)'])
+                id_municipio    = municipios_map.get(row['Municipio Dirección (catálogo)'])
+                id_colonia      = colonias_map.get(row['Colonia'])
+                id_estado_civil = estados_civiles_map.get(row['Estado Civil'])
+                
+                Logger.add_to_log("info", f"Estado Civil: {row['Estado Civil']}")
+                Logger.add_to_log("info", f"Id Civil: {id_estado_civil}")
+                
+                Logger.add_to_log("info",f"Antes\n {row}")
+                
+                row['Sexo']                             = id_sexo
+                row['Estado (catálogo)']                = id_estado
+                row['Municipio Dirección (catálogo)']   = id_municipio
+                row['Colonia']                          = id_colonia
+                row['Estado Civil']                     = id_estado_civil
+                
+                Logger.add_to_log("info", f"Despues\n {row}")
+                
+                if row['Municipio Dirección (catálogo)'][1] == row['Estado (catálogo)']:
+                    Logger.add_to_log("info", "SI")
+                    Logger.add_to_log("debug", f"Municipio: {row['Municipio Dirección (catálogo)']}")
+                else:
+                    Logger.add_to_log("info", "No")
+                    Logger.add_to_log("debug", f"Municipio: {row['Municipio Dirección (catálogo)']}")
                 
                 id_dependencia  = dependencias_map.get(row['Dependencia'])
                 
@@ -141,7 +172,7 @@ class ExcelService:
                 id_contacto = str(uuid.uuid4())
                 new_contacto.append({
                     'id': id_contacto,
-                    **{Config.COLUMN_MAP[k]:row[k] for k in group_tow_df if k in Config.COLUMN_MAP}
+                    **{Config.COLUMN_MAP_GROUP_ONE[k]:row[k] for k in group_tow_df if k in Config.COLUMN_MAP_GROUP_ONE}
                 })
                 
                 id_apoyo = str(uuid.uuid4())
@@ -154,7 +185,7 @@ class ExcelService:
 
             
             new_beneficiarios_renamed = [
-                {Config.COLUMN_MAP.get(k,k): v for k, v in row.items()}
+                {Config.COLUMN_MAP_GROUP_ONE.get(k,k): v for k, v in row.items()}
                 for row in new_beneficiarios
             ]
             # Logger.add_to_log("debug", new_beneficiarios)
@@ -168,7 +199,7 @@ class ExcelService:
 
             if new_beneficiarios_renamed:
                 # Insert de los datos
-                BeneficiariosService.bulk_insert(new_beneficiarios_renamed)
+                #BeneficiariosService.bulk_insert(new_beneficiarios_renamed)
                 Logger.add_to_log("info", f"Estos son los beneficiarios que se darna de alta \n {new_beneficiarios_renamed}")
                 
             if new_contacto:

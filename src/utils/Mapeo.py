@@ -1,4 +1,7 @@
 class Mapeo():
-    def map_row(id_value:str,row:dict,colums:dict):
-        mapped = {colums[k]: row.get(k) for k in colums.keys() if k in row}
-        return { "id": id_value, **mapped }
+    def map_row(columns_map, datos, messy_dictionary ):
+        _datos = [
+            {columns_map.get(k,k) : v for k, v in datos.items()}
+            for datos in messy_dictionary
+        ]
+        return _datos
