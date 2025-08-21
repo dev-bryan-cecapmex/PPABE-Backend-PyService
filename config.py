@@ -20,5 +20,23 @@ class Config:
         "Razón Social":"razonSocial",
     }
     GROUP_TOW_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
+    COLUMN_MAP_GROUP_TOW = {
+        'Correo':'correo',
+        'Telefono':'telefono1',
+        'Telefono 2':'telefono2',
+        'Estado (catálogo)':'idEstado',
+        'Municipio Dirección (catálogo)':'idMunicipio',
+        'Colonia':'idColonia',
+        'Calle':'calle',
+        'Numero':'numero'
+    }
     GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Monto']
+    COLUMN_MAP_GROUP_TREE = {
+        'Dependencia':'idDependencia',
+        'Programa':'idPrograma',
+        'Componente':'idComponente',
+        'Accion':'idAccion',
+        'Tipo de Beneficio':'idTipoBeneficio',
+        'Monto':'monto'
+    }
     

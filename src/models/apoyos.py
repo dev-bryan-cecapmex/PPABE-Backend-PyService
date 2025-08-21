@@ -1,4 +1,4 @@
-from database.connection import db
+from ..database.connection import db
 
 class Apoyos(db.Model):
     __tablename__ = 'apoyos'

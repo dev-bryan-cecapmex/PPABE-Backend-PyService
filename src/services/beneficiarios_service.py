@@ -1,5 +1,5 @@
-from ..models.beneficiarios import Beneficiarios
 from ..database.connection import db
+from ..models.beneficiarios import Beneficiarios
 
 # Logger
 from ..utils.Logger import Logger
