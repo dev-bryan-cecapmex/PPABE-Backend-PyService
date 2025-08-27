@@ -21,9 +21,10 @@ import polars as pl
 import uuid
 
 
-
-
 class ExcelService:
+    
+    
+    
     @staticmethod
     def process_file(file):
         try:
@@ -34,22 +35,29 @@ class ExcelService:
             
             # Datos Agrupados del Excel
             group_one_df    = data.select(Config.GROUP_ONE_KEYS).to_dict()
-            group_tow_df    = data.select(Config.GROUP_TOW_KEYS).to_dict()
+            group_two_df    = data.select(Config.GROUP_TWO_KEYS).to_dict()
             group_tree_df   = data.select(Config.GROUP_TREE_KEYS).to_dict()
             
-            results         = list(zip(group_one_df,group_tow_df,group_tree_df))
-            
+            # Grupo uno
             sexos_map               = SearchService.get_sexo_map()
+            
+            # Grupo dos
             estados_map             = SearchService.get_estado_map()
             municipios_map          = SearchService.get_municipio_map()
             colonias_map            = SearchService.get_colonia_map()
             estados_civiles_map     = SearchService.get_estado_civil_map()
             
-            # Datos de la DB
-            dependencias_map    = SearchService.get_dependencias_map()
-            programas_map       = SearchService.get_programas_map()
-            componentes_map     = SearchService.get_componentes_map()
-            beneficiario_map    = SearchService.get_beneficiarios_map()
+            # Grupo tres
+            dependencias_map            = SearchService.get_dependencias_map()
+            programas_map               = SearchService.get_programas_map()
+            componentes_map             = SearchService.get_componentes_map()
+            beneficiario_map            = SearchService.get_beneficiarios_map()
+            acciones_map                = SearchService.get_acciones_map()       
+            tipos_beneficiarios_map     = SearchService.get_tipos_beneficiarios_map()
+            
+            carpetas_beneficiarios_map  = SearchService.get_carpeta_beneficiarios_map()
+     
+            Logger.add_to_log("info", f"Carpetas Beneficiarios\n {carpetas_beneficiarios_map}")
             
             #Lista de los nuevos registros
             new_beneficiarios   = []
@@ -68,22 +76,32 @@ class ExcelService:
                 id_colonia      = colonias_map.get(row['Colonia'])
                 id_estado_civil = estados_civiles_map.get(row['Estado Civil'])
                 
-                id_dependencia  = dependencias_map.get(row['Dependencia'])
-                id_programa     = programas_map.get((row['Programa'],id_dependencia))
-                id_componente   = componentes_map.get((row['Componente'], id_programa))
+                id_dependencia          = dependencias_map.get(row['Dependencia'])
+                id_programa             = programas_map.get((row['Programa'],id_dependencia))
+                id_componente           = componentes_map.get((row['Componente'], id_programa))
+                id_acciones             = acciones_map.get(row['Accion'])
+                id_tipo_beneficiario    = tipos_beneficiarios_map.get(row['Tipo de Beneficio'])
+                
+                Logger.add_to_log("info", f"ID Dependecas\n {id_dependencia}")
+                Logger.add_to_log("info", f"ID Aciones\n {id_acciones}")
+                Logger.add_to_log("info", f"ID Tipos de Beneficiarios\n {id_tipo_beneficiario}")
                 # Faltan 3 mas
-            
+                #Logger.add_to_log("info", f"row\n {row}")
+                #Logger.add_to_log("info", f"Aciones\n {id_acciones} - {row['Accion']}")
                 
                 row['Sexo']                             = id_sexo
                 
                 row['Estado (catálogo)']                = id_estado
-                row['Municipio Dirección (catálogo)']   = str(id_municipio[1])
+                row['Municipio Dirección (catálogo)']   = str(id_municipio[1]) if id_municipio else None
                 row['Colonia']                          = str(id_colonia[0]) if id_colonia else None
                 row['Estado Civil']                     = id_estado_civil
                 
                 row['Dependencia']                      = id_dependencia
                 row['Programa']                         = id_programa
                 row['Componente']                       = id_componente
+                row['Accion']                           = id_acciones
+                row['Tipo de Beneficio']                = id_tipo_beneficiario
+            
                 
                 
                 
@@ -155,18 +173,18 @@ class ExcelService:
                 id_contacto = str(uuid.uuid4())
                 # new_contacto.append({
                 #     'id': id_contacto,
-                #     **{k: row[k] for k in Config.GROUP_TOW_KEYS}
+                #     **{k: row[k] for k in Config.GROUP_TWO_KEYS}
                 # })
                
                 new_contacto.append({
                     'id': id_contacto,
-                    **{Config.COLUMN_MAP_GROUP_TOW[k]:row[k] for k in group_tow_df if k in Config.COLUMN_MAP_GROUP_TOW}
+                    **{Config.COLUMN_MAP_GROUP_TWO[k]:row[k] for k in group_two_df if k in Config.COLUMN_MAP_GROUP_TWO}
                 })
                 
                 Logger.add_to_log("info",f"Contacto \n{new_contacto}")
                 
                 id_apoyo = str(uuid.uuid4())
-                Logger.add_to_log("info",f"Apoyo\n{new_apoyos}")
+                Logger.add_to_log("info",f"Apoyo\n{row}")
                 new_apoyos.append({
                     'id':id_apoyo,
                     'idBeneficiario':id_beneficiario,
@@ -191,7 +209,7 @@ class ExcelService:
             # Logger.add_to_log("debug", new_beneficiarios_renamed)
             
             # new_contacto_renamed = [
-            #     {Config.COLUMN_MAP_GROUP_TOW.get(k,k): v for k, v in row.items()}
+            #     {Config.COLUMN_MAP_GROUP_TWO.get(k,k): v for k, v in row.items()}
             #     for row in new_contacto
             # ]
             
@@ -203,21 +221,21 @@ class ExcelService:
 
             if new_beneficiarios_renamed:
                 # Insert de los datos
-                BeneficiariosService.bulk_insert(new_beneficiarios_renamed)
+                #BeneficiariosService.bulk_insert(new_beneficiarios_renamed)
                 Logger.add_to_log("info", f"Estos son los beneficiarios que se darna de alta \n {new_beneficiarios_renamed}")
                 
                 if new_contacto:
-                    ContactosService.bluk_insert(new_contacto)
+                    #ContactosService.bluk_insert(new_contacto)
                     Logger.add_to_log("info", f"Antes \n{new_contacto}")
                     
                     if new_apoyos_renamed:
-                        ApoyosService.bulk_insert(new_apoyos_renamed)
+                        #ApoyosService.bulk_insert(new_apoyos_renamed)
                         Logger.add_to_log("info", f"Estos son los apoyos que se darna de alta \n{new_apoyos}")
                 
             return jsonify({
                 'success': True,
                 'message': 'Info to Excel File',
-                'data': results,
+                'data': [],
                 'error' : None
             }),200
         except Exception as ex:

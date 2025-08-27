@@ -19,8 +19,8 @@ class Config:
         "Nombre Comercial":"nombreComercial",
         "Razón Social":"razonSocial",
     }
-    GROUP_TOW_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
-    COLUMN_MAP_GROUP_TOW = {
+    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
+    COLUMN_MAP_GROUP_TWO = {
         'Correo':'correo',
         'Telefono':'telefono1',
         'Telefono 2':'telefono2',

@@ -3,11 +3,15 @@ from ..models.dependencias  import Dependencias
 from ..models.programas     import Programas
 from ..models.componentes   import Componentes
 
-from ..models.sexos             import Sexos
-from ..models.estados           import Estados
-from ..models.municipios        import Municipios
-from ..models.colonias          import Colonias
-from ..models.estados_civiles   import EstadosCiviles
+from ..models.sexos                     import Sexos
+from ..models.estados                   import Estados
+from ..models.municipios                import Municipios
+from ..models.colonias                  import Colonias
+from ..models.estados_civiles           import EstadosCiviles
+from ..models.acciones                  import Acciones
+from ..models.tipos_beneficios          import TiposBeneficiarios
+
+from ..models.carpeta_beneficiarios     import CarpetaBeneficiarios
 
 
 
@@ -108,3 +112,36 @@ class SearchService:
             .all()
         )
         return {( curp, rfc ) : id_ben for curp, rfc, id_ben in beneficiarios}
+    
+    @staticmethod
+    def get_acciones_map():
+        tipos_acciones = (
+            Acciones.query
+            .with_entities(Acciones.nombre,Acciones.id)
+            .filter(Acciones.deleted == 0)
+            .all()
+        )
+        
+        return { nombre: id_act for nombre, id_act in tipos_acciones}
+    
+    @staticmethod
+    def get_tipos_beneficiarios_map():
+        tipos_benefisarios = (
+            
+            TiposBeneficiarios.query
+            .with_entities( TiposBeneficiarios.nombre, TiposBeneficiarios.id )
+            .filter(TiposBeneficiarios.deleted == 0)
+            .all()
+        )
+        return {nombre: id_tben for nombre, id_tben in tipos_benefisarios}
+    
+    @staticmethod
+    def get_carpeta_beneficiarios_map():
+        carpetas_beneficiarios = (
+            CarpetaBeneficiarios.query
+            .with_entities(CarpetaBeneficiarios.id, CarpetaBeneficiarios.idDependencia, CarpetaBeneficiarios.mes, CarpetaBeneficiarios.anio)
+            .filter(CarpetaBeneficiarios.deleted == 0)
+            .all()
+        )
+        
+        return {(id_dep,mes,anio) : id_cbe for id_cbe, id_dep, mes, anio in carpetas_beneficiarios}
