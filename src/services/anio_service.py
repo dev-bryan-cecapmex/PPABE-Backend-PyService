@@ -1,7 +1,7 @@
 from ..models.anio import Anio
 from ..database.connection import db
 
-class AnioServicie:
+class AnioService:
     @staticmethod
     def get_all():
         anios = Anio.query.all()

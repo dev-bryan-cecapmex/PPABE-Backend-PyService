@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from ..services.anio_service import AnioServicie
+from ..services.anio_service import AnioService
 
 import traceback
 
@@ -12,7 +12,7 @@ public_bp = Blueprint('public', __name__)
 @public_bp.route("/anios", methods=["GET"])
 def get_anios():
     try:
-        anios = AnioServicie.get_all()
+        anios = AnioService.get_all()
         
         Logger.add_to_log("info", anios)
         
