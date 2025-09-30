@@ -28,6 +28,8 @@ class ExcelService:
     @staticmethod
     def process_file(file):
         try:
+            
+            
             # Lectura de excel desde la memoria 
             data = pl.read_excel(io.BytesIO(file.read()))
             Logger.add_to_log("info",data)

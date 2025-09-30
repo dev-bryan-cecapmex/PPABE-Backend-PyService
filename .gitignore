@@ -1,5 +1,6 @@
 venv/
 .env
+*.env
 
 __pycache__/
 *.py[cod]
@@ -9,4 +10,5 @@ __pycache__/
 .vscode/
 #*.log
 
-log/
+app.log
+
