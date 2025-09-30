@@ -1,0 +1,407 @@
+2025-08-29 09:23:40 | INFO | shape: (6, 29)
+┌────────────────────┬──────────┬──────────────────┬──────────────────┬───┬──────────────────────────────┬───────────┬────────────────────────┬─────────────┐
+│ Curp               ┆ Nombre   ┆ Apellido paterno ┆ Apellido Materno ┆ … ┆ Razón Social                 ┆ Localidad ┆ Dependencia            ┆ Subprograma │
+│ ---                ┆ ---      ┆ ---              ┆ ---              ┆   ┆ ---                          ┆ ---       ┆ ---                    ┆ ---         │
+│ str                ┆ str      ┆ str              ┆ str              ┆   ┆ str                          ┆ str       ┆ str                    ┆ str         │
+╞════════════════════╪══════════╪══════════════════╪══════════════════╪═══╪══════════════════════════════╪═══════════╪════════════════════════╪═════════════╡
+│ GAGB950623HDFRZN08 ┆ Gabriela ┆ Gómez            ┆ Barrera          ┆ … ┆ null                         ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+│ RLMJ880412HNLVRS07 ┆ Raúl     ┆ López            ┆ Morales          ┆ … ┆ Comercial López S.A. de C.V. ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+│ MTLR010305MGRPRS05 ┆ Mariana  ┆ Torres           ┆ Ramírez          ┆ … ┆ null                         ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+│ HCRD790718HMNRRS03 ┆ Héctor   ┆ Ramírez          ┆ Díaz             ┆ … ┆ XXXXXXXXXXX                  ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+│ VLSA920910MDFRLS04 ┆ Valeria  ┆ Sánchez          ┆ Flores           ┆ … ┆ null                         ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+│ AUTB990224HNLGDR08 ┆ Bryan    ┆ Aguirre          ┆ Tudon            ┆ … ┆ null                         ┆ null      ┆ SECRETARÍA DEL TRABAJO ┆ null        │
+└────────────────────┴──────────┴──────────────────┴──────────────────┴───┴──────────────────────────────┴───────────┴────────────────────────┴─────────────┘
+2025-08-29 09:23:40 | INFO | {'Curp': shape: (6,)
+Series: 'Curp' [str]
+[
+	"GAGB950623HDFRZN08"
+	"RLMJ880412HNLVRS07"
+	"MTLR010305MGRPRS05"
+	"HCRD790718HMNRRS03"
+	"VLSA920910MDFRLS04"
+	"AUTB990224HNLGDR08"
+], 'Nombre': shape: (6,)
+Series: 'Nombre' [str]
+[
+	"Gabriela"
+	"Raúl"
+	"Mariana"
+	"Héctor"
+	"Valeria"
+	"Bryan "
+], 'Apellido paterno': shape: (6,)
+Series: 'Apellido paterno' [str]
+[
+	"Gómez"
+	"López"
+	"Torres"
+	"Ramírez"
+	"Sánchez"
+	"Aguirre "
+], 'Apellido Materno': shape: (6,)
+Series: 'Apellido Materno' [str]
+[
+	"Barrera"
+	"Morales"
+	"Ramírez"
+	"Díaz"
+	"Flores"
+	"Tudon"
+], 'Fecha de Nacimiento': shape: (6,)
+Series: 'Fecha de Nacimiento' [date]
+[
+	1995-06-23
+	1988-04-12
+	2001-03-05
+	1979-07-18
+	1992-09-10
+	1999-02-24
+], 'Sexo': shape: (6,)
+Series: 'Sexo' [str]
+[
+	"Mujer"
+	"Hombre"
+	"Mujer"
+	"Hombre"
+	"Mujer"
+	"Hombre"
+], 'RFC': shape: (6,)
+Series: 'RFC' [str]
+[
+	"GAGB950623"
+	"RLMJ880412"
+	"MTLR010305"
+	"HCRD790718"
+	"VLSA920910"
+	"ADASD3DAS"
+], 'Regimen Capital': shape: (6,)
+Series: 'Regimen Capital' [str]
+[
+	"Persona Física"
+	"Persona Física"
+	"Persona Física"
+	"Persona Física"
+	"Persona Física"
+	"Persona Física"
+], 'Actividad': shape: (6,)
+Series: 'Actividad' [str]
+[
+	"Estudiante"
+	"Comercio Minorista"
+	"Estudiante"
+	"Obrero"
+	"Música y Artes Escénicas"
+	"Obrero"
+], 'Nombre Comercial': shape: (6,)
+Series: 'Nombre Comercial' [str]
+[
+	null
+	"Tienda López"
+	null
+	"XXXXXXXXX"
+	null
+	null
+], 'Razón Social': shape: (6,)
+Series: 'Razón Social' [str]
+[
+	null
+	"Comercial López S.A. de C.V."
+	null
+	"XXXXXXXXXXX"
+	null
+	null
+]}
+2025-08-29 09:23:40 | INFO | {'Correo': shape: (6,)
+Series: 'Correo' [str]
+[
+	"gabriela.gomez@email.com"
+	"raul.lopez@email.com"
+	"mariana.torres@email.co"
+	"hector.ramirez@email.com"
+	"valeria.sanchez@email.com"
+	"bryan@hotmail.com"
+], 'Telefono': shape: (6,)
+Series: 'Telefono' [i64]
+[
+	5523456789
+	8187654321
+	7442233445
+	4433344556
+	3332233445
+	1231212321
+], 'Telefono 2': shape: (6,)
+Series: 'Telefono 2' [str]
+[
+	null
+	""
+	null
+	null
+	null
+	null
+], 'Estado (catálogo)': shape: (6,)
+Series: 'Estado (catálogo)' [str]
+[
+	"Ciudad de México"
+	"Nuevo León"
+	"Guerrero"
+	"Michoacán de Ocampo"
+	"Jalisco"
+	"Nuevo León"
+], 'Municipio Dirección (catálogo)': shape: (6,)
+Series: 'Municipio Dirección (catálogo)' [str]
+[
+	"Cerralvo"
+	"Agualeguas"
+	"Aramberri"
+	"Guadalupe"
+	"Bustamante"
+	"Guadalupe"
+], 'Colonia': shape: (6,)
+Series: 'Colonia' [str]
+[
+	"Roma"
+	"Villas de San Sebastian"
+	"Villa San Sebastian"
+	"Nuevo Repueblo"
+	"Ignacio Zaragoza"
+	"Nuevo Repueblo"
+], 'Calle': shape: (6,)
+Series: 'Calle' [str]
+[
+	"Av. Reforma"
+	"Calle Hidalgo"
+	"Calle Morelos"
+	"Av. Lázaro C."
+	"Av. Juárez"
+	"Ejercito Liberal"
+], 'Numero': shape: (6,)
+Series: 'Numero' [i64]
+[
+	123
+	45
+	89
+	678
+	150
+	916
+]}
+2025-08-29 09:23:40 | INFO | {'Dependencia': shape: (6,)
+Series: 'Dependencia' [str]
+[
+	"SECRETARÍA DEL TRABAJO"
+	"SECRETARÍA DEL TRABAJO"
+	"SECRETARÍA DEL TRABAJO"
+	"SECRETARÍA DEL TRABAJO"
+	"SECRETARÍA DEL TRABAJO"
+	"SECRETARÍA DEL TRABAJO"
+], 'Programa': shape: (6,)
+Series: 'Programa' [str]
+[
+	"DISTINTIVO TRE"
+	"INSPECCIÓN Y DEFENSA DEL TRABA…
+	"CAPITAL HUMANO Y EMPLEO"
+	"DISTINTIVO TRE"
+	"DEFENSA DEL TRABAJO"
+	"INSPECCIÓN Y DEFENSA DEL TRABA…
+], 'Componente': shape: (6,)
+Series: 'Componente' [str]
+[
+	"INSPECCIONES REALIZADAS"
+	"REPRESENTACIÓN JURÍDICA DEL TR…
+	"VINCULACIÓN LABORAL REALIZADA"
+	"INSPECCIONES REALIZADAS"
+	"CURSOS DE CAPACITACIÓN PARA EL…
+	"ASESORIAS BRINDADAS"
+], 'Accion': shape: (6,)
+Series: 'Accion' [str]
+[
+	"EDUCACIÓN SUPERIOR"
+	"EDUCACIÓN SUPERIOR"
+	"EDUCACIÓN SUPERIOR"
+	"UNIFORMES"
+	"UNIFORMES"
+	"UNIFORMES"
+], 'Tipo de Beneficio': shape: (6,)
+Series: 'Tipo de Beneficio' [str]
+[
+	"Gastos médicos"
+	"Apoyo Económico"
+	"Apoyo Económico"
+	"Apoyo en especie"
+	"Gastos de traslado"
+	"Gastos de traslado"
+], 'Monto': shape: (6,)
+Series: 'Monto' [i64]
+[
+	5000
+	25000
+	12000
+	800
+	3000
+	100000
+]}
+2025-08-29 09:23:44 | ERROR | (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-08-29 09:23:44 | ERROR | Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 649, in connect
+    sock = socket.create_connection(
+        (self.host, self.port), self.connect_timeout, **kwargs
+    )
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\excel_service.py", line 45, in process_file
+    sexos_map               = SearchService.get_sexo_map()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\search_service.py", line 31, in get_sexo_map
+    .all()
+     ~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3271, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2434, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+

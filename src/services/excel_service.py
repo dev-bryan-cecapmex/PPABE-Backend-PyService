@@ -30,13 +30,16 @@ class ExcelService:
         try:
             # Lectura de excel desde la memoria 
             data = pl.read_excel(io.BytesIO(file.read()))
-            
+            Logger.add_to_log("info",data)
             rows = data.to_dicts()
             
             # Datos Agrupados del Excel
             group_one_df    = data.select(Config.GROUP_ONE_KEYS).to_dict()
+            Logger.add_to_log("info",group_one_df);
             group_two_df    = data.select(Config.GROUP_TWO_KEYS).to_dict()
+            Logger.add_to_log("info",group_two_df);
             group_tree_df   = data.select(Config.GROUP_TREE_KEYS).to_dict()
+            Logger.add_to_log("info",group_tree_df);
             
             # Grupo uno
             sexos_map               = SearchService.get_sexo_map()
@@ -81,6 +84,11 @@ class ExcelService:
                 id_componente           = componentes_map.get((row['Componente'], id_programa))
                 id_acciones             = acciones_map.get(row['Accion'])
                 id_tipo_beneficiario    = tipos_beneficiarios_map.get(row['Tipo de Beneficio'])
+                
+                id_archivo_benefisiario = None
+                
+                if id_dependencia:
+                    id_archivo_benefisiario = carpetas_beneficiarios_map.get()
                 
                 Logger.add_to_log("info", f"ID Dependecas\n {id_dependencia}")
                 Logger.add_to_log("info", f"ID Aciones\n {id_acciones}")
