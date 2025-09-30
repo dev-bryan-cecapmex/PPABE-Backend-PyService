@@ -1,1 +1,667 @@
 2025-09-03 16:35:08 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-24 09:54:29 | ERROR | (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 09:54:29 | ERROR | Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 649, in connect
+    sock = socket.create_connection(
+        (self.host, self.port), self.connect_timeout, **kwargs
+    )
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\routes\public.py", line 15, in get_anios
+    anios = AnioServicie.get_all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\anio_service.py", line 7, in get_all
+    anios = Anio.query.all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3271, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2434, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-09-24 09:54:54 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-24 13:01:34 | ERROR | (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-24 13:01:34 | ERROR | Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 649, in connect
+    sock = socket.create_connection(
+        (self.host, self.port), self.connect_timeout, **kwargs
+    )
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\routes\public.py", line 15, in get_anios
+    anios = AnioServicie.get_all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\anio_service.py", line 7, in get_all
+    anios = Anio.query.all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3271, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2434, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-09-24 13:03:12 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-24 16:02:46 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-24 16:02:49 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-25 12:29:57 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-09-30 11:43:24 | ERROR | (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-30 11:43:24 | ERROR | Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 649, in connect
+    sock = socket.create_connection(
+        (self.host, self.port), self.connect_timeout, **kwargs
+    )
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\routes\public.py", line 15, in get_anios
+    anios = AnioService.get_all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\anio_service.py", line 7, in get_all
+    anios = Anio.query.all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3271, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2434, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-09-30 11:44:11 | ERROR | (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-09-30 11:44:11 | ERROR | Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 649, in connect
+    sock = socket.create_connection(
+        (self.host, self.port), self.connect_timeout, **kwargs
+    )
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 864, in create_connection
+    raise exceptions[0]
+  File "C:\Users\bryan\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 849, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+pymysql.err.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\routes\public.py", line 15, in get_anios
+    anios = AnioService.get_all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\src\services\anio_service.py", line 7, in get_all
+    anios = Anio.query.all()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2241, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2110, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1189, in _connection_for_bind
+    conn = bind.connect()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3271, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2434, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 626, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 361, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Proyectos\Servicio de Python\PPABE-Backend-PyService\venv\Lib\site-packages\pymysql\connections.py", line 716, in connect
+    raise exc
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (2003, "Can't connect to MySQL server on 'localhost' ([WinError 10061] No connection could be made because the target machine actively refused it)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-09-30 11:44:24 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
