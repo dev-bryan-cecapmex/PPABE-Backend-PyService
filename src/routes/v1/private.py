@@ -6,13 +6,13 @@ import io
 #from config import Config
 
 #from ..services.beneficiarios_service   import BeneficiariosService
-from ..services.excel_service           import ExcelService
+from ...services.excel_service           import ExcelService
 #from ..services.search_service          import SearchService
 
 import traceback
 
 #Logger
-from ..utils.Logger import Logger
+from ...utils.Logger import Logger
 
 private_bp = Blueprint('private',__name__)
 

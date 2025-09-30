@@ -11,5 +11,6 @@ __pycache__/
 
 # Logs
 *.log
+app.log
 /logs/
-src/utils/log/
+/src/utils/log

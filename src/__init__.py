@@ -3,9 +3,9 @@ from config import Config
 from .database.connection import db
 
 # Rutas
-from .routes.root import root_bp
-from .routes.public import public_bp
-from .routes.private import private_bp
+from .routes.v1.root import root_bp
+from .routes.v1.public import public_bp
+from .routes.v1.private import private_bp
 
 
 def create_app():
