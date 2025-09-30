@@ -9,10 +9,7 @@ __pycache__/
 
 .vscode/
 
-
 # Logs
 *.log
-logs/
+/logs/
 src/utils/log/
-
-
