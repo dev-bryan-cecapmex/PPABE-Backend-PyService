@@ -15,7 +15,7 @@ def create_app():
     db.init_app(app)
     
     app.register_blueprint(root_bp)
-    app.register_blueprint(public_bp, url_prefix="/public")
-    app.register_blueprint(private_bp, url_prefix="/private")
+    app.register_blueprint(public_bp, url_prefix="/api/v1/public")
+    app.register_blueprint(private_bp, url_prefix="/api/v1/private")
     
     return app
