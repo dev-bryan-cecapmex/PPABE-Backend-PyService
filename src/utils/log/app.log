@@ -1,155 +1,97 @@
-2025-09-25 21:07:55 | ERROR | (pymysql.err.ProgrammingError) (1146, "Table 'ppabe.Anios' doesn't exist")
-[SQL: SELECT `Anios`.id AS `Anios_id`, `Anios`.creador AS `Anios_creador`, `Anios`.modificador AS `Anios_modificador`, `Anios`.`fCreacion` AS `Anios_fCreacion`, `Anios`.`fModificacion` AS `Anios_fModificacion`, `Anios`.deleted AS `Anios_deleted` 
-FROM `Anios`]
-(Background on this error at: https://sqlalche.me/e/20/f405)
-2025-09-25 21:07:55 | ERROR | Traceback (most recent call last):
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1961, in _exec_single_context
-    self.dialect.do_execute(
-    ~~~~~~~~~~~~~~~~~~~~~~~^
-        cursor, str_statement, effective_parameters, context
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/default.py", line 944, in do_execute
-    cursor.execute(statement, parameters)
-    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/cursors.py", line 153, in execute
-    result = self._query(query)
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/cursors.py", line 322, in _query
-    conn.query(q)
-    ~~~~~~~~~~^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 563, in query
-    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
-                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 825, in _read_query_result
-    result.read()
-    ~~~~~~~~~~~^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 1199, in read
-    first_packet = self.connection._read_packet()
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 775, in _read_packet
-    packet.raise_for_error()
-    ~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/protocol.py", line 219, in raise_for_error
-    err.raise_mysql_exception(self._data)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/err.py", line 150, in raise_mysql_exception
-    raise errorclass(errno, errval)
-pymysql.err.ProgrammingError: (1146, "Table 'ppabe.Anios' doesn't exist")
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/src/routes/public.py", line 15, in get_anios
-    anios = AnioServicie.get_all()
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/src/services/anio_service.py", line 7, in get_all
-    anios = Anio.query.all()
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/orm/query.py", line 2704, in all
-    return self._iter().all()  # type: ignore
-           ~~~~~~~~~~^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
-    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
-                                                  ~~~~~~~~~~~~~~~~~~~~^
-        statement,
-        ^^^^^^^^^^
-        params,
-        ^^^^^^^
-        execution_options={"_sa_orm_load_options": self.load_options},
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/orm/session.py", line 2365, in execute
-    return self._execute_internal(
-           ~~~~~~~~~~~~~~~~~~~~~~^
-        statement,
-        ^^^^^^^^^^
-    ...<4 lines>...
-        _add_event=_add_event,
-        ^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/orm/session.py", line 2251, in _execute_internal
-    result: Result[Any] = compile_state_cls.orm_execute_statement(
-                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        self,
-        ^^^^^
-    ...<4 lines>...
-        conn,
-        ^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
-    result = conn.execute(
-        statement, params or {}, execution_options=execution_options
-    )
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1413, in execute
-    return meth(
-        self,
-        distilled_parameters,
-        execution_options or NO_OPTIONS,
-    )
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
-    return connection._execute_clauseelement(
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        self, distilled_params, execution_options
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1635, in _execute_clauseelement
-    ret = self._execute_context(
-        dialect,
-    ...<8 lines>...
-        cache_hit=cache_hit,
-    )
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1840, in _execute_context
-    return self._exec_single_context(
-           ~~~~~~~~~~~~~~~~~~~~~~~~~^
-        dialect, context, statement, parameters
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1980, in _exec_single_context
-    self._handle_dbapi_exception(
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-        e, str_statement, effective_parameters, cursor, context
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 2349, in _handle_dbapi_exception
-    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/base.py", line 1961, in _exec_single_context
-    self.dialect.do_execute(
-    ~~~~~~~~~~~~~~~~~~~~~~~^
-        cursor, str_statement, effective_parameters, context
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/sqlalchemy/engine/default.py", line 944, in do_execute
-    cursor.execute(statement, parameters)
-    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/cursors.py", line 153, in execute
-    result = self._query(query)
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/cursors.py", line 322, in _query
-    conn.query(q)
-    ~~~~~~~~~~^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 563, in query
-    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
-                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 825, in _read_query_result
-    result.read()
-    ~~~~~~~~~~~^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 1199, in read
-    first_packet = self.connection._read_packet()
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/connections.py", line 775, in _read_packet
-    packet.raise_for_error()
-    ~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/protocol.py", line 219, in raise_for_error
-    err.raise_mysql_exception(self._data)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
-  File "/home/bat-e404/Escritorio/Desarrollo/03 Proyectos de estudio/Backend/Python/Checar/PPABE-Backend-PyService/venv/lib64/python3.13/site-packages/pymysql/err.py", line 150, in raise_mysql_exception
-    raise errorclass(errno, errval)
-sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'ppabe.Anios' doesn't exist")
-[SQL: SELECT `Anios`.id AS `Anios_id`, `Anios`.creador AS `Anios_creador`, `Anios`.modificador AS `Anios_modificador`, `Anios`.`fCreacion` AS `Anios_fCreacion`, `Anios`.`fModificacion` AS `Anios_fModificacion`, `Anios`.deleted AS `Anios_deleted` 
-FROM `Anios`]
-(Background on this error at: https://sqlalche.me/e/20/f405)
-
-2025-09-25 21:08:21 | INFO | [{'id': 2024, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'fModificacion': datetime.datetime(2025, 8, 5, 15, 9, 4), 'deleted': '0'}, {'id': 2025, 'creador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'modificador': '15955ba3-61cf-11f0-b73a-c4346b72f0ba', 'fCreacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'fModificacion': datetime.datetime(2025, 8, 9, 17, 5, 19), 'deleted': '0'}]
+2025-10-03 16:47:56 | INFO | ==============================
+2025-10-03 16:47:56 | INFO | INICIO DE CARGA MASIVA
+2025-10-03 16:47:56 | INFO | ==============================
+2025-10-03 16:47:56 | INFO | Columnas de los datos
+2025-10-03 16:47:56 | INFO | ['Curp', 'Nombre', 'Apellido paterno', 'Apellido Materno', 'Fecha de Nacimiento', 'Estado (catálogo)', 'Estado Civil', 'Sexo', 'Calle', 'Numero', 'Colonia', 'Municipio Dirección (catálogo)', 'Telefono', 'Telefono 2', 'Correo', 'Programa', 'Componente', 'Accion', 'Fecha de Registro', 'Monto', 'Tipo de Beneficio', 'RFC', 'Regimen Capital', 'Actividad', 'Nombre Comercial', 'Razón Social', 'Localidad', 'Dependencia', 'Subprograma']
+2025-10-03 16:47:56 | INFO | Total de filas del Excel: 5
+2025-10-03 16:47:56 | INFO | Inicio de estrucutura de los datos .....
+2025-10-03 16:47:56 | INFO | Inicio de estrucutura correctamente
+2025-10-03 16:47:56 | INFO | Extrayendo grupos de columnas
+2025-10-03 16:47:56 | INFO |   - Grupo 1 (Beneficiarios): 11 columnas
+2025-10-03 16:47:56 | INFO |   - Grupo 2 (Contacto): 9 columnas
+2025-10-03 16:47:56 | INFO |   - Grupo 3 (Apoyos): 6 columnas
+2025-10-03 16:47:56 | INFO | 
+Grupo 1
+2025-10-03 16:47:56 | INFO |   ✓ Sexos: 2 registros
+2025-10-03 16:47:56 | INFO | 
+Grupo 2
+2025-10-03 16:47:56 | INFO |   ✓ Estados: 32 registros
+2025-10-03 16:47:56 | INFO |   ✓ Municipios: 21 registros
+2025-10-03 16:47:56 | INFO |   ✓ Colonias: 8 registros
+2025-10-03 16:47:56 | INFO |   ✓ Estados Civiles: 5 registros
+2025-10-03 16:47:56 | INFO | 
+Grupo 3
+2025-10-03 16:47:56 | INFO |   ✓ Dependencias: 2 registros
+2025-10-03 16:47:56 | INFO |   ✓ Programas: 5 registros
+2025-10-03 16:47:56 | INFO |   ✓ Componentes: 13 registros
+2025-10-03 16:47:56 | INFO |   ✓ Acciones: 15 registros
+2025-10-03 16:47:56 | INFO |   ✓ Tipos de Beneficiarios: 18 registros
+2025-10-03 16:47:56 | INFO |   ✓ Beneficiarios existentes en BD: 3 registros
+2025-10-03 16:47:56 | INFO |   ✓ Beneficiarios: {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('XXXXXXXXXXXXXXXXXX', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-10-03 16:47:56 | INFO |   ✓ Carpetas Beneficiarios: 6 registros
+2025-10-03 16:47:56 | INFO | ✓ Todos los catálogos cargados exitosamente
+2025-10-03 16:47:56 | DEBUG | --- Procesando fila 1/5 ---
+2025-10-03 16:47:56 | INFO | 0
+2025-10-03 16:47:56 | INFO | {'Curp': 'GAGB950623HDFRZN08', 'Nombre': 'Gabriela', 'Apellido paterno': 'Gómez', 'Apellido Materno': 'Barrera', 'Fecha de Nacimiento': datetime.date(1995, 6, 23), 'Estado (catálogo)': 'Ciudad de México', 'Estado Civil': 'Concubinato', 'Sexo': 'Mujer', 'Calle': 'Av. Reforma', 'Numero': 123, 'Colonia': 'Roma', 'Municipio Dirección (catálogo)': 'Cerralvo', 'Telefono': 5523456789, 'Telefono 2': None, 'Correo': 'gabriela.gomez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 5000, 'Tipo de Beneficio': 'Gastos médicos', 'RFC': 'GAGB950623', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-03 16:47:56 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Estado: 5feb89d4-722d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '3a94258d-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Colonia: ['086ed89a-5622-44ce-bfd2-76d57bfe9829', 'd626083f-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Estado Civil 0e6b7844-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-03 16:47:56 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-03 16:47:56 | INFO | Id Componente 7ff1326b-724d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Tipo Beneficiario 0725d1cb-722f-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | DEBUG | --- Procesando fila 2/5 ---
+2025-10-03 16:47:56 | INFO | 1
+2025-10-03 16:47:56 | INFO | {'Curp': 'RLMJ880412HNLVRS07', 'Nombre': 'Raúl', 'Apellido paterno': 'López', 'Apellido Materno': 'Morales', 'Fecha de Nacimiento': datetime.date(1988, 4, 12), 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Divorciado (a)', 'Sexo': 'Hombre', 'Calle': 'Calle Hidalgo', 'Numero': 45, 'Colonia': 'Villas de San Sebastian', 'Municipio Dirección (catálogo)': 'Agualeguas', 'Telefono': 8187654321, 'Telefono 2': '', 'Correo': 'raul.lopez@email.com', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'REPRESENTACIÓN JURÍDICA DEL TRABAJADOR ANTE LA J.L.C.A.', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 25000, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'RLMJ880412', 'Regimen Capital': 'Persona Física', 'Actividad': 'Comercio Minorista', 'Nombre Comercial': 'Tienda López', 'Razón Social': 'Comercial López S.A. de C.V.', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-03 16:47:56 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Estado: a588e00a-722d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'fc05a784-724d-11f0-b2f0-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Colonia: ['0c6d1cfe-420b-406c-8dd3-3e3194d3c07b', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Estado Civil 12a415f4-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-03 16:47:56 | INFO | Id Programa 6bb6c2d8-5096-4ed0-b00c-89e8f7801949
+2025-10-03 16:47:56 | INFO | Id Componente 989ad199-724d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Tipo Beneficiario 2f02885c-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | DEBUG | --- Procesando fila 3/5 ---
+2025-10-03 16:47:56 | INFO | 2
+2025-10-03 16:47:56 | INFO | {'Curp': 'MTLR010305MGRPRS05', 'Nombre': 'Mariana', 'Apellido paterno': 'Torres', 'Apellido Materno': 'Ramírez', 'Fecha de Nacimiento': datetime.date(2001, 3, 5), 'Estado (catálogo)': 'Guerrero', 'Estado Civil': 'Viudo (a)', 'Sexo': 'Mujer', 'Calle': 'Calle Morelos', 'Numero': 89, 'Colonia': 'Villa San Sebastian', 'Municipio Dirección (catálogo)': 'Aramberri', 'Telefono': 7442233445, 'Telefono 2': None, 'Correo': 'mariana.torres@email.co', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'VINCULACIÓN LABORAL REALIZADA', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 12000, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'MTLR010305', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-03 16:47:56 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Estado: 7a3f4ab3-722d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '1bc4f613-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Colonia: ['34693c19-eb41-41a2-9e7c-c8fc146b93d8', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Estado Civil 1bfdc18a-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-03 16:47:56 | INFO | Id Programa 706568bc-e02c-4f12-9d97-69ee18e24181
+2025-10-03 16:47:56 | INFO | Id Componente 65b89c29-724d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Tipo Beneficiario 2f02885c-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | DEBUG | --- Procesando fila 4/5 ---
+2025-10-03 16:47:56 | INFO | 3
+2025-10-03 16:47:56 | INFO | {'Curp': 'HCRD790718HMNRRS03', 'Nombre': 'Héctor', 'Apellido paterno': 'Ramírez', 'Apellido Materno': 'Díaz', 'Fecha de Nacimiento': datetime.date(1979, 7, 18), 'Estado (catálogo)': 'Michoacán de Ocampo', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Av. Lázaro C.', 'Numero': 678, 'Colonia': 'Nuevo Repueblo', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 4433344556, 'Telefono 2': None, 'Correo': 'hector.ramirez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'UNIFORMES', 'Fecha de Registro': 'Sistema', 'Monto': 800, 'Tipo de Beneficio': 'Apoyo en especie', 'RFC': 'HCRD790718', 'Regimen Capital': 'Persona Física', 'Actividad': 'Obrero', 'Nombre Comercial': 'XXXXXXXXX', 'Razón Social': 'XXXXXXXXXXX', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-03 16:47:56 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Estado: 8cc4b205-722d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Colonia: ['668200a5-15af-4b76-828d-540a34374839', 'd626083f-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-03 16:47:56 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-03 16:47:56 | INFO | Id Componente 7ff1326b-724d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Acciones: 53a0d386-723a-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Tipo Beneficiario 8f1b3063-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | DEBUG | --- Procesando fila 5/5 ---
+2025-10-03 16:47:56 | INFO | 4
+2025-10-03 16:47:56 | INFO | {'Curp': 'VLSA920910MDFRLS04', 'Nombre': 'Valeria', 'Apellido paterno': 'Sánchez', 'Apellido Materno': 'Flores', 'Fecha de Nacimiento': datetime.date(1992, 9, 10), 'Estado (catálogo)': 'Jalisco', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Mujer', 'Calle': 'Av. Juárez', 'Numero': 150, 'Colonia': 'Ignacio Zaragoza', 'Municipio Dirección (catálogo)': 'Bustamante', 'Telefono': 3332233445, 'Telefono 2': None, 'Correo': 'valeria.sanchez@email.com', 'Programa': 'DEFENSA DEL TRABAJO', 'Componente': 'CURSOS DE CAPACITACIÓN PARA EL TRABAJO IMPARTIDOS', 'Accion': 'UNIFORMES', 'Fecha de Registro': None, 'Monto': 3000, 'Tipo de Beneficio': 'Gastos de traslado', 'RFC': 'VLSA920910', 'Regimen Capital': 'Persona Física', 'Actividad': 'Música y Artes Escénicas', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-03 16:47:56 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Estado: 80991a7f-722d-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '239bb8cb-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Colonia: ['56cabec2-ea58-4b86-9149-5d88e8b60259', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-03 16:47:56 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-03 16:47:56 | INFO | Id Programa None
+2025-10-03 16:47:56 | INFO | Id Componente None
+2025-10-03 16:47:56 | INFO | Id Acciones: 53a0d386-723a-11f0-b2f0-c4346b72f0ba
+2025-10-03 16:47:56 | INFO | Id Tipo Beneficiario e73f4a41-722e-11f0-b2f0-c4346b72f0ba
