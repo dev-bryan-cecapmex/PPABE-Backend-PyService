@@ -45,14 +45,14 @@ class ExcelService:
             
             # Grupo uno
             sexos_map               = SearchService.get_sexo_map()
-            
-            # Grupo dos
+
+            # Grupo dos - Contacto
             estados_map             = SearchService.get_estado_map()
             municipios_map          = SearchService.get_municipio_map()
             colonias_map            = SearchService.get_colonia_map()
             estados_civiles_map     = SearchService.get_estado_civil_map()
             
-            # Grupo tres
+            # Grupo tres - Apoyos
             dependencias_map            = SearchService.get_dependencias_map()
             programas_map               = SearchService.get_programas_map()
             componentes_map             = SearchService.get_componentes_map()
@@ -74,21 +74,26 @@ class ExcelService:
             
             for row in rows:
                 # Busqueda
+                # Grupo uno - Beneficiarios
                 id_sexo         = sexos_map.get(row['Sexo']) 
                 
+                # Grupo dos - Contacto
                 id_estado       = estados_map.get(row['Estado (catálogo)'])
                 id_municipio    = municipios_map.get(row['Municipio Dirección (catálogo)'])
                 id_colonia      = colonias_map.get(row['Colonia'])
                 id_estado_civil = estados_civiles_map.get(row['Estado Civil'])
                 
+                # Grupo tres - Apoyos
                 id_dependencia          = dependencias_map.get(row['Dependencia'])
                 id_programa             = programas_map.get((row['Programa'],id_dependencia))
                 id_componente           = componentes_map.get((row['Componente'], id_programa))
                 id_acciones             = acciones_map.get(row['Accion'])
                 id_tipo_beneficiario    = tipos_beneficiarios_map.get(row['Tipo de Beneficio'])
                 
+                '''
+                ___ COMENTE ESTO ___
                 id_archivo_benefisiario = None
-                
+                 
                 if id_dependencia:
                     id_archivo_benefisiario = carpetas_beneficiarios_map.get()
                 
@@ -194,6 +199,7 @@ class ExcelService:
                 Logger.add_to_log("info",f"Contacto \n{new_contacto}")
                 
                 id_apoyo = str(uuid.uuid4())
+                Logger.add_to_log("info", f"Apoyo ID:{id_apoyo}")
                 Logger.add_to_log("info",f"Apoyo\n{row}")
                 new_apoyos.append({
                     'id':id_apoyo,
