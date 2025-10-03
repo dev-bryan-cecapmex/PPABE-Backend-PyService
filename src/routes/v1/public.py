@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify
-from ..services.anio_service import AnioService
+from ...services.anio_service import AnioService
 
 import traceback
 
 #Logger
-from ..utils.Logger import Logger
+from ...utils.Logger import Logger
 
 public_bp = Blueprint('public', __name__)
 

@@ -19,7 +19,7 @@ class Config:
         "Nombre Comercial":"nombreComercial",
         "Razón Social":"razonSocial",
     }
-    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
+    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Estado Civil','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
     COLUMN_MAP_GROUP_TWO = {
         'Correo':'correo',
         'Telefono':'telefono1',
@@ -28,7 +28,8 @@ class Config:
         'Municipio Dirección (catálogo)':'idMunicipio',
         'Colonia':'idColonia',
         'Calle':'calle',
-        'Numero':'numero'
+        'Numero':'numero',
+        'Estado Civil':'idEstadoCivil'
     }
     GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Monto']
     COLUMN_MAP_GROUP_TREE = {
