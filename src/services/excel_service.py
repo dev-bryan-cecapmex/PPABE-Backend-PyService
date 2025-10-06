@@ -300,8 +300,50 @@ class ExcelService:
                     Logger.add_to_log("info", f"Fila {idx + 1}: Beneficiario NUEVO - CURP {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
                                            
                     
-                    
-                    
+                # Preparacion de contacto y apoyo
+                
+                # Pre-generar UUIDs temporales
+                id_contacto_temp    = str(uuid.uuid4())
+                id_apoyo_temp       = str(uuid.uuid4())
+                
+                # Construccion de objeto de CONTACTO
+                contacto_data = {
+                    'id': id_contacto_temp
+                }
+                
+                for excel_col in Config.GROUP_TWO_KEYS:
+                    if excel_col in Config.COLUMN_MAP_GROUP_TWO:
+                        db_col = Config.COLUMN_MAP_GROUP_TWO[excel_col]
+                        contacto_data[db_col] = row.get(excel_col)
+                
+                # Agregar ID's de catálogos
+                contacto_data['idEstado']       = id_estado
+                contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
+                contacto_data['idColonia']      = str(id_colonia[0]) if id_colonia else None
+                contacto_data['idEstadoCivil']  = id_estado_civil
+                
+                
+                # Construccion de objeto de APOYO
+                apoyo_data = {
+                    'id': id_apoyo_temp,
+                    'idBeneficiario': id_beneficiario,
+                    'idContacto': id_contacto_temp
+                }
+                
+                # Mapear columnas del Excel a columnas de DB
+                for excel_col in Config.GROUP_TREE_KEYS:
+                    db_col = Config.COLUMN_MAP_GROUP_TREE.get(excel_col, excel_col)
+                    apoyo_data[db_col] = row.get(excel_col)
+                
+                # Agregar IDs de catálogos
+                apoyo_data['idDependencia']     = id_dependencia
+                apoyo_data['idPrograma']        = id_programa
+                apoyo_data['idComponente']      = id_componente
+                apoyo_data['idAccion']          = id_acciones
+                apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
+                # Agregar despues idCarpetaBeneficiarios
+                
+                 
                     
         except Exception as ex:
             return jsonify({
