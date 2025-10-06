@@ -130,7 +130,7 @@ class ExcelService:
             
             for idx, row in enumerate(rows):
                 Logger.add_to_log("debug", f"--- Procesando fila {idx + 1}/{len(rows)} ---")
-                Logger.add_to_log("info", idx)
+                Logger.add_to_log("info", idx + 1)
                 Logger.add_to_log("info", row)
             
                 # Grupo 1 - Beneficiarios
@@ -269,7 +269,40 @@ class ExcelService:
                         stats['beneficiarios_existentes_bd'] += 1
                         Logger.add_to_log("info", f"Fila {idx +1}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
                         
-                        
+                # Crea Nuevo beneficiario
+                if not id_beneficiario:
+                    id_beneficiario = str(uuid.uuid4())
+                    es_nuevo = True
+                    origen = "nuevo"
+                    stats['beneficiarios_nuevos'] += 1
+                    beneficiarios_nuevos_ids.add(id_beneficiario)
+                    
+                    # Objeto con beneficiario con mapeo correcto
+                    nuevo_beneficiario = {
+                        'id': id_beneficiario
+                    }
+                    
+                    # Mapeo columnas del Excel a columnas de BD
+                    for excel_col in Config.GROUP_ONE_KEYS:
+                        db_col = Config.COLUMN_MAP_GROUP_ONE.get(excel_col, excel_col)
+                        nuevo_beneficiario[db_col] = row.get((excel_col))
+                    
+                    # Asegurar que tenga el idSexo correcto
+                    nuevo_beneficiario['idSexo'] = id_sexo
+
+                    # Agregar a lista de inserción 
+                    beneficiarios_to_insert.append(nuevo_beneficiario) 
+                    
+                    # REGISTRO en CACHE LOCAL
+                    if curp or rfc:
+                        cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
+                    
+                    Logger.add_to_log("info", f"Fila {idx + 1}: Beneficiario NUEVO - CURP {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
+                                           
+                    
+                    
+                    
+                    
         except Exception as ex:
             return jsonify({
                 'success': False,
