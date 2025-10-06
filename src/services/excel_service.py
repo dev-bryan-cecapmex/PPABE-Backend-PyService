@@ -238,7 +238,38 @@ class ExcelService:
                         origen = "cache_excel"
                         Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL (por RFC) - {rfc} -> Reutilizando ID: {id_beneficiario[:8]}...." )
                         break
-                
+                    
+                # Busqueda en Base de Datos
+                if not id_beneficiario:
+                    # Busqueda por CURP y RFC
+                    if curp and rfc:
+                        id_beneficiario = beneficiario_map.get((curp, rfc))
+                        if id_beneficiario:
+                            origen = 'db'
+                            
+                    # Busqueda solo por CURP
+                    elif curp and not id_beneficiario:
+                        id_beneficiario = next(
+                            (id_ben for (c,_), id_ben in beneficiario_map.items() if c == curp),
+                            None
+                        )
+                        if id_beneficiario:
+                            origen ='db'
+                            
+                    # Busqueda solo por RFC
+                    elif rfc and not id_beneficiario:
+                        id_beneficiario = next(
+                            (id_ben for (_,r), id_ben in beneficiario_map.items() if r == rfc),
+                            None
+                        )
+                        if id_beneficiario:
+                            origen = 'db'
+                    
+                    if id_beneficiario and origen == 'db':
+                        stats['beneficiarios_existentes_bd'] += 1
+                        Logger.add_to_log("info", f"Fila {idx +1}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
+                        
+                        
         except Exception as ex:
             return jsonify({
                 'success': False,
