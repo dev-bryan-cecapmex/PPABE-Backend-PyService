@@ -80,12 +80,16 @@ class ExcelService:
             
             # MAPEO por Grupos
             # Grupo 1 - Beneficiarios
-            Logger.add_to_log("info", f"\nGrupo 1")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", f"GRUPO 1")
+            Logger.add_to_log("info", "=" * 60)
             sexos_map = SearchService.get_sexo_map()
             Logger.add_to_log("info", f"  ✓ Sexos: {len(sexos_map)} registros")
             
             # Grupo 2 - Contactos
-            Logger.add_to_log("info", f"\nGrupo 2")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", f"GRUPO 2")
+            Logger.add_to_log("info", "=" * 60)
             estados_map = SearchService.get_estado_map()
             Logger.add_to_log("info", f"  ✓ Estados: {len(estados_map)} registros")
             municipios_map = SearchService.get_municipio_map()
@@ -96,7 +100,9 @@ class ExcelService:
             Logger.add_to_log("info", f"  ✓ Estados Civiles: {len(estados_civiles_map)} registros")
         
             # Grupo 3 - Apoyos
-            Logger.add_to_log("info", f"\nGrupo 3")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", f"GRUPO 3")
+            Logger.add_to_log("info", "=" * 60)
             dependencias_map = SearchService.get_dependencias_map()
             Logger.add_to_log("info", f"  ✓ Dependencias: {len(dependencias_map)} registros")
             programas_map = SearchService.get_programas_map()
@@ -343,7 +349,95 @@ class ExcelService:
                 apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
                 # Agregar despues idCarpetaBeneficiarios
                 
+                # Registro de relación completa
+                relacion = {
+                    'row_index': idx + 1,
+                    'id_beneficiario': id_beneficiario,
+                    'id_contacto': id_contacto_temp,
+                    'id_apoyo': id_apoyo_temp,
+                    'es_beneficiario_nuevo': es_nuevo,
+                    'origen_beneficiario': origen,
+                    'contacto_data': contacto_data,
+                    'apoyo_data': apoyo_data,
+                    # Datos para reporte
+                    'curp': curp,
+                    'rfc': rfc,
+                    'nombre_completo': f"{row.get('Nombre',' ')} {row.get('Apellido paterno','')} {row.get('Apellido Materno','')}".strip()
+                }
+                
+                relaciones.append(relacion)
                  
+                Logger.add_to_log("debug", f"Fila {idx +1} procesada correctamente")
+                
+                # Fin de loop
+            # Estadistica y reporte de duplicados
+            Logger.add_to_log("info", "")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", "📊 ESTADÍSTICAS DE FASE 1:")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", f"  Total de filas procesadas: {stats['total_filas']}")
+            Logger.add_to_log("info", f"  ✨ Beneficiarios NUEVOS: {stats['beneficiarios_nuevos']}")
+            Logger.add_to_log("info", f"  ✓ Beneficiarios EXISTENTES en BD: {stats['beneficiarios_existentes_bd']}")
+            Logger.add_to_log("info", f"  ♻️  Duplicados EN EXCEL: {stats['duplicados_en_excel']}")
+            Logger.add_to_log("info", f"  ⚠️  Errores de validación: {stats['errores_validacion']}")
+            Logger.add_to_log("info", f"  📝 Relaciones válidas creadas: {len(relaciones)}")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", "")
+            
+            # Reporte detallado de duplicados en Excel
+            if stats['duplicados_en_excel'] > 0:
+                Logger.add_to_log("warn", "⚠️  REPORTE DE DUPLICADOS EN EXCEL:")
+                Logger.add_to_log("warn", "-" * 60)
+            
+                # Contar ocurrencias de cada beneficiario
+                beneficiario_ocurrencias = {}
+                for rel in relaciones:
+                    id_ben = rel['id_beneficiario']
+                    if id_ben not in beneficiario_ocurrencias:
+                        beneficiario_ocurrencias[id_ben] = {
+                            'count': 0,
+                            'curp': rel['curp'],
+                            'rfc': rel['rfc'],
+                            'nombre': rel['nombre_completo'],
+                            'filas': []
+                        }
+                    beneficiario_ocurrencias[id_ben]['count'] += 1
+                    beneficiario_ocurrencias[id_ben]['filas'].append(rel['row_index'])
+                
+                # Filtrar solo los que aparecen más de una vez
+                duplicados = {k: v for k, v in beneficiario_ocurrencias.items() if v['count'] > 1}
+                
+                for id_ben, info in duplicados.items():
+                    Logger.add_to_log("warn", f"  • {info['nombre']}")
+                    Logger.add_to_log("warn", f"    CURP: {info['curp']}, RFC: {info['rfc']}")
+                    Logger.add_to_log("warn", f"    Aparece {info['count']} veces en filas: {info['filas']}")
+                    Logger.add_to_log("warn", "")
+            
+            # Reporte de errores de validación 
+            if rows_errors:
+                Logger.add_to_log("error", "REPORTE DE ERRORES DE VALIDACIÓN")
+                Logger.add_to_log("error","-" * 60)
+                
+                for error in rows_errors[:10]: # Muesta solo primero 10
+                    Logger.add_to_log("error", f"  Fila {error['row_index']}: {error.get('nombre_completo', 'N/A')}")
+                    Logger.add_to_log("error", f"    CURP: {error.get('curp', 'N/A')}")
+                    Logger.add_to_log("error", f"    Error: {error['error']}")
+                    Logger.add_to_log("error", f"    Campos inválidos: {error['campos_invalidos']}")
+                    Logger.add_to_log("error", "")
+                
+                if len(rows_errors) > 10:
+                    Logger.add_to_log("error", f"  ... y {len(rows_errors) - 10} errores más")
+
+            Logger.add_to_log("info", "")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", "FASE 1 COMPLETADA - INICIANDO FASE 2...")
+            Logger.add_to_log("info", "=" * 60)
+            Logger.add_to_log("info", "")
+            
+            Logger.add_to_log("info","INICIANDO INSERCIÓN EN BASE DE DATOS ...")
+            
+            if not relaciones:
+                Logger.add_to_log("warn", "No hay datos validos para insertar")
                     
         except Exception as ex:
             return jsonify({
