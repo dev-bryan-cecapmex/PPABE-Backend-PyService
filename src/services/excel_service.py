@@ -23,243 +23,202 @@ import uuid
 
 class ExcelService:
     
-    
-    
     @staticmethod
     def process_file(file):
         try:
+            Logger.add_to_log("info", "="*30)
+            Logger.add_to_log("info", f"INICIO DE CARGA MASIVA")
+            Logger.add_to_log("info", "="*30)
             
-            
-            # Lectura de excel desde la memoria 
             data = pl.read_excel(io.BytesIO(file.read()))
             rows = data.to_dicts()
             
-            # Datos Agrupados del Excel
-            group_one_df    = data.select(Config.GROUP_ONE_KEYS).to_dict()
-            # Logger.add_to_log("info", "GRUPO UNO")
-            # Logger.add_to_log("info",group_one_df)
-            group_two_df    = data.select(Config.GROUP_TWO_KEYS).to_dict()
-            # Logger.add_to_log("info", "GRUPO DOS")
-            # Logger.add_to_log("info",group_two_df)
-            group_tree_df   = data.select(Config.GROUP_TREE_KEYS).to_dict()
-            # Logger.add_to_log("info", "GRUPO TRES")
-            # Logger.add_to_log("info",group_tree_df)
+            Logger.add_to_log("info", "Columnas de los datos")
+            Logger.add_to_log("info", data.columns)
             
-            # Grupo uno - Beneficiarios
-            sexos_map               = SearchService.get_sexo_map()
+            Logger.add_to_log("info", f"Total de filas del Excel: {len(rows)}")
+            
+            Logger.add_to_log("info", f"Inicio de estrucutura de los datos .....")
+            
+            # Listado de Beneficiarios Nuevos para insertar en BD
+            beneficiarios_to_insert = []
+            
+            # Set de IDs de beneficiarios nuevos 
+            beneficiarios_nuevos_ids = set()
+            
+            # Lista de relacciones completas: fila -> beneficiario -> contacto -> apoyo
+            relaciones = []
+            
+            # Lista de filas con errores de validacion
+            rows_errors = []
+            
+            """
+                CACHE LOCAL: Detecta duplicidad DENTRO del Excel
+                Estrucutura: {(curp, rfc): id_beneficiario}
+            """
+            cache_beneficiarios_excel = {}
+            
+            Logger.add_to_log("info", f"Inicio de estrucutura correctamente")
+            
+            Logger.add_to_log("info", "Extrayendo grupos de columnas")
+            
+            # INICIO de agrupamiento
+            
+            # GRUPO 1: Columna de Beneficiarios
+            group_one_df = data.select(Config.GROUP_ONE_KEYS).to_dict()
+            Logger.add_to_log("info", f"  - Grupo 1 (Beneficiarios): {len(Config.GROUP_ONE_KEYS)} columnas")
+           
+            # GRUPO 2: Columnas de Contacto
+            group_two_df = data.select(Config.GROUP_TWO_KEYS).to_dict()
+            Logger.add_to_log("info", f"  - Grupo 2 (Contacto): {len(Config.GROUP_TWO_KEYS)} columnas")
+           
+            # GRUPO 3: Columnas de Apoyos
+            group_tree_df = data.select(Config.GROUP_TREE_KEYS).to_dict()
+            Logger.add_to_log("info", f"  - Grupo 3 (Apoyos): {len(Config.GROUP_TREE_KEYS)} columnas")
+            
+            # FIN de agrupamiento
+            
+            # MAPEO por Grupos
+            # Grupo 1 - Beneficiarios
+            Logger.add_to_log("info", f"\nGrupo 1")
+            sexos_map = SearchService.get_sexo_map()
+            Logger.add_to_log("info", f"  ✓ Sexos: {len(sexos_map)} registros")
+            
+            # Grupo 2 - Contactos
+            Logger.add_to_log("info", f"\nGrupo 2")
+            estados_map = SearchService.get_estado_map()
+            Logger.add_to_log("info", f"  ✓ Estados: {len(estados_map)} registros")
+            municipios_map = SearchService.get_municipio_map()
+            Logger.add_to_log("info", f"  ✓ Municipios: {len(municipios_map)} registros")
+            colonias_map = SearchService.get_colonia_map()
+            Logger.add_to_log("info", f"  ✓ Colonias: {len(colonias_map)} registros")
+            estados_civiles_map = SearchService.get_estado_civil_map()
+            Logger.add_to_log("info", f"  ✓ Estados Civiles: {len(estados_civiles_map)} registros")
+        
+            # Grupo 3 - Apoyos
+            Logger.add_to_log("info", f"\nGrupo 3")
+            dependencias_map = SearchService.get_dependencias_map()
+            Logger.add_to_log("info", f"  ✓ Dependencias: {len(dependencias_map)} registros")
+            programas_map = SearchService.get_programas_map()
+            Logger.add_to_log("info", f"  ✓ Programas: {len(programas_map)} registros")
+            componentes_map = SearchService.get_componentes_map()
+            Logger.add_to_log("info", f"  ✓ Componentes: {len(componentes_map)} registros")
+            acciones_map = SearchService.get_acciones_map()
+            Logger.add_to_log("info", f"  ✓ Acciones: {len(acciones_map)} registros")
+            tipos_beneficiarios_map = SearchService.get_tipos_beneficiarios_map()
+            Logger.add_to_log("info", f"  ✓ Tipos de Beneficiarios: {len(tipos_beneficiarios_map)} registros")
+            
+            # Mapa de beneficiarios existentes en BD (para detectar duplicados con BD)
+            beneficiario_map = SearchService.get_beneficiarios_map()
+            Logger.add_to_log("info", f"  ✓ Beneficiarios existentes en BD: {len(beneficiario_map)} registros")
+            Logger.add_to_log("info", f"  ✓ Beneficiarios: {beneficiario_map}")
+        
+            # Carpeta de Beneficiarios 
+            carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
+            Logger.add_to_log("info", f"  ✓ Carpetas Beneficiarios: {len(carpetas_beneficiarios_map)} registros")
+            
+            Logger.add_to_log("info", "✓ Todos los catálogos cargados exitosamente")
+            
+            # Diccionario de Estadistica
+            stats = {
+                'total_filas': len(rows),
+                'beneficiarios_nuevos':0,
+                'beneficiarios_existentes_db':0,
+                'duplicados_en_excel':0,
+                'errores_validacion':0
+            }
+            
+            for idx, row in enumerate(rows):
+                Logger.add_to_log("debug", f"--- Procesando fila {idx + 1}/{len(rows)} ---")
+                Logger.add_to_log("info", idx)
+                Logger.add_to_log("info", row)
+            
+                # Grupo 1 - Beneficiarios
+                id_sexo = sexos_map.get(row.get('Sexo'))
+                
+                Logger.add_to_log("info", f"Id Sexo: {id_sexo}")
+                
+                # Grupo 2 - Contacto
+                id_estado = estados_map.get(row.get('Estado (catálogo)'))
+                Logger.add_to_log("info", f"Id Estado: {id_estado}")
+                
+                id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)'))
+                Logger.add_to_log("info", f"Id Municipio: {id_municipio}")
+                id_colonia = colonias_map.get(row.get('Colonia'))
+                Logger.add_to_log("info", f"Id Colonia: {id_colonia}")
+                id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
+                Logger.add_to_log("info", f"Id Estado Civil {id_estado_civil}")
+                
+                # Grupo 3 - Apoyos
+                id_dependencia = dependencias_map.get(row.get('Dependencia'))
+                Logger.add_to_log("info", f"Id Dependencia {id_dependencia}")
+                id_programa = programas_map.get((row.get('Programa'), id_dependencia)) if id_dependencia else None
+                Logger.add_to_log("info", f"Id Programa {id_programa}")
+                
+                id_componente = componentes_map.get((row.get('Componente'), id_programa)) if id_programa else None
+                Logger.add_to_log("info", f"Id Componente {id_componente}")
+                
+                id_acciones = acciones_map.get(row.get('Accion'))
+                Logger.add_to_log("info", f"Id Acciones: {id_acciones}")
+                
+                id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio'))
+                Logger.add_to_log("info", f"Id Tipo Beneficiario { id_tipo_beneficiario }")
 
-            # Grupo dos - Contacto
-            estados_map             = SearchService.get_estado_map()
-            municipios_map          = SearchService.get_municipio_map()
-            colonias_map            = SearchService.get_colonia_map()
-            estados_civiles_map     = SearchService.get_estado_civil_map()
-            
-            # Grupo tres - Apoyos
-            dependencias_map            = SearchService.get_dependencias_map()
-            programas_map               = SearchService.get_programas_map()
-            componentes_map             = SearchService.get_componentes_map()
-            beneficiario_map            = SearchService.get_beneficiarios_map()
-            acciones_map                = SearchService.get_acciones_map()       
-            tipos_beneficiarios_map     = SearchService.get_tipos_beneficiarios_map()
-            
-            carpetas_beneficiarios_map  = SearchService.get_carpeta_beneficiarios_map()
-     
-            Logger.add_to_log("info", f"Carpetas Beneficiarios\n {carpetas_beneficiarios_map}")
-            
-            #Lista de los nuevos registros
-            new_beneficiarios   = []
-            new_contacto        = []
-            new_apoyos          = []
-            
-            rows_errors     = []
-            rows_goods      = []
-            
-            for row in rows:
-                # Busqueda
-                # Grupo uno - Beneficiarios
-                id_sexo         = sexos_map.get(row['Sexo']) 
-                
-                # Grupo dos - Contacto
-                id_estado       = estados_map.get(row['Estado (catálogo)'])
-                id_municipio    = municipios_map.get(row['Municipio Dirección (catálogo)'])
-                id_colonia      = colonias_map.get(row['Colonia'])
-                id_estado_civil = estados_civiles_map.get(row['Estado Civil'])
-                
-                # Grupo tres - Apoyos
-                id_dependencia          = dependencias_map.get(row['Dependencia'])
-                id_programa             = programas_map.get((row['Programa'],id_dependencia))
-                id_componente           = componentes_map.get((row['Componente'], id_programa))
-                id_acciones             = acciones_map.get(row['Accion'])
-                id_tipo_beneficiario    = tipos_beneficiarios_map.get(row['Tipo de Beneficio'])
-                
-                '''
-                ___ COMENTE ESTO ___
-                id_archivo_benefisiario = None
-                 
-                if id_dependencia:
-                    id_archivo_benefisiario = carpetas_beneficiarios_map.get(id_dependencia)
-                    Lo
-                '''
-                Logger.add_to_log("info", f"ID Dependecas\n {id_dependencia}")
-                Logger.add_to_log("info", f"ID Aciones\n {id_acciones}")
-                Logger.add_to_log("info", f"ID Tipos de Beneficiarios\n {id_tipo_beneficiario}")
-                # Faltan 3 mas
-                #Logger.add_to_log("info", f"row\n {row}")
-                #Logger.add_to_log("info", f"Aciones\n {id_acciones} - {row['Accion']}")
-                
-                row['Sexo']                             = id_sexo
-                
-                row['Estado (catálogo)']                = id_estado
-                row['Municipio Dirección (catálogo)']   = str(id_municipio[1]) if id_municipio else None
-                row['Colonia']                          = str(id_colonia[0]) if id_colonia else None
-                row['Estado Civil']                     = id_estado_civil
-                
-                row['Dependencia']                      = id_dependencia
-                row['Programa']                         = id_programa
-                row['Componente']                       = id_componente
-                row['Accion']                           = id_acciones
-                row['Tipo de Beneficio']                = id_tipo_beneficiario
-            
-                
-                
-                
-                Logger.add_to_log("info",f"Municipio Dirección (catálogo) {row['Municipio Dirección (catálogo)']}")
-                # if row['Municipio Dirección (catálogo)'][1] == row['Estado (catálogo)']:
-                #     Logger.add_to_log("info", "SI")
-                #     Logger.add_to_log("debug", f"Municipio: {row['Municipio Dirección (catálogo)']}")
-                # else:
-                #     Logger.add_to_log("info", "No")
-                #     Logger.add_to_log("debug", f"Municipio: {row['Municipio Dirección (catálogo)']}")
-                
+                # Valicacciones
+                validacion_errores = {}
                 
                 if not id_dependencia:
-                    Logger.add_to_log("warn", f"Dependecia no encontrada - {row['Dependencia']}" )
-                    rows_errors.append(row)
-                    continue
-                
-                if not id_programa:
-                    #Logger.add_to_log('warn', f"Programa no encontrado - {row['Programa']}")
-                    rows_errors.append(row)
-                    continue
-                
-                if not id_componente:
-                    #Logger.add_to_log('warn', f"Componente no encontrado - {row['Componente']}")
-                    rows_errors.append(row)
-                    continue
-                    
-                #rows_goods.append(row)
-                
-                # Verificar existencia de beneficiario
-                curp                = row['Curp'] or None
-                rfc                 = row['RFC'] or None
-                
-                id_beneficiario     = None
-                
-                if curp and rfc:
-                    id_beneficiario = beneficiario_map.get((curp,rfc))
-                    
-                elif curp and not rfc:
-                    id_beneficiario =  next(
-                        (id_ben for(c,_), id_ben in beneficiario_map.items() if c == curp),
-                        None
-                    )         
-                            
-                elif rfc and not curp:
-                    #Logger.add_to_log("info", "1 Un Dato pasado: RFC")
-                    id_beneficiario = next(
-                        (id_ben for (_, r), id_ben in beneficiario_map.items() if r == rfc),
-                        None
-                    )
-                    
-                else:
-                    Logger.add_to_log("info","No se encontro, se dara de alta")
-                
-                if not id_beneficiario:
-                    
-                    id_beneficiario = str(uuid.uuid4())
-                    
-                    new_beneficiarios.append({
-                        "id": id_beneficiario,
-                        **{k: row[k] for k in Config.GROUP_ONE_KEYS}
-                    })
-
-                else:   
-                    Logger.add_to_log("info", f"Ya existe, no se dara de alta y el ID del usuario:{id_beneficiario}")
-                
-                
-                
-                id_contacto = str(uuid.uuid4())
-                # new_contacto.append({
-                #     'id': id_contacto,
-                #     **{k: row[k] for k in Config.GROUP_TWO_KEYS}
-                # })
+                    validacion_errores['Dependecia'] = row.get('Dependencia')
                
-                new_contacto.append({
-                    'id': id_contacto,
-                    **{Config.COLUMN_MAP_GROUP_TWO[k]:row[k] for k in group_two_df if k in Config.COLUMN_MAP_GROUP_TWO}
-                })
-                
-                Logger.add_to_log("info",f"Contacto \n{new_contacto}")
-                
-                
-                id_apoyo = str(uuid.uuid4())
-                Logger.add_to_log("info", f"Apoyo ID:{id_apoyo}")
-                Logger.add_to_log("info",f"Apoyo\n{row}")
-                new_apoyos.append({
-                    'id':id_apoyo,
-                    'idBeneficiario':id_beneficiario,
-                    'idContacto':id_contacto,
-                    **{k:row[k] for k in group_tree_df}
-                })
-                
-                
-            
-            new_beneficiarios_renamed = [
-                {Config.COLUMN_MAP_GROUP_ONE.get(k,k): v for k, v in row.items()}
-                for row in new_beneficiarios
-            ]
-            
-            new_apoyos_renamed = [
-                {Config.COLUMN_MAP_GROUP_TREE.get(k,k): v for k, v in row.items()}
-                for row in new_apoyos
-            ]
-            
-            Logger.add_to_log("info",f"Apoyo Nuevo\n{new_apoyos_renamed}")
-            #Logger.add_to_log("debug", f"Contacto {new_contacto}")
-            # Logger.add_to_log("debug", new_beneficiarios_renamed)
-            
-            # new_contacto_renamed = [
-            #     {Config.COLUMN_MAP_GROUP_TWO.get(k,k): v for k, v in row.items()}
-            #     for row in new_contacto
-            # ]
-            
-            
-            # if rows_errors:
-            #     #Logger.add_to_log("info", f"Se encontraron {len(rows_errors)} registros con errores")
-            #     for e in rows_errors:
-            #         Logger.add_to_log("info", str(e))
+                if not id_programa:
+                    validacion_errores['Programa'] = row.get('Programa')    
 
-            if new_beneficiarios_renamed:
-                # Insert de los datos
-                BeneficiariosService.bulk_insert(new_beneficiarios_renamed)
-                Logger.add_to_log("info", f"Estos son los beneficiarios que se darna de alta \n {new_beneficiarios_renamed}")
+                if not id_componente:
+                    validacion_errores['Componente'] = row.get('Componente')
                 
-                if new_contacto:
-                    ContactosService.bluk_insert(new_contacto)
-                    Logger.add_to_log("info", f"Antes \n{new_contacto}")
+                if not id_acciones:
+                    validacion_errores['Accion'] = row.get('Accion')
+                
+                if validacion_errores:
+                    stats['errores_validacion'] += 1
                     
-                    if new_apoyos_renamed:
-                        ApoyosService.bulk_insert(new_apoyos_renamed)
-                        Logger.add_to_log("info", f"Estos son los apoyos que se darna de alta \n{new_apoyos}")
+                    error_detail = {
+                        'row_index': idx + 1,
+                        'curp': row.get('Curp'),
+                        'nombre_completo': f"{row.get('Nombre', '')} {('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
+                        'error': 'Faltan datos obligatorios',
+                        'campos_invalidos': validacion_errores,
+                        'data': row
+                    }
+                    
+                    rows_errors.append(error_detail)
+                    
+                    Logger.add_to_log('warn', f'Fila {idx+1} rechazada - Faltan: {', '.join(validacion_errores.keys()) }')
+                    Logger.add_to_log('warn', rows_errors)
+                    continue
                 
-            return jsonify({
-                'success': True,
-                'message': 'Info to Excel File',
-                'data': [],
-                'error' : None
-            }),200
+                curp = row.get('Curp') or None
+                rfc  = row.get('RFC') or None
+                
+                # Quitar los espacio
+                if curp:
+                    curp = curp.strip()
+                if rfc:
+                    rfc = rfc.strip()
+
+                id_beneficiario = None
+                es_nuevo = False
+                origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
+                
+                
+                
+                
+                
         except Exception as ex:
-                Logger.add_to_log("error", str(ex))
-                Logger.add_to_log("error", traceback.format_exc())
-            
-                return jsonify({'message': "ERROR", 'success': False}),500
+            return jsonify({
+                'success': False,
+                'message': 'Error en el proceso de carga masiva',
+                'error': str(ex)
+            }),500
+        
+       
