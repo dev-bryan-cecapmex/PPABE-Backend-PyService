@@ -210,9 +210,34 @@ class ExcelService:
                 es_nuevo = False
                 origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
                 
+                # Buscar en CHACHE LOCAL del Excel
+                if curp or rfc:
+                    key_beneficiario = (curp, rfc)
+                    Logger.add_to_log('info', f"Beneficiarios {key_beneficiario}")
+                    
+                if key_beneficiario in cache_beneficiarios_excel:
+                    id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
+                    stats['duplicados_en_excel'] +=1
+                    origen = 'cache_excel'
+                    Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL - CURP: {curp}, RFC:{rfc} -> Reutilizando ID: {id_beneficiario[:8]}....")
                 
-                
-                
+                # Busqueda por solo CURP en cache
+                elif curp and not id_beneficiario:
+                    for(c,r), id_ben in cache_beneficiarios_excel.items():
+                        if c == curp:
+                            id_beneficiario = id_ben
+                            stats['duplicados_en_excel'] += 1
+                            origen = "cache_excel"
+                            Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL (por CURP) - {curp} -> Reutilizando ID: {id_beneficiario[:8]}....")
+                            break
+                            
+                # Busqueda por solo RFC en cache  
+                elif rfc and not id_beneficiario:
+                    for(c,r), id_ben in cache_beneficiarios_excel.items():
+                        stats['duplicados_en_excel'] += 1
+                        origen = "cache_excel"
+                        Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL (por RFC) - {rfc} -> Reutilizando ID: {id_beneficiario[:8]}...." )
+                        break
                 
         except Exception as ex:
             return jsonify({
