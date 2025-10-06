@@ -119,6 +119,15 @@ class ExcelService:
             
             Logger.add_to_log("info", "✓ Todos los catálogos cargados exitosamente")
             
+            # Diccionario de Estadistica
+            stats = {
+                'total_filas': len(rows),
+                'beneficiarios_nuevos':0,
+                'beneficiarios_existentes_db':0,
+                'duplicados_en_excel':0,
+                'errores_validacion':0
+            }
+            
             for idx, row in enumerate(rows):
                 Logger.add_to_log("debug", f"--- Procesando fila {idx + 1}/{len(rows)} ---")
                 Logger.add_to_log("info", idx)
@@ -155,7 +164,56 @@ class ExcelService:
                 id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio'))
                 Logger.add_to_log("info", f"Id Tipo Beneficiario { id_tipo_beneficiario }")
 
+                # Valicacciones
+                validacion_errores = {}
+                
+                if not id_dependencia:
+                    validacion_errores['Dependecia'] = row.get('Dependencia')
+               
+                if not id_programa:
+                    validacion_errores['Programa'] = row.get('Programa')    
 
+                if not id_componente:
+                    validacion_errores['Componente'] = row.get('Componente')
+                
+                if not id_acciones:
+                    validacion_errores['Accion'] = row.get('Accion')
+                
+                if validacion_errores:
+                    stats['errores_validacion'] += 1
+                    
+                    error_detail = {
+                        'row_index': idx + 1,
+                        'curp': row.get('Curp'),
+                        'nombre_completo': f"{row.get('Nombre', '')} {('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
+                        'error': 'Faltan datos obligatorios',
+                        'campos_invalidos': validacion_errores,
+                        'data': row
+                    }
+                    
+                    rows_errors.append(error_detail)
+                    
+                    Logger.add_to_log('warn', f'Fila {idx+1} rechazada - Faltan: {', '.join(validacion_errores.keys()) }')
+                    Logger.add_to_log('warn', rows_errors)
+                    continue
+                
+                curp = row.get('Curp') or None
+                rfc  = row.get('RFC') or None
+                
+                # Quitar los espacio
+                if curp:
+                    curp = curp.strip()
+                if rfc:
+                    rfc = rfc.strip()
+
+                id_beneficiario = None
+                es_nuevo = False
+                origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
+                
+                
+                
+                
+                
         except Exception as ex:
             return jsonify({
                 'success': False,
