@@ -470,11 +470,24 @@ class ExcelService:
                             'beneficiarios_intentados': len(beneficiarios_to_insert)
                         },
                         'error':str(e)
-                    }), 500
-                    
+                    }), 500       
             else:
                 Logger.add_to_log('info', '✅ 💾 No hay beneficiarios nuevos para insertar')
-                          
+                     
+            # Preparacion de Contactos y Apoyos
+            Logger.add_to_log('info', "Preparando lista de contactos y apoyos ...")
+            
+            contactos_to_insert = []
+            apoyos_to_insert    = []
+            
+            for relacion in relaciones:
+                # Extraer datos ya mapedas
+                contactos_to_insert.append(relacion['contacto_data'])
+                apoyos_to_insert.append(relacion['apoyo_data'])
+            
+            Logger.add_to_log("info", f"{len(contactos_to_insert)} contactos preparados")
+            Logger.add_to_log("info", f"{len(apoyos_to_insert)} apoyos preparados")
+                                 
         except Exception as ex:
             
             return jsonify({
