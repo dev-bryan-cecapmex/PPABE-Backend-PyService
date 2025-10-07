@@ -15,6 +15,8 @@ from ..services.contacto_service        import ContactosService
 from ..services.apoyo_service           import ApoyosService
 from ..services.search_service          import SearchService
 
+from datetime                           import datetime
+
 import traceback
 
 import polars as pl 
@@ -122,6 +124,7 @@ class ExcelService:
             # Carpeta de Beneficiarios 
             carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
             Logger.add_to_log("info", f"  ✓ Carpetas Beneficiarios: {len(carpetas_beneficiarios_map)} registros")
+            Logger.add_to_log("info", carpetas_beneficiarios_map)
             
             Logger.add_to_log("info", "✓ Todos los catálogos cargados exitosamente")
             
@@ -169,6 +172,19 @@ class ExcelService:
                 
                 id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio'))
                 Logger.add_to_log("info", f"Id Tipo Beneficiario { id_tipo_beneficiario }")
+                
+                # Carpeta Beneficiario
+
+                fecha_str = row.get('Fecha de Registro')
+                Logger.add_to_log("info", fecha_str )
+                fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
+                
+                mes     = fecha.month 
+                anio    = fecha.year
+                Logger.add_to_log('warn', f"{mes} - {anio}")
+                id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                
 
                 # Valicacciones
                 validacion_errores = {}
@@ -348,7 +364,7 @@ class ExcelService:
                 apoyo_data['idAccion']          = id_acciones
                 apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
                 # Agregar despues idCarpetaBeneficiarios
-                
+                apoyo_data['idCarpetaBeneficiarios'] = id_carpeta_beneficiario
                 # Registro de relación completa
                 relacion = {
                     'row_index': idx + 1,
