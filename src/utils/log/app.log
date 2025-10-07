@@ -1,0 +1,174 @@
+2025-10-07 10:28:24 | INFO | ==============================
+2025-10-07 10:28:24 | INFO | INICIO DE CARGA MASIVA
+2025-10-07 10:28:24 | INFO | ==============================
+2025-10-07 10:28:24 | INFO | Columnas de los datos
+2025-10-07 10:28:24 | INFO | ['Curp', 'Nombre', 'Apellido paterno', 'Apellido Materno', 'Fecha de Nacimiento', 'Estado (catálogo)', 'Estado Civil', 'Sexo', 'Calle', 'Numero', 'Colonia', 'Municipio Dirección (catálogo)', 'Telefono', 'Telefono 2', 'Correo', 'Programa', 'Componente', 'Accion', 'Fecha de Registro', 'Monto', 'Tipo de Beneficio', 'RFC', 'Regimen Capital', 'Actividad', 'Nombre Comercial', 'Razón Social', 'Localidad', 'Dependencia', 'Subprograma']
+2025-10-07 10:28:24 | INFO | Total de filas del Excel: 7
+2025-10-07 10:28:24 | INFO | Inicio de estrucutura de los datos .....
+2025-10-07 10:28:24 | INFO | Inicio de estrucutura correctamente
+2025-10-07 10:28:24 | INFO | Extrayendo grupos de columnas
+2025-10-07 10:28:24 | INFO |   - Grupo 1 (Beneficiarios): 11 columnas
+2025-10-07 10:28:24 | INFO |   - Grupo 2 (Contacto): 9 columnas
+2025-10-07 10:28:24 | INFO |   - Grupo 3 (Apoyos): 6 columnas
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | GRUPO 1
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO |   ✓ Sexos: 2 registros
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | GRUPO 2
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO |   ✓ Estados: 32 registros
+2025-10-07 10:28:24 | INFO |   ✓ Municipios: 21 registros
+2025-10-07 10:28:24 | INFO |   ✓ Colonias: 8 registros
+2025-10-07 10:28:24 | INFO |   ✓ Estados Civiles: 5 registros
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | GRUPO 3
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO |   ✓ Dependencias: 2 registros
+2025-10-07 10:28:24 | INFO |   ✓ Programas: 5 registros
+2025-10-07 10:28:24 | INFO |   ✓ Componentes: 13 registros
+2025-10-07 10:28:24 | INFO |   ✓ Acciones: 15 registros
+2025-10-07 10:28:24 | INFO |   ✓ Tipos de Beneficiarios: 18 registros
+2025-10-07 10:28:24 | INFO |   ✓ Beneficiarios existentes en BD: 3 registros
+2025-10-07 10:28:24 | INFO |   ✓ Beneficiarios: {('GAGG011109HNLRMRA4', 'GAGG0912312FA'): '10fb1562-baa8-4e79-b2fb-0c0cc37d5615', ('XXXXXXXXXXXXXXXXXX', 'AAAA000000AAA'): '8774aa91-ecf8-4be5-bcf4-061ace316c2e', ('TESTTESTTEST123456', 'AASS000000DDA'): 'e94b7968-c25c-4b81-962f-988d0df49558'}
+2025-10-07 10:28:24 | INFO |   ✓ Carpetas Beneficiarios: 6 registros
+2025-10-07 10:28:24 | INFO | ✓ Todos los catálogos cargados exitosamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 1/7 ---
+2025-10-07 10:28:24 | INFO | 1
+2025-10-07 10:28:24 | INFO | {'Curp': 'GAGB950623HDFRZN08', 'Nombre': 'Gabriela', 'Apellido paterno': 'Gómez', 'Apellido Materno': 'Barrera', 'Fecha de Nacimiento': '1995-06-23 00:00:00', 'Estado (catálogo)': 'Ciudad de México', 'Estado Civil': 'Concubinato', 'Sexo': 'Mujer', 'Calle': 'Av. Reforma', 'Numero': 123, 'Colonia': 'Roma', 'Municipio Dirección (catálogo)': 'Cerralvo', 'Telefono': 5523456789, 'Telefono 2': None, 'Correo': 'gabriela.gomez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 5000, 'Tipo de Beneficio': 'Gastos médicos', 'RFC': 'GAGB950623', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: 5feb89d4-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '3a94258d-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['086ed89a-5622-44ce-bfd2-76d57bfe9829', 'd626083f-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 0e6b7844-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-07 10:28:24 | INFO | Id Componente 7ff1326b-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario 0725d1cb-722f-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('GAGB950623HDFRZN08', 'GAGB950623')
+2025-10-07 10:28:24 | INFO | Fila 1: Beneficiario NUEVO - CURP GAGB950623HDFRZN08, RFC: GAGB950623 -> ID: f72821e6....
+2025-10-07 10:28:24 | DEBUG | Fila 1 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 2/7 ---
+2025-10-07 10:28:24 | INFO | 2
+2025-10-07 10:28:24 | INFO | {'Curp': 'RLMJ880412HNLVRS07', 'Nombre': 'Raúl', 'Apellido paterno': 'López', 'Apellido Materno': 'Morales', 'Fecha de Nacimiento': '1988-04-12 00:00:00', 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Divorciado (a)', 'Sexo': 'Hombre', 'Calle': 'Calle Hidalgo', 'Numero': 45, 'Colonia': 'Villas de San Sebastian', 'Municipio Dirección (catálogo)': 'Agualeguas', 'Telefono': 8187654321, 'Telefono 2': '', 'Correo': 'raul.lopez@email.com', 'Programa': 'INSPECCIÓN Y DEFENSA DEL TRABAJO', 'Componente': 'REPRESENTACIÓN JURÍDICA DEL TRABAJADOR ANTE LA J.L.C.A.', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 25000, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'RLMJ880412', 'Regimen Capital': 'Persona Física', 'Actividad': 'Comercio Minorista', 'Nombre Comercial': 'Tienda López', 'Razón Social': 'Comercial López S.A. de C.V.', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: a588e00a-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'fc05a784-724d-11f0-b2f0-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['0c6d1cfe-420b-406c-8dd3-3e3194d3c07b', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 12a415f4-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 6bb6c2d8-5096-4ed0-b00c-89e8f7801949
+2025-10-07 10:28:24 | INFO | Id Componente 989ad199-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario 2f02885c-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('RLMJ880412HNLVRS07', 'RLMJ880412')
+2025-10-07 10:28:24 | INFO | Fila 2: Beneficiario NUEVO - CURP RLMJ880412HNLVRS07, RFC: RLMJ880412 -> ID: ff73092b....
+2025-10-07 10:28:24 | DEBUG | Fila 2 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 3/7 ---
+2025-10-07 10:28:24 | INFO | 3
+2025-10-07 10:28:24 | INFO | {'Curp': 'MTLR010305MGRPRS05', 'Nombre': 'Mariana', 'Apellido paterno': 'Torres', 'Apellido Materno': 'Ramírez', 'Fecha de Nacimiento': '2001-03-05 00:00:00', 'Estado (catálogo)': 'Guerrero', 'Estado Civil': 'Viudo (a)', 'Sexo': 'Mujer', 'Calle': 'Calle Morelos', 'Numero': 89, 'Colonia': 'Villa San Sebastian', 'Municipio Dirección (catálogo)': 'Aramberri', 'Telefono': 7442233445, 'Telefono 2': None, 'Correo': 'mariana.torres@email.co', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'VINCULACIÓN LABORAL REALIZADA', 'Accion': 'EDUCACION SUPERIOR', 'Fecha de Registro': None, 'Monto': 12000, 'Tipo de Beneficio': 'Apoyo Económico', 'RFC': 'MTLR010305', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: 7a3f4ab3-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '1bc4f613-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['34693c19-eb41-41a2-9e7c-c8fc146b93d8', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 1bfdc18a-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 706568bc-e02c-4f12-9d97-69ee18e24181
+2025-10-07 10:28:24 | INFO | Id Componente 65b89c29-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: 03f6447e-723a-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario 2f02885c-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('MTLR010305MGRPRS05', 'MTLR010305')
+2025-10-07 10:28:24 | INFO | Fila 3: Beneficiario NUEVO - CURP MTLR010305MGRPRS05, RFC: MTLR010305 -> ID: 36fe01fc....
+2025-10-07 10:28:24 | DEBUG | Fila 3 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 4/7 ---
+2025-10-07 10:28:24 | INFO | 4
+2025-10-07 10:28:24 | INFO | {'Curp': 'HCRD790718HMNRRS03', 'Nombre': 'Héctor', 'Apellido paterno': 'Ramírez', 'Apellido Materno': 'Díaz', 'Fecha de Nacimiento': '1979-07-18 00:00:00', 'Estado (catálogo)': 'Michoacán de Ocampo', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Av. Lázaro C.', 'Numero': 678, 'Colonia': 'Nuevo Repueblo', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 4433344556, 'Telefono 2': None, 'Correo': 'hector.ramirez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'UNIFORMES', 'Fecha de Registro': 'Sistema', 'Monto': 800, 'Tipo de Beneficio': 'Apoyo en especie', 'RFC': 'HCRD790718', 'Regimen Capital': 'Persona Física', 'Actividad': 'Obrero', 'Nombre Comercial': 'XXXXXXXXX', 'Razón Social': 'XXXXXXXXXXX', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: 8cc4b205-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['668200a5-15af-4b76-828d-540a34374839', 'd626083f-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-07 10:28:24 | INFO | Id Componente 7ff1326b-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: 53a0d386-723a-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario 8f1b3063-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('HCRD790718HMNRRS03', 'HCRD790718')
+2025-10-07 10:28:24 | INFO | Fila 4: Beneficiario NUEVO - CURP HCRD790718HMNRRS03, RFC: HCRD790718 -> ID: 9bfed8d8....
+2025-10-07 10:28:24 | DEBUG | Fila 4 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 5/7 ---
+2025-10-07 10:28:24 | INFO | 5
+2025-10-07 10:28:24 | INFO | {'Curp': 'VLSA920910MDFRLS04', 'Nombre': 'Valeria', 'Apellido paterno': 'Sánchez', 'Apellido Materno': 'Flores', 'Fecha de Nacimiento': '1992-09-10 00:00:00', 'Estado (catálogo)': 'Jalisco', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Mujer', 'Calle': 'Av. Juárez', 'Numero': 150, 'Colonia': 'Ignacio Zaragoza', 'Municipio Dirección (catálogo)': 'Bustamante', 'Telefono': 3332233445, 'Telefono 2': None, 'Correo': 'valeria.sanchez@email.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'INSPECCIONES REALIZADAS', 'Accion': 'UNIFORMES', 'Fecha de Registro': None, 'Monto': 3000, 'Tipo de Beneficio': 'Gastos de traslado', 'RFC': 'VLSA920910', 'Regimen Capital': 'Persona Física', 'Actividad': 'Música y Artes Escénicas', 'Nombre Comercial': None, 'Razón Social': None, 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 52566191-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: 80991a7f-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', '239bb8cb-724e-11f0-b2f0-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['56cabec2-ea58-4b86-9149-5d88e8b60259', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-07 10:28:24 | INFO | Id Componente 7ff1326b-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: 53a0d386-723a-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario e73f4a41-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('VLSA920910MDFRLS04', 'VLSA920910')
+2025-10-07 10:28:24 | INFO | Fila 5: Beneficiario NUEVO - CURP VLSA920910MDFRLS04, RFC: VLSA920910 -> ID: e950a365....
+2025-10-07 10:28:24 | DEBUG | Fila 5 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 6/7 ---
+2025-10-07 10:28:24 | INFO | 6
+2025-10-07 10:28:24 | INFO | {'Curp': 'AUTB990224HNLGDR08', 'Nombre': 'Bryan', 'Apellido paterno': 'Aguirre', 'Apellido Materno': 'Tudon', 'Fecha de Nacimiento': '24/02/1999', 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Ejercito Liberal', 'Numero': 916, 'Colonia': 'Ignacio Zaragoza', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 8117867721, 'Telefono 2': None, 'Correo': 'bryan@outlook.com', 'Programa': 'DISTINTIVO TRE', 'Componente': 'ASESORIAS REALIZADAS', 'Accion': 'APOYO ECONÓMICO', 'Fecha de Registro': None, 'Monto': 5800, 'Tipo de Beneficio': 'Gastos de traslado y gastos médicos', 'RFC': 'BATD790724', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': 'Softech', 'Razón Social': 'Softech S.A de C.V.', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: a588e00a-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['56cabec2-ea58-4b86-9149-5d88e8b60259', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 21d4a4e2-8228-494e-b2be-ff5c4f7aebc8
+2025-10-07 10:28:24 | INFO | Id Componente 877992ff-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: b52c59da-7239-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario f75d33d0-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('AUTB990224HNLGDR08', 'BATD790724')
+2025-10-07 10:28:24 | INFO | Fila 6: Beneficiario NUEVO - CURP AUTB990224HNLGDR08, RFC: BATD790724 -> ID: 9801970e....
+2025-10-07 10:28:24 | DEBUG | Fila 6 procesada correctamente
+2025-10-07 10:28:24 | DEBUG | --- Procesando fila 7/7 ---
+2025-10-07 10:28:24 | INFO | 7
+2025-10-07 10:28:24 | INFO | {'Curp': 'AUTB990224HNLGDR08', 'Nombre': 'Bryan', 'Apellido paterno': 'Aguirre', 'Apellido Materno': 'Tudon', 'Fecha de Nacimiento': '24/02/1999', 'Estado (catálogo)': 'Nuevo León', 'Estado Civil': 'Soltero (a)', 'Sexo': 'Hombre', 'Calle': 'Ejercito Liberal', 'Numero': 916, 'Colonia': 'Ignacio Zaragoza', 'Municipio Dirección (catálogo)': 'Guadalupe', 'Telefono': 8117867721, 'Telefono 2': None, 'Correo': 'bryan@outlook.com', 'Programa': 'CAPITAL HUMANO Y EMPLEO', 'Componente': 'ASESORIAS BRINDADAS', 'Accion': 'ASESORIAS ACADÉMICAS', 'Fecha de Registro': None, 'Monto': 450, 'Tipo de Beneficio': 'Beca deportiva', 'RFC': 'BATD790724', 'Regimen Capital': 'Persona Física', 'Actividad': 'Estudiante', 'Nombre Comercial': 'Softech', 'Razón Social': 'Softech S.A de C.V.', 'Localidad': None, 'Dependencia': 'SECRETARÍA DEL TRABAJO', 'Subprograma': None}
+2025-10-07 10:28:24 | INFO | Id Sexo: 524c0a94-7469-11f0-b864-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Estado: a588e00a-722d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Municipio: ['a588e00a-722d-11f0-b2f0-c4346b72f0ba', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Colonia: ['56cabec2-ea58-4b86-9149-5d88e8b60259', 'cdb9930e-749f-11f0-b864-c4346b72f0ba']
+2025-10-07 10:28:24 | INFO | Id Estado Civil 1824c819-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Dependencia b305fde3-51b5-11ee-b06d-3cd92b4d9bf4
+2025-10-07 10:28:24 | INFO | Id Programa 706568bc-e02c-4f12-9d97-69ee18e24181
+2025-10-07 10:28:24 | INFO | Id Componente 77690a4d-724d-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Acciones: da3f64b5-7239-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Id Tipo Beneficiario a2123041-722e-11f0-b2f0-c4346b72f0ba
+2025-10-07 10:28:24 | INFO | Beneficiarios ('AUTB990224HNLGDR08', 'BATD790724')
+2025-10-07 10:28:24 | INFO | Fila: 7: DUPLICADO EN EXCEL - CURP: AUTB990224HNLGDR08, RFC:BATD790724 -> Reutilizando ID: 9801970e....
+2025-10-07 10:28:24 | DEBUG | Fila 7 procesada correctamente
+2025-10-07 10:28:24 | INFO | 
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | 📊 ESTADÍSTICAS DE FASE 1:
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO |   Total de filas procesadas: 7
+2025-10-07 10:28:24 | INFO |   ✨ Beneficiarios NUEVOS: 6
+2025-10-07 10:28:24 | INFO |   ✓ Beneficiarios EXISTENTES en BD: 0
+2025-10-07 10:28:24 | INFO |   ♻️  Duplicados EN EXCEL: 1
+2025-10-07 10:28:24 | INFO |   ⚠️  Errores de validación: 0
+2025-10-07 10:28:24 | INFO |   📝 Relaciones válidas creadas: 7
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | 
+2025-10-07 10:28:24 | WARNING | ⚠️  REPORTE DE DUPLICADOS EN EXCEL:
+2025-10-07 10:28:24 | WARNING | ------------------------------------------------------------
+2025-10-07 10:28:24 | WARNING |   • Bryan Aguirre Tudon
+2025-10-07 10:28:24 | WARNING |     CURP: AUTB990224HNLGDR08, RFC: BATD790724
+2025-10-07 10:28:24 | WARNING |     Aparece 2 veces en filas: [6, 7]
+2025-10-07 10:28:24 | WARNING | 
+2025-10-07 10:28:24 | INFO | 
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | FASE 1 COMPLETADA - INICIANDO FASE 2...
+2025-10-07 10:28:24 | INFO | ============================================================
+2025-10-07 10:28:24 | INFO | 
+2025-10-07 10:28:24 | INFO | INICIANDO INSERCIÓN EN BASE DE DATOS ...
+2025-10-07 10:28:24 | INFO | 💾 🗄️ Insertando 6 beneficiarios nuevos ...
+2025-10-07 10:28:24 | DEBUG | Primeros 3 beneficiarios: [{'id': 'f72821e6-fe64-47f7-8567-81d4157bc496', 'CURP': 'GAGB950623HDFRZN08', 'nombre': 'Gabriela', 'aPaterno': 'Gómez', 'aMaterno': 'Barrera', 'fNacimiento': '1995-06-23 00:00:00', 'idSexo': '52566191-7469-11f0-b864-c4346b72f0ba', 'RFC': 'GAGB950623', 'regimenCapital': 'Persona Física', 'actividad': 'Estudiante', 'nombreComercial': None, 'razonSocial': None}, {'id': 'ff73092b-8557-45ff-8f59-76a72c12bf95', 'CURP': 'RLMJ880412HNLVRS07', 'nombre': 'Raúl', 'aPaterno': 'López', 'aMaterno': 'Morales', 'fNacimiento': '1988-04-12 00:00:00', 'idSexo': '524c0a94-7469-11f0-b864-c4346b72f0ba', 'RFC': 'RLMJ880412', 'regimenCapital': 'Persona Física', 'actividad': 'Comercio Minorista', 'nombreComercial': 'Tienda López', 'razonSocial': 'Comercial López S.A. de C.V.'}, {'id': '36fe01fc-0a67-4f0b-bfd1-2370a56dbe20', 'CURP': 'MTLR010305MGRPRS05', 'nombre': 'Mariana', 'aPaterno': 'Torres', 'aMaterno': 'Ramírez', 'fNacimiento': '2001-03-05 00:00:00', 'idSexo': '52566191-7469-11f0-b864-c4346b72f0ba', 'RFC': 'MTLR010305', 'regimenCapital': 'Persona Física', 'actividad': 'Estudiante', 'nombreComercial': None, 'razonSocial': None}]
+2025-10-07 10:28:24 | INFO | ✅ 💾 6 beneficiarios insertados exitosamente

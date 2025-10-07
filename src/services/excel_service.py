@@ -377,7 +377,7 @@ class ExcelService:
             Logger.add_to_log("info", "=" * 60)
             Logger.add_to_log("info", f"  Total de filas procesadas: {stats['total_filas']}")
             Logger.add_to_log("info", f"  ✨ Beneficiarios NUEVOS: {stats['beneficiarios_nuevos']}")
-            Logger.add_to_log("info", f"  ✓ Beneficiarios EXISTENTES en BD: {stats['beneficiarios_existentes_bd']}")
+            Logger.add_to_log("info", f"  ✓ Beneficiarios EXISTENTES en BD: {stats['beneficiarios_existentes_db']}")
             Logger.add_to_log("info", f"  ♻️  Duplicados EN EXCEL: {stats['duplicados_en_excel']}")
             Logger.add_to_log("info", f"  ⚠️  Errores de validación: {stats['errores_validacion']}")
             Logger.add_to_log("info", f"  📝 Relaciones válidas creadas: {len(relaciones)}")
@@ -449,10 +449,34 @@ class ExcelService:
                     'error':'Sin datos válidos'
                 }),400
                 
-            
-            
+            # Insercion de beneficiarios nuevos
+            if beneficiarios_to_insert:
+                try:
+                    Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
+                    Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
+                    #Llamada de al servicio de insercion
+                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert)
+                    Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
+                except Exception as e:  
+                    Logger.add_to_log('error', "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
+                    Logger.add_to_log('error', f"Detalles: {str(e)}")      
+                    Logger.add_to_log("error", traceback.format_exc())
                     
+                    return jsonify({
+                        'success':False,
+                        'message':'Error al insertar beneficiarios',
+                        'data':{
+                            'fase_fallida':'Insercion de Beneficiarios',
+                            'beneficiarios_intentados': len(beneficiarios_to_insert)
+                        },
+                        'error':str(e)
+                    }), 500
+                    
+            else:
+                Logger.add_to_log('info', '✅ 💾 No hay beneficiarios nuevos para insertar')
+                          
         except Exception as ex:
+            
             return jsonify({
                 'success': False,
                 'message': 'Error en el proceso de carga masiva',
