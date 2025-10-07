@@ -438,6 +438,19 @@ class ExcelService:
             
             if not relaciones:
                 Logger.add_to_log("warn", "No hay datos validos para insertar")
+                return jsonify({
+                    'success':False,
+                    'message':'No se encontraron registros validos para procesar',
+                     'data':{
+                        'total_filas':stats['total_filas'],
+                        'errores': stats['errores_validacion'],
+                        'errores_detalle': rows_errors
+                    },
+                    'error':'Sin datos válidos'
+                }),400
+                
+            
+            
                     
         except Exception as ex:
             return jsonify({
