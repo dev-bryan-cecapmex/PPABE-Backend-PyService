@@ -454,8 +454,8 @@ class ExcelService:
                 try:
                     Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
-                    #Llamada de al servicio de insercion
-                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert)
+                    # Llamada de al servicio de insercion
+                    BeneficiariosService.bulk_insert(beneficiarios_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:  
                     Logger.add_to_log('error', "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
@@ -472,7 +472,7 @@ class ExcelService:
                         'error':str(e)
                     }), 500       
             else:
-                Logger.add_to_log('info', '✅ 💾 No hay beneficiarios nuevos para insertar')
+                Logger.add_to_log("info", "✅ 💾 No hay beneficiarios nuevos para insertar")
                      
             # Preparacion de Contactos y Apoyos
             Logger.add_to_log('info', "Preparando lista de contactos y apoyos ...")
@@ -487,13 +487,78 @@ class ExcelService:
             
             Logger.add_to_log("info", f"{len(contactos_to_insert)} contactos preparados")
             Logger.add_to_log("info", f"{len(apoyos_to_insert)} apoyos preparados")
-                                 
+            
+            # INSERCIÓN DE CONTACTOS
+            if contactos_to_insert:
+                try:
+                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
+                    Logger.add_to_log('debug', f"Primeros 3 contactos: {contactos_to_insert[:3]}")
+                    # Llamada de al servicio de insercion
+                    ContactosService.bluk_insert(contactos_to_insert)
+                    Logger.add_to_log('info', f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
+
+                except Exception as e:
+                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR CONTACTOS")
+                    Logger.add_to_log("error", f"Detalles: {str(e)}")
+                    Logger.add_to_log("error", traceback.format_exc())
+                    
+                    return jsonify({
+                        'success':False,
+                        'message':'Error al insertar contactos',
+                        'data':{
+                            'fase_fallida':'Insercion de contactos',
+                            'beneficiarios_insertados': len(beneficiarios_to_insert),
+                            'contactos_intentados': len(contactos_to_insert),
+                            'warning':'Los beneficiarios quedaron en BD sin contactos asociados'
+                        },
+                        'error':str(e)
+                    }), 500   
+            else:
+                Logger.add_to_log("warn", "✅ 💾 No hay contactos para insertar")       
+            
+            # INSERCIÓN DE APOYOS
+            if apoyos_to_insert:
+                try:
+                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} contactos nuevos ...")
+                    Logger.add_to_log('debug', f"Primeros 3 apoyos: {apoyos_to_insert[:3]}")
+                    # Llamada de al servicio de insercion
+                    ApoyosService.bulk_insert(apoyos_to_insert)
+                    Logger.add_to_log('info', f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
+
+                except Exception as e:
+                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR APOYOS")
+                    Logger.add_to_log("error", f"Detalles: {str(e)}")
+                    Logger.add_to_log("error", traceback.format_exc())
+                    
+                    return jsonify({
+                        'success':False,
+                        'message':'Error al insertar apoyos',
+                        'data':{
+                            'fase_fallida':'Insercion de apoyos',
+                            'beneficiarios_insertados': len(beneficiarios_to_insert),
+                            'contactos_intentados': len(contactos_to_insert),
+                            'apoyos_intentados': len(apoyos_to_insert),
+                            'warning':'Los beneficiarios quedaron en BD sin contactos asociados'
+                        },
+                        'error':str(e)
+                    }), 500   
+            else:
+                Logger.add_to_log("warn", "✅ 💾 No hay contactos para insertar")       
+            
+            
+            
+            
         except Exception as ex:
             
             return jsonify({
-                'success': False,
-                'message': 'Error en el proceso de carga masiva',
-                'error': str(ex)
-            }),500
+            'success': False,
+            'message': 'Error crítico en el proceso de carga masiva',
+            'data': None,
+            'error': {
+                'type': type(ex).__name__,
+                'message': str(ex),
+                'traceback': traceback.format_exc()
+            }
+        }), 500
         
        
