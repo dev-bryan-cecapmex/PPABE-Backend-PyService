@@ -45,7 +45,9 @@ def uploader_file():
    
     try:
        
-        ExcelService.process_file(request.files['file'])
+        respuesta = ExcelService.process_file(request.files['file'])
+        if respuesta:
+            return respuesta
 
         return jsonify({
             'success': True,
