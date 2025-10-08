@@ -174,18 +174,24 @@ class ExcelService:
                 Logger.add_to_log("info", f"Id Tipo Beneficiario { id_tipo_beneficiario }")
                 
                 # Carpeta Beneficiario
-
-                fecha_str = row.get('Fecha de Registro')
-                Logger.add_to_log("info", fecha_str )
-                fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
                 
+                fecha_str = row.get('Fecha de Registro')
+                Logger.add_to_log("info", type(fecha_str) )
+                
+                
+                # Plantilla del sistema
+                #fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
+                
+                # Plantilla Ruy
+                fecha = fecha_str
+                Logger.add_to_log("warn",fecha)
                 mes     = fecha.month 
                 anio    = fecha.year
                 Logger.add_to_log('warn', f"{mes} - {anio}")
                 id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
                 Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
                 
-
+            
                 # Valicacciones
                 validacion_errores = {}
                 
