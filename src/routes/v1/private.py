@@ -107,7 +107,7 @@ def get_catalogos():
             "error": str(ex)
         }), 500
 
-@private_bp.route("/catalogos", methods=["POST"])
+@private_bp.route("/download_template", methods=["POST"])
 def getTemplate():
     try:
         body = request.get_json()

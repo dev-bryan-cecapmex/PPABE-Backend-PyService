@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class DependenciaProgramaAnio(db.Model):
-    __tablename__ = 'dependenciaprogramaanio'
+    __tablename__ = 'DependenciaProgramaAnio'
     
     id              = db.Column(db.String(36), primary_key=True)
     idDependencia   = db.Column(db.String(36), nullable=False)
