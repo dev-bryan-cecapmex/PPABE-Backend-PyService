@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class EstadosCiviles(db.Model):
-    __tablename__ = 'estadosciviles'
+    __tablename__ = 'EstadosCiviles'
     id      = db.Column(db.String(36), primary_key = True)
     nombre  = db.Column(db.String(100))
     deleted = db.Column(db.String(4))

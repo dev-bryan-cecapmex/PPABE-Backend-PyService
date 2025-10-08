@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class Anio(db.Model):
-    __tablename__ = 'anios'
+    __tablename__ = 'Anios'
     
     id              = db.Column(db.Integer, primary_key = True)
     creador         = db.Column(db.String(36), nullable=False)

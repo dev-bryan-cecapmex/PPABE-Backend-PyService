@@ -139,9 +139,9 @@ class SearchService:
     def get_carpeta_beneficiarios_map():
         carpetas_beneficiarios = (
             CarpetaBeneficiarios.query
-            .with_entities(CarpetaBeneficiarios.id, CarpetaBeneficiarios.idDependencia, CarpetaBeneficiarios.mes, CarpetaBeneficiarios.anio)
+            .with_entities(CarpetaBeneficiarios.id, CarpetaBeneficiarios.mes, CarpetaBeneficiarios.anio)
             .filter(CarpetaBeneficiarios.deleted == 0)
             .all()
         )
         
-        return {(id_dep,mes,anio) : id_cbe for id_cbe, id_dep, mes, anio in carpetas_beneficiarios}
+        return {(mes,anio) : id_cbe for id_cbe, mes, anio in carpetas_beneficiarios}

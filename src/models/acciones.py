@@ -2,7 +2,7 @@ from ..database.connection import db
 
 class Acciones(db.Model):
     
-    __tablename__ = 'acciones'
+    __tablename__ = 'Acciones'
     
     id          = db.Column(db.String(36), primary_key = True)
     nombre      = db.Column(db.String(255))

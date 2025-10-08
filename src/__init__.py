@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from config import Config
 from .database.connection import db
 
@@ -13,9 +14,21 @@ def create_app():
     app.config.from_object(Config)
     
     db.init_app(app)
-    
+
+    # --- Leer entorno e IPs del frontend ---
+    # env = app.config["ENVIRONMENT"]
+    origins = app.config["IP_SERVER_FRONT"]
+
+    # print(f"🌎 Iniciando entorno: {env}")
+    print(f"🔗 Orígenes permitidos: {origins}")
+
+    # --- Configurar CORS usando los dominios del .env ---
+    CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
+
+    # --- Registrar Blueprints ---
     app.register_blueprint(root_bp)
     app.register_blueprint(public_bp, url_prefix="/api/v1/public")
     app.register_blueprint(private_bp, url_prefix="/api/v1/private")
-    
+
     return app
+

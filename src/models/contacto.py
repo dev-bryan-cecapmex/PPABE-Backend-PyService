@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class Contacto(db.Model):
-    __tablename__ = 'contacto'
+    __tablename__ = 'Contacto'
     
     id              = db.Column(db.String(36), primary_key = True)
     correo          = db.Column(db.String(255))

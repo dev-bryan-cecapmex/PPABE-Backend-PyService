@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class Beneficiarios(db.Model):
-    __tablename__ = 'beneficiarios'
+    __tablename__ = 'Beneficiarios'
     
     id              = db.Column(db.String(36), primary_key = True)
     CURP            = db.Column(db.String(18), unique=True, nullable=False)

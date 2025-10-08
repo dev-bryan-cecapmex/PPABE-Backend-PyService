@@ -1,7 +1,7 @@
 from ..database.connection     import db
 
 class TiposBeneficiarios(db.Model):
-    __tablename__ = 'tiposbeneficios'
+    __tablename__ = 'TiposBeneficios'
     
     id = db.Column(db.String(36), primary_key = True)
     nombre = db.Column(db.String(255))

@@ -1,7 +1,7 @@
 from ..database.connection import db
 
 class CarpetaBeneficiarios(db.Model):
-    __tablename__ = 'carpetabeneficiarios'
+    __tablename__ = 'CarpetaBeneficiarios'
     
     id              = db.Column(db.String(50), primary_key = True)
     idDependencia   = db.Column(db.String(50), unique=True, nullable=False)

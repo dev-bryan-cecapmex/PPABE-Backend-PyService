@@ -41,3 +41,5 @@ class Config:
         'Monto':'monto'
     }
     
+     # Lista de orígenes permitidos (convertimos el texto en lista)
+    IP_SERVER_FRONT = os.getenv("IP_SERVER_FRONT", "").split(",") if os.getenv("IP_SERVER_FRONT") else []
