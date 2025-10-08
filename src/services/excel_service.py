@@ -175,22 +175,23 @@ class ExcelService:
                 
                 # Carpeta Beneficiario
                 
-                fecha_str = row.get('Fecha de Registro')
-                Logger.add_to_log("info", type(fecha_str) )
+                fecha_plantilla= row.get('Fecha de Registro')
                 
-                
-                # Plantilla del sistema
-                #fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
-                
-                # Plantilla Ruy
-                fecha = fecha_str
-                Logger.add_to_log("warn",fecha)
+                if isinstance(fecha_plantilla, str):
+                    # Plantilla del sistema
+                    fecha_str = fecha_plantilla
+                    fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
+                    Logger.add_to_log("warn", f"Fecha String: {fecha_str}")
+                else:
+                    # Plantilla Ruy
+                    fecha = fecha_plantilla
+                    Logger.add_to_log("warn",f"Fecha:{fecha}")
+                    
                 mes     = fecha.month 
                 anio    = fecha.year
                 Logger.add_to_log('warn', f"{mes} - {anio}")
                 id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
                 Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
-                
             
                 # Valicacciones
                 validacion_errores = {}
