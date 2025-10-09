@@ -156,10 +156,14 @@ class ExcelService:
                 # Grupo 2 - Contacto
                 id_estado = estados_map.get(row.get('Estado (catálogo)'))
                 Logger.add_to_log("info", f"Id Estado: {id_estado}")
-                
-                id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)'))
+                Logger.add_to_log("info", "Municipiooo")
+                Logger.add_to_log("info", row.get('Municipio Dirección (catálogo)'))
+                id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').rstrip() if row.get('Municipio Dirección (catálogo)') else None) 
+               #id_municipio if id_municipio else None
+                Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)'))
+                #Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)').rstrip())
                 Logger.add_to_log("info", f"Id Municipio: {id_municipio}")
-                id_colonia = colonias_map.get(row.get('Colonia'))
+                id_colonia = colonias_map.get(row.get('Colonia').rstrip() if row.get('Colonia') else None)
                 Logger.add_to_log("info", f"Id Colonia: {id_colonia}")
                 id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
                 Logger.add_to_log("info", f"Id Estado Civil {id_estado_civil}")
@@ -301,7 +305,7 @@ class ExcelService:
                             origen = 'db'
                     
                     if id_beneficiario and origen == 'db':
-                        stats['beneficiarios_existentes_bd'] += 1
+                        stats['beneficiarios_existentes_db'] += 1
                         Logger.add_to_log("info", f"Fila {idx +1}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
                         
                 # Crea Nuevo beneficiario
