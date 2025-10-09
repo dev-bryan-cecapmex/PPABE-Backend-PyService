@@ -598,50 +598,141 @@ class ExcelService:
     @staticmethod
     def generate_template(catalogos):
         wb = Workbook()
-
-        # Hoja principal
         ws = wb.active
         ws.title = "Beneficiarios"
 
-        # Hoja oculta con catálogos
+        # ---------- Hoja oculta con catálogos ----------
         ws_cat = wb.create_sheet("Catalogos")
-
-        # Insertar catálogos en hoja oculta
         col = 1
-        ranges = {}
+
+        # Rango para DataValidation (con "=") y rangos crudos para fórmulas
+        dv_ranges = {}       # p.ej. "=Catalogos!$A$2:$A$100"
+        lookup_ranges = {}   # p.ej. ("Catalogos!$A$2:$A$100","Catalogos!$B$2:$B$100","Catalogos!$A$2:$B$100")
+
         for key, values in catalogos.items():
+            if not values:
+                continue
+
+            # Columna de nombres
+            name_col_letter = get_column_letter(col)
+            # Columna de IDs (adyacente)
+            id_col_letter = get_column_letter(col + 1)
+
             ws_cat.cell(1, col, key)
+            ws_cat.cell(1, col + 1, f"{key}_ID")
+
             for i, v in enumerate(values, start=2):
                 ws_cat.cell(i, col, v["nombre"])
-            # Guardamos rango para validación
+                ws_cat.cell(i, col + 1, v["id"])
+
             end_row = len(values) + 1
-            ranges[key] = f"Catalogos!${chr(64+col)}$2:${chr(64+col)}${end_row}"
-            col += 1
 
-        # Definir columnas visibles en hoja Beneficiarios
-        headers = []
-        for key in catalogos.keys():
-            headers.append(key)
-            headers.append(f"{key}_ID")
+            # Para DV (debe llevar "=")
+            dv_ranges[key] = f"=Catalogos!${name_col_letter}$2:${name_col_letter}${end_row}"
 
+            # Para fórmulas (sin "=")
+            names_raw = f"Catalogos!${name_col_letter}$2:${name_col_letter}${end_row}"
+            ids_raw   = f"Catalogos!${id_col_letter}$2:${id_col_letter}${end_row}"
+            table_raw = f"Catalogos!${name_col_letter}$2:${id_col_letter}${end_row}"
+            lookup_ranges[key] = (names_raw, ids_raw, table_raw)
+
+            col += 2
+
+        # ---------- Encabezados visibles (una sola fila) ----------
+        headers = [
+            "Curp", "Nombre", "Apellido paterno", "Apellido Materno",
+            "Fecha de Nacimiento", "Estado (catálogo)", "Estado Civil", "Sexo",
+            "Calle", "Numero", "Colonia", "Municipio Dirección (catálogo)",
+            "Telefono", "Telefono 2", "Correo", "Programa", "Componente",
+            "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
+            "RFC", "Regimen Capital", "Actividad", "Nombre Comercial",
+            "Razón Social", "Localidad", "Dependencia", "Subprograma"
+        ]
         ws.append(headers)
 
-        # Agregar validaciones
-        col_num = 1
-        for key in catalogos.keys():
-            dv = DataValidation(type="list", formula1=ranges[key], allow_blank=True)
-            ws.add_data_validation(dv)
-            dv.add(f"{chr(64+col_num)}2:{chr(64+col_num)}1048576")  # toda la columna
-            col_num += 2  # saltamos el campo ID
+        # Formato de cabecera
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        border_style = Side(style="thin", color="000000")
+        for c in range(1, len(headers) + 1):
+            cell = ws.cell(1, c)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.border = Border(top=border_style, bottom=border_style, left=border_style, right=border_style)
+            ws.column_dimensions[get_column_letter(c)].width = 18
+        ws.freeze_panes = "A2"
 
-        # Ocultar IDs si la variable está en false
+        # Campos que llevan listas (catálogos)
+        catalog_fields = {
+            "Estado (catálogo)": "Estado",
+            "Municipio Dirección (catálogo)": "Municipio",
+            "Sexo": "Sexo",
+            "Estado Civil": "EstadoCivil",
+            "Programa": "Programa",
+            "Componente": "Componente",
+            "Accion": "Accion",
+            "Tipo de Beneficio": "TipoBeneficio",
+            "Dependencia": "Dependencia",
+            "Colonia": "Colonia"
+        }
+
+        # ---------- Data Validation (listas) ----------
+        MAX_ROWS = 10000
+        for idx, h in enumerate(headers, start=1):
+            if h in catalog_fields:
+                key = catalog_fields[h]
+                if key in dv_ranges:
+                    col_letter = get_column_letter(idx)
+                    dv = DataValidation(type="list", formula1=dv_ranges[key], allow_blank=True)
+                    ws.add_data_validation(dv)
+                    dv.add(f"{col_letter}2:{col_letter}{MAX_ROWS + 1}")
+
+        # ---------- Agregar columnas ID (al final) ----------
+        id_headers = [f"{catalog_fields[h]}_ID" for h in headers if h in catalog_fields]
+        start_id_col = len(headers) + 1
+        for i, idh in enumerate(id_headers):
+            ws.cell(1, start_id_col + i, idh)
+            cell = ws.cell(1, start_id_col + i)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.border = Border(top=border_style, bottom=border_style, left=border_style, right=border_style)
+            ws.column_dimensions[get_column_letter(start_id_col + i)].width = 18
+
+        # ---------- Fórmulas automáticas para _ID (XLOOKUP + fallback VLOOKUP) ----------
+        # Para cada campo con catálogo, ubicamos columna de nombre y columna de ID
+        for h in headers:
+            if h in catalog_fields:
+                cat_key = catalog_fields[h]
+                if cat_key in lookup_ranges:
+                    names_raw, ids_raw, table_raw = lookup_ranges[cat_key]
+                    # Columna del valor seleccionado (catálogo)
+                    name_col_idx = headers.index(h) + 1
+                    name_col_letter = get_column_letter(name_col_idx)
+                    # Columna del ID destino
+                    id_header = f"{cat_key}_ID"
+                    id_col_idx = start_id_col + id_headers.index(id_header)
+                    id_col_letter = get_column_letter(id_col_idx)
+
+                    # Fórmula: intenta XLOOKUP; si no existe, usa VLOOKUP con tabla de 2 columnas contiguas
+                    base_formula = (
+                        f'IFERROR('
+                        f'XLOOKUP({name_col_letter}{{ROW}}, {names_raw}, {ids_raw}, ""),'
+                        f'IFERROR(VLOOKUP({name_col_letter}{{ROW}}, {table_raw}, 2, FALSE), "")'
+                        f')'
+                    )
+
+                    for r in range(2, MAX_ROWS + 2):
+                        ws[f"{id_col_letter}{r}"] = f"={base_formula.replace('{ROW}', str(r))}"
+
+        # ---------- Ocultar hoja catálogos ----------
+        ws_cat.sheet_state = "hidden"
+
+        # Mostrar/ocultar columnas ID según variable
         show_ids = os.getenv("SHOW_IDS", "false").lower() == "true"
         if not show_ids:
-            for idx, key in enumerate(catalogos.keys()):
-                col_to_hide = (idx * 2) + 2
-                ws.column_dimensions[chr(64+col_to_hide)].hidden = True
-
-        # Ocultamos hoja de catálogos
-        ws_cat.sheet_state = "hidden"
+            for i in range(len(id_headers)):
+                ws.column_dimensions[get_column_letter(start_id_col + i)].hidden = True
 
         return wb
