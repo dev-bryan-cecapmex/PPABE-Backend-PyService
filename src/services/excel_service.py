@@ -39,6 +39,17 @@ class ExcelService:
             Logger.add_to_log("info", "="*30)
             
             data = pl.read_excel(io.BytesIO(file.read()))
+            data = data.filter(~pl.all_horizontal(pl.all().is_null()))
+
+# 🔹 También eliminar filas que estén vacías o solo tengan espacios
+            data = data.filter(
+                pl.any_horizontal(
+                    pl.when(pl.col(c).is_not_null() & (pl.col(c).cast(pl.Utf8).str.strip_chars() != ""))
+                    .then(True)
+                    .otherwise(False)
+                    for c in data.columns
+                )
+            )
             rows = data.to_dicts()
             
             Logger.add_to_log("info", "Columnas de los datos")
