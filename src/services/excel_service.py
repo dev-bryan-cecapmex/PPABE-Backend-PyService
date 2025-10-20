@@ -22,6 +22,9 @@ import traceback
 import polars as pl 
 import uuid
 
+import re
+from datetime import datetime
+
 import os
 from openpyxl import Workbook
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -29,7 +32,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-class ExcelService:
+class ExcelService:  
     
     @staticmethod
     def process_file(file):
@@ -38,10 +41,32 @@ class ExcelService:
             Logger.add_to_log("info", f"INICIO DE CARGA MASIVA")
             Logger.add_to_log("info", "="*30)
             
-            data = pl.read_excel(io.BytesIO(file.read()))
-            data = data.filter(~pl.all_horizontal(pl.all().is_null()))
+            #data = pl.read_excel(io.BytesIO(file.read()))
+            #Logger.add_to_log("info", data)
+            #data = data.filter(~pl.all_horizontal(pl.all().is_null()))
+            data = pl.read_excel(
+                    io.BytesIO(file.read()),
+                    schema_overrides = Config.CELLS_DATA_TYPES,
+                    infer_schema_length=10000
+                )
 
-# 🔹 También eliminar filas que estén vacías o solo tengan espacios
+            data = data.with_columns(
+                
+                pl.col("Fecha de Nacimiento").is_null().alias("fecha_nac_vacia_original"),
+                
+                pl.col("Fecha de Nacimiento")
+                .str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S", strict=False)
+                .dt.strftime("%d/%m/%Y")
+                .alias("Fecha de Nacimiento")
+            )
+            
+            data = data.with_columns([
+                    pl.col("Estado Civil").is_null().alias("estado_civil_vacio_original"),
+                    pl.col("Sexo").is_null().alias("sexo_vacio_original"),
+                    
+                ])
+                        
+            # También eliminar filas que estén vacías o solo tengan espacios
             data = data.filter(
                 pl.any_horizontal(
                     pl.when(pl.col(c).is_not_null() & (pl.col(c).cast(pl.Utf8).str.strip_chars() != ""))
@@ -50,6 +75,7 @@ class ExcelService:
                     for c in data.columns
                 )
             )
+            
             rows = data.to_dicts()
             
             Logger.add_to_log("info", "Columnas de los datos")
@@ -155,22 +181,33 @@ class ExcelService:
             }
             
             for idx, row in enumerate(rows):
-                Logger.add_to_log("debug", f"--- Procesando fila {idx + 1}/{len(rows)} ---")
-                Logger.add_to_log("info", idx + 1)
+                curp = row.get('Curp') or None
+                rfc  = row.get('RFC') or None
+                
+                # Quitar los espacio
+                if curp:
+                    curp = curp.strip()
+                if rfc:
+                    rfc = rfc.strip()
+                    
+                    
+                Logger.add_to_log("debug", f"--- Procesando fila {idx + 2}/{len(rows)} ---")
+                Logger.add_to_log("info", idx + 2)
                 Logger.add_to_log("info", row)
             
                 # Grupo 1 - Beneficiarios
                 id_sexo = sexos_map.get(row.get('Sexo'))
-                
                 Logger.add_to_log("info", f"Id Sexo: {id_sexo}")
                 
                 # Grupo 2 - Contacto
+                calle       = row.get('Calle')
+                numero      = row.get('Numero')
                 id_estado = estados_map.get(row.get('Estado (catálogo)'))
                 Logger.add_to_log("info", f"Id Estado: {id_estado}")
                 Logger.add_to_log("info", "Municipiooo")
                 Logger.add_to_log("info", row.get('Municipio Dirección (catálogo)'))
                 id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').rstrip() if row.get('Municipio Dirección (catálogo)') else None) 
-               #id_municipio if id_municipio else None
+                #id_municipio if id_municipio else None
                 Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)'))
                 #Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)').rstrip())
                 Logger.add_to_log("info", f"Id Municipio: {id_municipio}")
@@ -179,6 +216,10 @@ class ExcelService:
                 id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
                 Logger.add_to_log("info", f"Id Estado Civil {id_estado_civil}")
                 
+                telefono    = row.get('Telefono')
+                telefono_2  = row.get('Telefono 2')
+                correo      = row.get('Correo')
+
                 # Grupo 3 - Apoyos
                 id_dependencia = dependencias_map.get(row.get('Dependencia'))
                 Logger.add_to_log("info", f"Id Dependencia {id_dependencia}")
@@ -197,25 +238,77 @@ class ExcelService:
                 # Carpeta Beneficiario
                 
                 fecha_plantilla= row.get('Fecha de Registro')
+                fecha_nacimiento = row.get('Fecha de Nacimiento')
                 
-                if isinstance(fecha_plantilla, str):
-                    # Plantilla del sistema
-                    fecha_str = fecha_plantilla
-                    fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
-                    Logger.add_to_log("warn", f"Fecha String: {fecha_str}")
-                else:
-                    # Plantilla Ruy
-                    fecha = fecha_plantilla
-                    Logger.add_to_log("warn",f"Fecha:{fecha}")
-                    
-                mes     = fecha.month 
-                anio    = fecha.year
-                Logger.add_to_log('warn', f"{mes} - {anio}")
-                id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
-                Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                Logger.add_to_log('info', f'Fecha de NN {fecha_nacimiento}')
+                Logger.add_to_log('info', f'Fecha de Plantilla {fecha_plantilla}')
+                
+
             
                 # Valicacciones
                 validacion_errores = {}
+                msg_error = ""
+                
+                if not fecha_plantilla:
+                    validacion_errores['Fecha de Registro'] = 'Celda vacía'
+                else:
+                    if isinstance(fecha_plantilla, str):
+                        # Plantilla del sistema
+                        fecha_str = fecha_plantilla
+                        fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
+                        Logger.add_to_log("warn", f"Fecha String: {fecha_str}")
+                    else:
+                        # Plantilla Ruy
+                        fecha = fecha_plantilla
+                        Logger.add_to_log("warn",f"Fecha:{fecha}")
+                        
+                    
+                        mes     = fecha.month 
+                        anio    = fecha.year
+                        Logger.add_to_log('warn', f"{mes} - {anio}")
+                        id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                        Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                
+                
+                if (len(curp or '') > 18 or len(curp or '') < 18 ) and curp != None:
+                    validacion_errores['Curp'] = row.get('Curp')
+                    msg_error = "Curp inválida. Debe tener 18 caracteres."
+
+                if not fecha_nacimiento :
+                    if not row["fecha_nac_vacia_original"]:
+                        validacion_errores['Fecha de Nacimiento'] = 'Error en formato'
+                
+                if not id_sexo :
+                    if not row["sexo_vacio_original"]:
+                        validacion_errores['Sexo'] = row.get('Sexo')
+                        
+                if calle == None or calle.strip() == "":
+                    validacion_errores['Calle'] = 'Celda vacía'
+                
+                if numero == None or numero.strip() == "":
+                    validacion_errores['Número'] = 'Celda vacía'
+                
+                if not id_estado_civil:
+                    if not row["estado_civil_vacio_original"]:
+                        validacion_errores['Estado Civil'] = row.get('Estado Civil')
+                        
+                if not id_estado:
+                    validacion_errores['Estado'] = row.get('Estado (catálogo)')
+                    
+                if not id_municipio:
+                    validacion_errores['Municipio'] = row.get('Municipio Dirección (catálogo)')
+                    
+                if not id_colonia:
+                    validacion_errores['Colonia'] = row.get('Colonia')
+                    
+                if not telefono:
+                    validacion_errores['Telefono'] = 'Celda vacía'
+                
+                if not telefono_2:
+                    validacion_errores['Telefono 2'] = 'Celda vacía'
+                
+                if not correo:
+                    validacion_errores['Correo'] = 'Celda vacía'
                 
                 if not id_dependencia:
                     validacion_errores['Dependecia'] = row.get('Dependencia')
@@ -231,30 +324,29 @@ class ExcelService:
                 
                 if validacion_errores:
                     stats['errores_validacion'] += 1
+                    for validador in validacion_errores:
                     
-                    error_detail = {
-                        'row_index': idx + 1,
-                        'curp': row.get('Curp'),
-                        'nombre_completo': f"{row.get('Nombre', '')} {('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
-                        'error': 'Faltan datos obligatorios',
-                        'campos_invalidos': validacion_errores,
-                        'data': row
-                    }
+                        error_detail = {
+                            'row_index': idx + 2,
+                            'curp': row.get('Curp'),
+                            'nombre_completo': f"{row.get('Nombre', '')} {('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
+                            'error': msg_error or 'Error de validación en campos obligatorios',
+                            'campos_invalidos': validador,
+                            'valor': validacion_errores[validador],
+                            'data': row
+                        }
+                        
+                        Logger.add_to_log("info","Errores fatales")
+                        rows_errors.append(error_detail)
                     
-                    rows_errors.append(error_detail)
-                    
-                    Logger.add_to_log('warn', f'Fila {idx+1} rechazada - Faltan: {', '.join(validacion_errores.keys()) }')
+                    Logger.add_to_log('warn', f'Fila {idx+2} rechazada - Faltan: {', '.join(validacion_errores.keys()) }')
                     Logger.add_to_log('warn', rows_errors)
                     continue
                 
-                curp = row.get('Curp') or None
-                rfc  = row.get('RFC') or None
                 
-                # Quitar los espacio
-                if curp:
-                    curp = curp.strip()
-                if rfc:
-                    rfc = rfc.strip()
+                    
+                
+
 
                 id_beneficiario = None
                 es_nuevo = False
@@ -269,7 +361,7 @@ class ExcelService:
                     id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
                     stats['duplicados_en_excel'] +=1
                     origen = 'cache_excel'
-                    Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL - CURP: {curp}, RFC:{rfc} -> Reutilizando ID: {id_beneficiario[:8]}....")
+                    Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL - CURP: {curp}, RFC:{rfc} -> Reutilizando ID: {id_beneficiario[:8]}....")
                 
                 # Busqueda por solo CURP en cache
                 elif curp and not id_beneficiario:
@@ -278,7 +370,7 @@ class ExcelService:
                             id_beneficiario = id_ben
                             stats['duplicados_en_excel'] += 1
                             origen = "cache_excel"
-                            Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL (por CURP) - {curp} -> Reutilizando ID: {id_beneficiario[:8]}....")
+                            Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL (por CURP) - {curp} -> Reutilizando ID: {id_beneficiario[:8]}....")
                             break
                             
                 # Busqueda por solo RFC en cache  
@@ -286,7 +378,7 @@ class ExcelService:
                     for(c,r), id_ben in cache_beneficiarios_excel.items():
                         stats['duplicados_en_excel'] += 1
                         origen = "cache_excel"
-                        Logger.add_to_log("info", f"Fila: {idx + 1}: DUPLICADO EN EXCEL (por RFC) - {rfc} -> Reutilizando ID: {id_beneficiario[:8]}...." )
+                        Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL (por RFC) - {rfc} -> Reutilizando ID: {id_beneficiario[:8]}...." )
                         break
                     
                 # Busqueda en Base de Datos
@@ -317,7 +409,7 @@ class ExcelService:
                     
                     if id_beneficiario and origen == 'db':
                         stats['beneficiarios_existentes_db'] += 1
-                        Logger.add_to_log("info", f"Fila {idx +1}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
+                        Logger.add_to_log("info", f"Fila {idx +2}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
                         
                 # Crea Nuevo beneficiario
                 if not id_beneficiario:
@@ -347,7 +439,7 @@ class ExcelService:
                     if curp or rfc:
                         cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
                     
-                    Logger.add_to_log("info", f"Fila {idx + 1}: Beneficiario NUEVO - CURP {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
+                    Logger.add_to_log("info", f"Fila {idx + 2}: Beneficiario NUEVO - CURP {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
                                            
                     
                 # Preparacion de contacto y apoyo
@@ -395,7 +487,7 @@ class ExcelService:
                 apoyo_data['idCarpetaBeneficiarios'] = id_carpeta_beneficiario
                 # Registro de relación completa
                 relacion = {
-                    'row_index': idx + 1,
+                    'row_index': idx + 2,
                     'id_beneficiario': id_beneficiario,
                     'id_contacto': id_contacto_temp,
                     'id_apoyo': id_apoyo_temp,
@@ -411,7 +503,7 @@ class ExcelService:
                 
                 relaciones.append(relacion)
                  
-                Logger.add_to_log("debug", f"Fila {idx +1} procesada correctamente")
+                Logger.add_to_log("debug", f"Fila {idx +2} procesada correctamente")
                 
                 # Fin de loop
             # Estadistica y reporte de duplicados
@@ -471,6 +563,17 @@ class ExcelService:
                 
                 if len(rows_errors) > 10:
                     Logger.add_to_log("error", f"  ... y {len(rows_errors) - 10} errores más")
+                
+                return jsonify({
+                    'success':False,
+                    'message':'No se encontraron registros validos para procesar',
+                     'data':{
+                        'total_filas':stats['total_filas'],
+                        'errores': stats['errores_validacion'],
+                        'errores_detalle': rows_errors
+                    },
+                    'error':'Sin datos válidos'
+                }),400
 
             Logger.add_to_log("info", "")
             Logger.add_to_log("info", "=" * 60)
@@ -499,7 +602,7 @@ class ExcelService:
                     Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    BeneficiariosService.bulk_insert(beneficiarios_to_insert)
+                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:  
                     Logger.add_to_log('error', "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
@@ -538,7 +641,7 @@ class ExcelService:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 contactos: {contactos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    ContactosService.bluk_insert(contactos_to_insert)
+                    # ContactosService.bulk_insert(contactos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
 
                 except Exception as e:
@@ -566,7 +669,7 @@ class ExcelService:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} contactos nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 apoyos: {apoyos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    ApoyosService.bulk_insert(apoyos_to_insert)
+                    # ApoyosService.bulk_insert(apoyos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
 
                 except Exception as e:
@@ -603,8 +706,7 @@ class ExcelService:
                 'message': str(ex),
                 'traceback': traceback.format_exc()
             }
-        }), 500
-        
+        }), 500 
        
     @staticmethod
     def generate_template(catalogos):
