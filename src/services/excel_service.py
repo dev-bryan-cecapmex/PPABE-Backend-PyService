@@ -63,7 +63,7 @@ class ExcelService:
             data = data.with_columns([
                     pl.col("Estado Civil").is_null().alias("estado_civil_vacio_original"),
                     pl.col("Sexo").is_null().alias("sexo_vacio_original"),
-                    
+                   
                 ])
                         
             # También eliminar filas que estén vacías o solo tengan espacios
@@ -152,6 +152,8 @@ class ExcelService:
             Logger.add_to_log("info", f"  ✓ Dependencias: {len(dependencias_map)} registros")
             programas_map = SearchService.get_programas_map()
             Logger.add_to_log("info", f"  ✓ Programas: {len(programas_map)} registros")
+            subprograma_map = SearchService.get_subprogramas_map()
+            Logger.add_to_log("info", f"  ✓ Subprogramas: {len(subprograma_map)} registros")
             componentes_map = SearchService.get_componentes_map()
             Logger.add_to_log("info", f"  ✓ Componentes: {len(componentes_map)} registros")
             acciones_map = SearchService.get_acciones_map()
@@ -219,14 +221,19 @@ class ExcelService:
                 telefono    = row.get('Telefono')
                 telefono_2  = row.get('Telefono 2')
                 correo      = row.get('Correo')
+                monto       = row.get('Monto')
 
                 # Grupo 3 - Apoyos
                 id_dependencia = dependencias_map.get(row.get('Dependencia'))
                 Logger.add_to_log("info", f"Id Dependencia {id_dependencia}")
+                
                 id_programa = programas_map.get((row.get('Programa'), id_dependencia)) if id_dependencia else None
                 Logger.add_to_log("info", f"Id Programa {id_programa}")
                 
-                id_componente = componentes_map.get((row.get('Componente'), id_programa)) if id_programa else None
+                id_subprograma = subprograma_map.get((row.get('Subprograma'), id_programa) if id_programa else None)
+                Logger.add_to_log("info", f"Id Subprograma {id_subprograma}")
+                
+                id_componente = componentes_map.get((row.get('Componente'), id_subprograma)) if id_subprograma else None
                 Logger.add_to_log("info", f"Id Componente {id_componente}")
                 
                 id_acciones = acciones_map.get(row.get('Accion'))
@@ -249,6 +256,8 @@ class ExcelService:
                 validacion_errores = {}
                 msg_error = ""
                 
+                fecha = None
+                
                 if not fecha_plantilla:
                     validacion_errores['Fecha de Registro'] = 'Celda vacía'
                 else:
@@ -261,13 +270,20 @@ class ExcelService:
                         # Plantilla Ruy
                         fecha = fecha_plantilla
                         Logger.add_to_log("warn",f"Fecha:{fecha}")
-                        
+                
+                
+                if fecha:
+                    mes = fecha.month
+                    anio = fecha.year
+                    Logger.add_to_log('warn', f"{mes} - {anio}")
+                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                    Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                else:
+                    Logger.add_to_log("warn", "No se pudo determinar la fecha (celda vacía o formato inválido)")
+                    validacion_errores['Fecha de Registro'] = 'Error en formato'
                     
-                        mes     = fecha.month 
-                        anio    = fecha.year
-                        Logger.add_to_log('warn', f"{mes} - {anio}")
-                        id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
-                        Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                if not id_carpeta_beneficiario:
+                    validacion_errores['Carpeta de Beneficiarios'] = f"No existe carpeta para {mes}/{anio}"
                 
                 
                 if (len(curp or '') > 18 or len(curp or '') < 18 ) and curp != None:
@@ -310,11 +326,20 @@ class ExcelService:
                 if not correo:
                     validacion_errores['Correo'] = 'Celda vacía'
                 
+                if not monto:
+                    validacion_errores['Monto'] = 'Celda vacía'
+                
+                if not id_tipo_beneficiario:
+                    validacion_errores['Tipo de Beneficio'] = row.get('Tipo de Beneficio')
+                
                 if not id_dependencia:
                     validacion_errores['Dependecia'] = row.get('Dependencia')
                
                 if not id_programa:
                     validacion_errores['Programa'] = row.get('Programa')    
+                    
+                if not id_subprograma:
+                     validacion_errores['Subprograma'] = row.get('Subprograma')   
 
                 if not id_componente:
                     validacion_errores['Componente'] = row.get('Componente')
@@ -480,6 +505,7 @@ class ExcelService:
                 # Agregar IDs de catálogos
                 apoyo_data['idDependencia']     = id_dependencia
                 apoyo_data['idPrograma']        = id_programa
+                apoyo_data['idSubprograma']     = id_subprograma
                 apoyo_data['idComponente']      = id_componente
                 apoyo_data['idAccion']          = id_acciones
                 apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
