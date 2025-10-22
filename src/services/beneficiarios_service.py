@@ -6,7 +6,7 @@ from ..utils.Logger import Logger
 
 class BeneficiariosService:
     @staticmethod
-    def add_beneficiario(id_beneficiario, data):
+    def add_beneficiario(id_beneficiario, id_user, data):
         new_beneficiario = Beneficiarios(
             id              = id_beneficiario,
             CURP            = data.get("Curp"),
@@ -15,6 +15,8 @@ class BeneficiariosService:
             aPaterno        = data.get("Apellido paterno"),
             aMaterno        = data.get("Apellido Materno"),
             fNacimiento	    = data.get("Fecha de Nacimiento"),
+            creador         = id_user,
+            modificador     = id_user,
             deleted = 0
         )
         

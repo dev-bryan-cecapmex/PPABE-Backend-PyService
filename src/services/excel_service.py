@@ -35,11 +35,13 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 class ExcelService:  
     
     @staticmethod
-    def process_file(file):
+    def process_file(file, id_user):
         try:
             Logger.add_to_log("info", "="*30)
             Logger.add_to_log("info", f"INICIO DE CARGA MASIVA")
             Logger.add_to_log("info", "="*30)
+            
+            Logger.add_to_log("info", id_user)
             
             #data = pl.read_excel(io.BytesIO(file.read()))
             #Logger.add_to_log("info", data)
@@ -245,7 +247,12 @@ class ExcelService:
                 # Carpeta Beneficiario
                 
                 fecha_plantilla= row.get('Fecha de Registro')
-                fecha_nacimiento = row.get('Fecha de Nacimiento')
+                row['Fecha de Nacimiento'] = datetime.strptime(
+                row['Fecha de Nacimiento'], 
+                    '%d/%m/%Y'
+                ).strftime('%Y-%m-%d')
+                
+                fecha_nacimiento = row['Fecha de Nacimiento'] 
                 
                 Logger.add_to_log('info', f'Fecha de NN {fecha_nacimiento}')
                 Logger.add_to_log('info', f'Fecha de Plantilla {fecha_plantilla}')
@@ -446,7 +453,9 @@ class ExcelService:
                     
                     # Objeto con beneficiario con mapeo correcto
                     nuevo_beneficiario = {
-                        'id': id_beneficiario
+                        'id': id_beneficiario,
+                        'creador': id_user,
+                        'modificador': id_user,
                     }
                     
                     # Mapeo columnas del Excel a columnas de BD
@@ -475,7 +484,9 @@ class ExcelService:
                 
                 # Construccion de objeto de CONTACTO
                 contacto_data = {
-                    'id': id_contacto_temp
+                    'id': id_contacto_temp,
+                    'creador': id_user,
+                    'modificador': id_user,
                 }
                 
                 for excel_col in Config.GROUP_TWO_KEYS:
@@ -494,7 +505,9 @@ class ExcelService:
                 apoyo_data = {
                     'id': id_apoyo_temp,
                     'idBeneficiario': id_beneficiario,
-                    'idContacto': id_contacto_temp
+                    'idContacto': id_contacto_temp,
+                    'creador': id_user,
+                    'modificador': id_user,
                 }
                 
                 # Mapear columnas del Excel a columnas de DB
@@ -628,7 +641,7 @@ class ExcelService:
                     Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert)
+                    BeneficiariosService.bulk_insert(beneficiarios_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:  
                     Logger.add_to_log('error', "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
@@ -667,7 +680,7 @@ class ExcelService:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 contactos: {contactos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    # ContactosService.bulk_insert(contactos_to_insert)
+                    ContactosService.bulk_insert(contactos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
 
                 except Exception as e:
@@ -695,7 +708,7 @@ class ExcelService:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} contactos nuevos ...")
                     Logger.add_to_log('debug', f"Primeros 3 apoyos: {apoyos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    # ApoyosService.bulk_insert(apoyos_to_insert)
+                    ApoyosService.bulk_insert(apoyos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
 
                 except Exception as e:

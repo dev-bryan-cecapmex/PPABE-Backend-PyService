@@ -44,8 +44,9 @@ def uploader_file():
     #file = request.files['file']
    
     try:
-       
-        respuesta = ExcelService.process_file(request.files['file'])
+        
+        id_usuario = request.form.get('data')
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario)
         if respuesta:
             return respuesta
 
