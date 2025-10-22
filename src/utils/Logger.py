@@ -4,9 +4,13 @@ import traceback
 
 class Logger:
     
-    def __set_logger(self):
-        log_directory = 'src/utils/log'
+    @staticmethod
+    def __set_logger():
+        log_directory = os.path.join('src', 'utils', 'log')
         log_filename = 'app.log'
+
+        # Crear carpeta si no existe
+        os.makedirs(log_directory, exist_ok=True)
 
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.DEBUG)
@@ -15,10 +19,14 @@ class Logger:
         file_handler = logging.FileHandler(log_path, encoding='utf-8')
         file_handler.setLevel(logging.DEBUG)
 
-        formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s', "%Y-%m-%d %H:%M:%S")
+        formatter = logging.Formatter(
+            '%(asctime)s | %(levelname)s | %(message)s',
+            "%Y-%m-%d %H:%M:%S"
+        )
         file_handler.setFormatter(formatter)
 
-        if (logger.hasHandlers()):
+        # Evitar duplicar handlers
+        if logger.hasHandlers():
             logger.handlers.clear()
 
         logger.addHandler(file_handler)
@@ -28,18 +36,22 @@ class Logger:
     @classmethod
     def add_to_log(cls, level, message):
         try:
-            logger = cls.__set_logger(cls)
+            logger = cls.__set_logger()
 
-            if (level == "critical"):
-                logger.critical(message)
-            elif (level == "debug"):
-                logger.debug(message)
-            elif (level == "error"):
-                logger.error(message)
-            elif (level == "info"):
-                logger.info(message)
-            elif (level == "warn"):
-                logger.warn(message)
+            match level.lower():
+                case "critical":
+                    logger.critical(message)
+                case "debug":
+                    logger.debug(message)
+                case "error":
+                    logger.error(message)
+                case "info":
+                    logger.info(message)
+                case "warn" | "warning":
+                    logger.warning(message)
+                case _:
+                    logger.info(f"UNKNOWN LEVEL: {level} | {message}")
+
         except Exception as ex:
             print(traceback.format_exc())
             print(ex)

@@ -44,8 +44,9 @@ def uploader_file():
     #file = request.files['file']
    
     try:
-       
-        respuesta = ExcelService.process_file(request.files['file'])
+        
+        id_usuario = request.form.get('data')
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario)
         if respuesta:
             return respuesta
 
@@ -60,6 +61,54 @@ def uploader_file():
             Logger.add_to_log("error", traceback.format_exc())
         
             return jsonify({'message': "ERROR", 'success': False}),500
+
+@private_bp.route("/datos", methods=["POST"])
+def get_catalogos():
+    try:
+        body = request.get_json()
+
+        id_dependencia = body.get("idDependencia")
+        anio = body.get("anio")
+
+        if not id_dependencia or not anio:
+            return jsonify({
+                "success": False,
+                "message": "idDependencia y anio son requeridos",
+                "data": {},
+                "error": None
+            }), 400
+
+        response = {
+            "estados": [{"id": e.id, "nombre": e.nombre} for e in CatalogosService.get_estados()],
+            "municipios": [{"id": m.id, "nombre": m.nombre} for m in CatalogosService.get_municipios()],
+            "estados_civiles": [{"id": ec.id, "nombre": ec.nombre} for ec in CatalogosService.get_estados_civiles()],
+            "sexos": [{"id": s.id, "nombre": s.nombre} for s in CatalogosService.get_sexos()],
+            "dependencia": (
+                {"id": d.id, "nombre": d.nombre}
+                if (d := CatalogosService.get_dependencia(id_dependencia)) else None
+            ),
+
+            "programas": [{"id": p.id, "nombre": p.nombre} for p in CatalogosService.get_programas(id_dependencia, anio)],
+            "componentes": [{"id": c.id, "nombre": c.nombre} for c in CatalogosService.get_componentes(id_dependencia, anio)],
+            "acciones": [{"id": a.id, "nombre": a.nombre} for a in CatalogosService.get_acciones()],
+            "tipos_beneficios": [{"id": tb.id, "nombre": tb.nombre} for tb in CatalogosService.get_tipos_beneficios()],
+            "colonias": [{"id": c.id, "nombre": c.nombre} for c in CatalogosService.get_colonias()]
+        }
+
+        return jsonify({
+            "success": True,
+            "message": "Catálogos obtenidos correctamente",
+            "data": response,
+            "error": None
+        }), 200
+
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al obtener catálogos",
+            "data": {},
+            "error": str(ex)
+        }), 500
 
 @private_bp.route("/download_template", methods=["POST"])
 def getTemplate():
