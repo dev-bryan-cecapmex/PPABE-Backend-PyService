@@ -8,6 +8,7 @@ class Apoyos(db.Model):
     idContacto                  = db.Column(db.String(36))
     idDependencia               = db.Column(db.String(36))
     idPrograma                  = db.Column(db.String(36))
+    idSubprograma               = db.Column(db.String(36))
     idComponente                = db.Column(db.String(36))
     idAccion                    = db.Column(db.String(36))
     idTipoBeneficio             = db.Column(db.String(36))

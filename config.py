@@ -1,5 +1,6 @@
 
 import os 
+import polars as pl 
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -43,3 +44,34 @@ class Config:
     
      # Lista de orígenes permitidos (convertimos el texto en lista)
     IP_SERVER_FRONT = os.getenv("IP_SERVER_FRONT", "").split(",") if os.getenv("IP_SERVER_FRONT") else []
+    CELLS_DATA_TYPES = {
+        "Curp" : pl.Utf8,
+        "Nombre" : pl.Utf8,
+        "Apellido paterno" :pl.Utf8,
+        "Apellido Materno" :pl.Utf8,
+        "Fecha de Nacimiento":pl.Utf8,
+        "Estado (catálogo)" :pl.Utf8,
+        "Estado Civil" :pl.Utf8,
+        "Sexo":pl.Utf8,
+        "Calle":pl.Utf8,
+        "Numero" :pl.Utf8,
+        "Colonia":pl.Utf8,
+        "Municipio Dirección (catálogo)":pl.Utf8,
+        "Telefono" :pl.Utf8,
+        "Telefono 2" :pl.Utf8,
+        "Correo":pl.Utf8,
+        "Programa":pl.Utf8,
+        "Componente":pl.Utf8,
+        "Accion":pl.Utf8,
+        "Fecha de Registro":pl.Date,
+        "Monto":pl.Utf8,
+        "Tipo de Beneficio":pl.Utf8,
+        "RFC":pl.Utf8,
+        "Regimen Capital":pl.Utf8,
+        "Actividad":pl.Utf8,
+        "Nombre Comercial":pl.Utf8,
+        "Razón Social":pl.Utf8,
+        "Localidad":pl.Utf8,
+        "Dependencia":pl.Utf8,
+        "Subprograma":pl.Utf8,
+    }

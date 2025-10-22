@@ -6,7 +6,7 @@ from ..utils.Logger import Logger
 
 class ContactosService:
     @staticmethod
-    def bluk_insert(rows):
+    def bulk_insert(rows):
         try:
             db.session.bulk_insert_mappings(Contacto, rows)
             db.session.commit()

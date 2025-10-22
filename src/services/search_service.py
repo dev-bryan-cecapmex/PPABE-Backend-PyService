@@ -1,6 +1,7 @@
 # Importar los modelos para buscar su informacion
 from ..models.dependencias  import Dependencias
 from ..models.programas     import Programas
+from ..models.subprogramas  import Subprogramas
 from ..models.componentes   import Componentes
 
 from ..models.sexos                     import Sexos
@@ -92,16 +93,26 @@ class SearchService:
         )
         #return {(nombre, id_prog): id_dep for nombre, id_prog, id_dep in programas}
         return {(nombre, id_dep): id_prog for nombre, id_prog, id_dep in programas}
-   
+    
+    @staticmethod
+    def get_subprogramas_map():
+        subprogramas = (
+            Subprogramas.query
+            .with_entities(Subprogramas.nombre, Subprogramas.id, Subprogramas.idPrograma)
+            .filter(Subprogramas.deleted == 0)
+            .all()
+        )
+        return {(nombre, id_prog): id_sub for nombre, id_sub, id_prog in subprogramas}
+
     @staticmethod
     def get_componentes_map():
         componentes = (
             Componentes.query
-            .with_entities(Componentes.nombre, Componentes.id,  Componentes.idPrograma)
+            .with_entities(Componentes.nombre, Componentes.id,  Componentes.idSubPrograma)
             .filter(Componentes.deleted == 0)
             .all()
         )
-        return {(nombre, id_prog ) : id_com for nombre, id_com, id_prog in componentes}
+        return {(nombre, id_sub ) : id_com for nombre, id_com, id_sub in componentes}
     
     @staticmethod
     def get_beneficiarios_map():

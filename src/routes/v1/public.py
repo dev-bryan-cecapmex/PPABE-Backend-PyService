@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from ...services.anio_service import AnioService
+from ...services.search_service import SearchService
 
 import traceback
 
@@ -12,13 +13,13 @@ public_bp = Blueprint('public', __name__)
 @public_bp.route("/anios", methods=["GET"])
 def get_anios():
     try:
-        anios = AnioService.get_all()
+        componentes = SearchService.get_componentes_map()
         
-        Logger.add_to_log("info", anios)
+        Logger.add_to_log("info", componentes)
         
         return jsonify({
             "success": True,
-            "data": anios
+            "data": "subprogramas"
         })
     except Exception as ex:
             Logger.add_to_log("error", str(ex))

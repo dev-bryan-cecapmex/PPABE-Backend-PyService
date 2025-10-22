@@ -5,7 +5,7 @@ class Componentes(db.Model):
     
     id              = db.Column(db.Integer, primary_key = True)
     nombre          = db.Column(db.String(255))
-    idPrograma      = db.Column(db.String(36))
+    idSubPrograma   = db.Column(db.String(36))
     creador	        = db.Column(db.String(36))
     modificador	    = db.Column(db.String(36))
     fCreacion	    = db.Column(db.Date)

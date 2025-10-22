@@ -44,8 +44,9 @@ def uploader_file():
     #file = request.files['file']
    
     try:
-       
-        respuesta = ExcelService.process_file(request.files['file'])
+        
+        id_usuario = request.form.get('data')
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario)
         if respuesta:
             return respuesta
 
@@ -113,7 +114,6 @@ def get_catalogos():
 def getTemplate():
     try:
         body = request.get_json()
-
         id_dependencia = body.get("idDependencia")
         anio = body.get("anio")
 
@@ -125,7 +125,7 @@ def getTemplate():
                 "error": None
             }), 400
 
-        # Obtener catálogos desde el servicio
+        # 🧩 Obtener catálogos desde el servicio con la nueva jerarquía
         catalogos = {
             "Estado": [{"id": e.id, "nombre": e.nombre} for e in CatalogosService.get_estados()],
             "Municipio": [{"id": m.id, "nombre": m.nombre} for m in CatalogosService.get_municipios()],
@@ -134,17 +134,21 @@ def getTemplate():
             "Dependencia": (
                 [{"id": d.id, "nombre": d.nombre}] if (d := CatalogosService.get_dependencia(id_dependencia)) else []
             ),
+
+            # 🔽 Nueva jerarquía
             "Programa": [{"id": p.id, "nombre": p.nombre} for p in CatalogosService.get_programas(id_dependencia, anio)],
+            "Subprograma": [{"id": sp.id, "nombre": sp.nombre} for sp in CatalogosService.get_subprogramas(id_dependencia, anio)],
             "Componente": [{"id": c.id, "nombre": c.nombre} for c in CatalogosService.get_componentes(id_dependencia, anio)],
+
             "Accion": [{"id": a.id, "nombre": a.nombre} for a in CatalogosService.get_acciones()],
             "TipoBeneficio": [{"id": tb.id, "nombre": tb.nombre} for tb in CatalogosService.get_tipos_beneficios()],
             "Colonia": [{"id": c.id, "nombre": c.nombre} for c in CatalogosService.get_colonias()]
         }
 
-        # Generar Excel
+        # 🧾 Generar Excel con los catálogos listados
         wb = ExcelService.generate_template(catalogos)
 
-        # Guardar en memoria y devolver como descarga
+        # 🪣 Guardar en memoria y devolver como descarga
         output = BytesIO()
         wb.save(output)
         output.seek(0)
