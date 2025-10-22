@@ -5,6 +5,7 @@ from ..models.estados_civiles import EstadosCiviles
 from ..models.sexos import Sexos
 from ..models.dependencias import Dependencias
 from ..models.programas import Programas
+from ..models.subprogramas import Subprogramas   # 👈 nuevo import
 from ..models.componentes import Componentes
 from ..models.acciones import Acciones
 from ..models.tipos_beneficios import TiposBeneficiarios
@@ -50,17 +51,39 @@ class CatalogosService:
             .all()
         )
 
+    # 🆕 NUEVO: Subprogramas entre Programa y Componente
+    @staticmethod
+    def get_subprogramas(id_dependencia, anio):
+        return (
+            db.session.query(Subprogramas.id, Subprogramas.nombre)
+            .join(Programas, Subprogramas.idPrograma == Programas.id)
+            .join(
+                DependenciaProgramaAnio,
+                Programas.idDependencia == DependenciaProgramaAnio.idDependencia
+            )
+            .filter(
+                DependenciaProgramaAnio.idDependencia == id_dependencia,
+                DependenciaProgramaAnio.anio == anio,
+                Subprogramas.deleted == False
+            )
+            .all()
+        )
+
+    # 🔧 Modificado: ahora se filtra por idSubPrograma
     @staticmethod
     def get_componentes(id_dependencia, anio):
         return (
             db.session.query(Componentes.id, Componentes.nombre)
+            .join(Subprogramas, Componentes.idSubPrograma == Subprogramas.id)
+            .join(Programas, Subprogramas.idPrograma == Programas.id)
             .join(
                 DependenciaProgramaAnio,
-                Componentes.idPrograma == DependenciaProgramaAnio.idPrograma
+                Programas.idDependencia == DependenciaProgramaAnio.idDependencia
             )
             .filter(
                 DependenciaProgramaAnio.idDependencia == id_dependencia,
-                DependenciaProgramaAnio.anio == anio
+                DependenciaProgramaAnio.anio == anio,
+                Componentes.deleted == False
             )
             .all()
         )
