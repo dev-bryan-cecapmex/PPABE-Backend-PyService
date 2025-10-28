@@ -339,7 +339,6 @@ class ExcelService:
                             'data': row
                         }
                         
-                        Logger.add_to_log("info","Errores fatales")
                         rows_errors.append(error_detail)
                     
                    
