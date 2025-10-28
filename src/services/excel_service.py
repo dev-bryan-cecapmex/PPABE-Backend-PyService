@@ -254,7 +254,8 @@ class ExcelService:
                     mes = fecha.month
                     anio = fecha.year
                    
-                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia))
+
                     
                 else:
                     validacion_errores['Fecha de Registro'] = 'Error en formato'
