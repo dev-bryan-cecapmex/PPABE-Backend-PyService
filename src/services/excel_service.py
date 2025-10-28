@@ -175,13 +175,13 @@ class ExcelService:
         
             
                 # Grupo 1 - Beneficiarios
-                id_sexo = sexos_map.get(row.get('Sexo'))
+                id_sexo = sexos_map.get(row.get('Sexo')).strip()
                
                 
                 # Grupo 2 - Contacto
-                calle       = row.get('Calle')
-                numero      = row.get('Numero')
-                id_estado = estados_map.get(row.get('Estado (catálogo)'))
+                calle       = row.get('Calle').strip()
+                numero      = row.get('Numero').strip()
+                id_estado = estados_map.get(row.get('Estado (catálogo)')).strip()
              
                 id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').rstrip() if row.get('Municipio Dirección (catálogo)') else None) 
                 #id_municipio if id_municipio else None
@@ -190,31 +190,31 @@ class ExcelService:
                
                 id_colonia = colonias_map.get(row.get('Colonia').rstrip() if row.get('Colonia') else None)
                 
-                id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
+                id_estado_civil = estados_civiles_map.get(row.get('Estado Civil')).strip()
     
                 
-                telefono    = row.get('Telefono')
-                telefono_2  = row.get('Telefono 2')
-                correo      = row.get('Correo')
-                monto       = row.get('Monto')
+                telefono    = row.get('Telefono').strip()
+                telefono_2  = row.get('Telefono 2').strip()
+                correo      = row.get('Correo').strip()
+                monto       = row.get('Monto').strip()
 
                 # Grupo 3 - Apoyos
-                id_dependencia = dependencias_map.get(row.get('Dependencia'))
+                id_dependencia = dependencias_map.get(row.get('Dependencia')).strip()
                
                 
-                id_programa = programas_map.get((row.get('Programa'), id_dependencia)) if id_dependencia else None
+                id_programa = programas_map.get((row.get('Programa'), id_dependencia)).strip() if id_dependencia else None
                 
                 
-                id_subprograma = subprograma_map.get((row.get('Subprograma'), id_programa) if id_programa else None)
+                id_subprograma = subprograma_map.get((row.get('Subprograma'), id_programa).strip() if id_programa else None)
                
                 
-                id_componente = componentes_map.get((row.get('Componente'), id_subprograma)) if id_subprograma else None
+                id_componente = componentes_map.get((row.get('Componente'), id_subprograma)).strip() if id_subprograma else None
                 
                 
-                id_acciones = acciones_map.get(row.get('Accion'))
+                id_acciones = acciones_map.get(row.get('Accion')).strip()
                 
                 
-                id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio'))
+                id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio')).strip()
                 
                 
                 # Carpeta Beneficiario
