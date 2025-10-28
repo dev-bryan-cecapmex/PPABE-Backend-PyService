@@ -41,7 +41,7 @@ class ExcelService:
             Logger.add_to_log("info", f"INICIO DE CARGA MASIVA")
             Logger.add_to_log("info", "="*30)
             
-            Logger.add_to_log("info", id_user)
+            Logger.add_to_log("info", f"Id User: {id_user}")
             
             #data = pl.read_excel(io.BytesIO(file.read()))
             #Logger.add_to_log("info", data)
@@ -113,66 +113,44 @@ class ExcelService:
             
             # GRUPO 1: Columna de Beneficiarios
             group_one_df = data.select(Config.GROUP_ONE_KEYS).to_dict()
-            Logger.add_to_log("info", f"  - Grupo 1 (Beneficiarios): {len(Config.GROUP_ONE_KEYS)} columnas")
+           
            
             # GRUPO 2: Columnas de Contacto
             group_two_df = data.select(Config.GROUP_TWO_KEYS).to_dict()
-            Logger.add_to_log("info", f"  - Grupo 2 (Contacto): {len(Config.GROUP_TWO_KEYS)} columnas")
+           
            
             # GRUPO 3: Columnas de Apoyos
             group_tree_df = data.select(Config.GROUP_TREE_KEYS).to_dict()
-            Logger.add_to_log("info", f"  - Grupo 3 (Apoyos): {len(Config.GROUP_TREE_KEYS)} columnas")
+            
             
             # FIN de agrupamiento
             
             # MAPEO por Grupos
             # Grupo 1 - Beneficiarios
-            Logger.add_to_log("info", "=" * 60)
-            Logger.add_to_log("info", f"GRUPO 1")
-            Logger.add_to_log("info", "=" * 60)
             sexos_map = SearchService.get_sexo_map()
-            Logger.add_to_log("info", f"  ✓ Sexos: {len(sexos_map)} registros")
+          
             
             # Grupo 2 - Contactos
-            Logger.add_to_log("info", "=" * 60)
-            Logger.add_to_log("info", f"GRUPO 2")
-            Logger.add_to_log("info", "=" * 60)
             estados_map = SearchService.get_estado_map()
-            Logger.add_to_log("info", f"  ✓ Estados: {len(estados_map)} registros")
             municipios_map = SearchService.get_municipio_map()
-            Logger.add_to_log("info", f"  ✓ Municipios: {len(municipios_map)} registros")
             colonias_map = SearchService.get_colonia_map()
-            Logger.add_to_log("info", f"  ✓ Colonias: {len(colonias_map)} registros")
             estados_civiles_map = SearchService.get_estado_civil_map()
-            Logger.add_to_log("info", f"  ✓ Estados Civiles: {len(estados_civiles_map)} registros")
         
             # Grupo 3 - Apoyos
-            Logger.add_to_log("info", "=" * 60)
-            Logger.add_to_log("info", f"GRUPO 3")
-            Logger.add_to_log("info", "=" * 60)
             dependencias_map = SearchService.get_dependencias_map()
-            Logger.add_to_log("info", f"  ✓ Dependencias: {len(dependencias_map)} registros")
             programas_map = SearchService.get_programas_map()
-            Logger.add_to_log("info", f"  ✓ Programas: {len(programas_map)} registros")
             subprograma_map = SearchService.get_subprogramas_map()
-            Logger.add_to_log("info", f"  ✓ Subprogramas: {len(subprograma_map)} registros")
             componentes_map = SearchService.get_componentes_map()
-            Logger.add_to_log("info", f"  ✓ Componentes: {len(componentes_map)} registros")
             acciones_map = SearchService.get_acciones_map()
-            Logger.add_to_log("info", f"  ✓ Acciones: {len(acciones_map)} registros")
             tipos_beneficiarios_map = SearchService.get_tipos_beneficiarios_map()
-            Logger.add_to_log("info", f"  ✓ Tipos de Beneficiarios: {len(tipos_beneficiarios_map)} registros")
             
             # Mapa de beneficiarios existentes en BD (para detectar duplicados con BD)
             beneficiario_map = SearchService.get_beneficiarios_map()
             Logger.add_to_log("info", f"  ✓ Beneficiarios existentes en BD: {len(beneficiario_map)} registros")
-            Logger.add_to_log("info", f"  ✓ Beneficiarios: {beneficiario_map}")
         
             # Carpeta de Beneficiarios 
             carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
             Logger.add_to_log("info", f"  ✓ Carpetas Beneficiarios: {len(carpetas_beneficiarios_map)} registros")
-            Logger.add_to_log("info", carpetas_beneficiarios_map)
-            
             Logger.add_to_log("info", "✓ Todos los catálogos cargados exitosamente")
             
             # Diccionario de Estadistica
@@ -193,32 +171,26 @@ class ExcelService:
                     curp = curp.strip()
                 if rfc:
                     rfc = rfc.strip()
-                    
-                    
-                Logger.add_to_log("debug", f"--- Procesando fila {idx + 2}/{len(rows)} ---")
-                Logger.add_to_log("info", idx + 2)
-                Logger.add_to_log("info", row)
+        
             
                 # Grupo 1 - Beneficiarios
                 id_sexo = sexos_map.get(row.get('Sexo'))
-                Logger.add_to_log("info", f"Id Sexo: {id_sexo}")
+               
                 
                 # Grupo 2 - Contacto
                 calle       = row.get('Calle')
                 numero      = row.get('Numero')
                 id_estado = estados_map.get(row.get('Estado (catálogo)'))
-                Logger.add_to_log("info", f"Id Estado: {id_estado}")
-                Logger.add_to_log("info", "Municipiooo")
-                Logger.add_to_log("info", row.get('Municipio Dirección (catálogo)'))
+             
                 id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').rstrip() if row.get('Municipio Dirección (catálogo)') else None) 
                 #id_municipio if id_municipio else None
-                Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)'))
+               
                 #Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)').rstrip())
-                Logger.add_to_log("info", f"Id Municipio: {id_municipio}")
+               
                 id_colonia = colonias_map.get(row.get('Colonia').rstrip() if row.get('Colonia') else None)
-                Logger.add_to_log("info", f"Id Colonia: {id_colonia}")
+                
                 id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
-                Logger.add_to_log("info", f"Id Estado Civil {id_estado_civil}")
+    
                 
                 telefono    = row.get('Telefono')
                 telefono_2  = row.get('Telefono 2')
@@ -227,22 +199,22 @@ class ExcelService:
 
                 # Grupo 3 - Apoyos
                 id_dependencia = dependencias_map.get(row.get('Dependencia'))
-                Logger.add_to_log("info", f"Id Dependencia {id_dependencia}")
+               
                 
                 id_programa = programas_map.get((row.get('Programa'), id_dependencia)) if id_dependencia else None
-                Logger.add_to_log("info", f"Id Programa {id_programa}")
+                
                 
                 id_subprograma = subprograma_map.get((row.get('Subprograma'), id_programa) if id_programa else None)
-                Logger.add_to_log("info", f"Id Subprograma {id_subprograma}")
+               
                 
                 id_componente = componentes_map.get((row.get('Componente'), id_subprograma)) if id_subprograma else None
-                Logger.add_to_log("info", f"Id Componente {id_componente}")
+                
                 
                 id_acciones = acciones_map.get(row.get('Accion'))
-                Logger.add_to_log("info", f"Id Acciones: {id_acciones}")
+                
                 
                 id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio'))
-                Logger.add_to_log("info", f"Id Tipo Beneficiario { id_tipo_beneficiario }")
+                
                 
                 # Carpeta Beneficiario
                 
@@ -253,11 +225,7 @@ class ExcelService:
                 ).strftime('%Y-%m-%d')
                 
                 fecha_nacimiento = row['Fecha de Nacimiento'] 
-                
-                Logger.add_to_log('info', f'Fecha de NN {fecha_nacimiento}')
-                Logger.add_to_log('info', f'Fecha de Plantilla {fecha_plantilla}')
-                
-
+            
             
                 # Valicacciones
                 validacion_errores = {}
@@ -272,21 +240,20 @@ class ExcelService:
                         # Plantilla del sistema
                         fecha_str = fecha_plantilla
                         fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
-                        Logger.add_to_log("warn", f"Fecha String: {fecha_str}")
+                        
                     else:
                         # Plantilla Ruy
                         fecha = fecha_plantilla
-                        Logger.add_to_log("warn",f"Fecha:{fecha}")
+                       
                 
                 
                 if fecha:
                     mes = fecha.month
                     anio = fecha.year
-                    Logger.add_to_log('warn', f"{mes} - {anio}")
+                   
                     id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
-                    Logger.add_to_log('warn', f"{mes} - {anio} id: {id_carpeta_beneficiario}")
+                    
                 else:
-                    Logger.add_to_log("warn", "No se pudo determinar la fecha (celda vacía o formato inválido)")
                     validacion_errores['Fecha de Registro'] = 'Error en formato'
                     
                 if not id_carpeta_beneficiario:
@@ -371,8 +338,7 @@ class ExcelService:
                         Logger.add_to_log("info","Errores fatales")
                         rows_errors.append(error_detail)
                     
-                    Logger.add_to_log('warn', f'Fila {idx+2} rechazada - Faltan: {', '.join(validacion_errores.keys()) }')
-                    Logger.add_to_log('warn', rows_errors)
+                   
                     continue
                 
                 
@@ -387,14 +353,12 @@ class ExcelService:
                 # Buscar en CHACHE LOCAL del Excel
                 if curp or rfc:
                     key_beneficiario = (curp, rfc)
-                    Logger.add_to_log('info', f"Beneficiarios {key_beneficiario}")
                     
                 if key_beneficiario in cache_beneficiarios_excel:
                     id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
                     stats['duplicados_en_excel'] +=1
                     origen = 'cache_excel'
-                    Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL - CURP: {curp}, RFC:{rfc} -> Reutilizando ID: {id_beneficiario[:8]}....")
-                
+                   
                 # Busqueda por solo CURP en cache
                 elif curp and not id_beneficiario:
                     for(c,r), id_ben in cache_beneficiarios_excel.items():
@@ -402,7 +366,7 @@ class ExcelService:
                             id_beneficiario = id_ben
                             stats['duplicados_en_excel'] += 1
                             origen = "cache_excel"
-                            Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL (por CURP) - {curp} -> Reutilizando ID: {id_beneficiario[:8]}....")
+                           
                             break
                             
                 # Busqueda por solo RFC en cache  
@@ -410,7 +374,7 @@ class ExcelService:
                     for(c,r), id_ben in cache_beneficiarios_excel.items():
                         stats['duplicados_en_excel'] += 1
                         origen = "cache_excel"
-                        Logger.add_to_log("info", f"Fila: {idx + 2}: DUPLICADO EN EXCEL (por RFC) - {rfc} -> Reutilizando ID: {id_beneficiario[:8]}...." )
+                        
                         break
                     
                 # Busqueda en Base de Datos
@@ -441,8 +405,7 @@ class ExcelService:
                     
                     if id_beneficiario and origen == 'db':
                         stats['beneficiarios_existentes_db'] += 1
-                        Logger.add_to_log("info", f"Fila {idx +2}: Beneficiario EXISTENTE en BD - CURP: {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
-                        
+                       
                 # Crea Nuevo beneficiario
                 if not id_beneficiario:
                     id_beneficiario = str(uuid.uuid4())
@@ -472,9 +435,7 @@ class ExcelService:
                     # REGISTRO en CACHE LOCAL
                     if curp or rfc:
                         cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
-                    
-                    Logger.add_to_log("info", f"Fila {idx + 2}: Beneficiario NUEVO - CURP {curp}, RFC: {rfc} -> ID: {id_beneficiario[:8]}....")
-                                           
+                                       
                     
                 # Preparacion de contacto y apoyo
                 
@@ -542,7 +503,6 @@ class ExcelService:
                 
                 relaciones.append(relacion)
                  
-                Logger.add_to_log("debug", f"Fila {idx +2} procesada correctamente")
                 
                 # Fin de loop
             # Estadistica y reporte de duplicados
@@ -561,9 +521,7 @@ class ExcelService:
             
             # Reporte detallado de duplicados en Excel
             if stats['duplicados_en_excel'] > 0:
-                Logger.add_to_log("warn", "⚠️  REPORTE DE DUPLICADOS EN EXCEL:")
-                Logger.add_to_log("warn", "-" * 60)
-            
+    
                 # Contar ocurrencias de cada beneficiario
                 beneficiario_ocurrencias = {}
                 for rel in relaciones:
@@ -581,12 +539,13 @@ class ExcelService:
                 
                 # Filtrar solo los que aparecen más de una vez
                 duplicados = {k: v for k, v in beneficiario_ocurrencias.items() if v['count'] > 1}
-                
+                """ 
                 for id_ben, info in duplicados.items():
                     Logger.add_to_log("warn", f"  • {info['nombre']}")
                     Logger.add_to_log("warn", f"    CURP: {info['curp']}, RFC: {info['rfc']}")
                     Logger.add_to_log("warn", f"    Aparece {info['count']} veces en filas: {info['filas']}")
                     Logger.add_to_log("warn", "")
+                """
             
             # Reporte de errores de validación 
             if rows_errors:
@@ -614,11 +573,7 @@ class ExcelService:
                     'error':'Sin datos válidos'
                 }),400
 
-            Logger.add_to_log("info", "")
-            Logger.add_to_log("info", "=" * 60)
-            Logger.add_to_log("info", "FASE 1 COMPLETADA - INICIANDO FASE 2...")
-            Logger.add_to_log("info", "=" * 60)
-            Logger.add_to_log("info", "")
+
             
             Logger.add_to_log("info","INICIANDO INSERCIÓN EN BASE DE DATOS ...")
             
