@@ -187,7 +187,7 @@ class ExcelService:
                
                 #Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)').rstrip())
                
-                id_colonia = colonias_map.get(row.get('Colonia').rstrip() if row.get('Colonia') else None)
+                
                 
                 id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
     
@@ -196,6 +196,7 @@ class ExcelService:
                 telefono_2  = row.get('Telefono 2')
                 correo      = row.get('Correo')
                 monto       = row.get('Monto')
+                colonia     = row.get('Colonia').rstrip() if row.get('Colonia') else None
 
                 # Grupo 3 - Apoyos
                 id_dependencia = dependencias_map.get(row.get('Dependencia'))
@@ -288,8 +289,8 @@ class ExcelService:
                 if not id_municipio:
                     validacion_errores['Municipio'] = row.get('Municipio Dirección (catálogo)')
                     
-                if not id_colonia:
-                    validacion_errores['Colonia'] = row.get('Colonia')
+                if not colonia:
+                    validacion_errores['Colonia'] = 'Celda vacía'
                     
                 if not telefono:
                     validacion_errores['Telefono'] = 'Celda vacía'
@@ -458,7 +459,7 @@ class ExcelService:
                 # Agregar ID's de catálogos
                 contacto_data['idEstado']       = id_estado
                 contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
-                contacto_data['idColonia']      = str(id_colonia[0]) if id_colonia else None
+                contacto_data['colonia']        = str(colonia[0]) if colonia else None
                 contacto_data['idEstadoCivil']  = id_estado_civil
                 
                 
