@@ -180,7 +180,7 @@ class ExcelService:
                 
                 # Grupo 2 - Contacto
                 calle       = row.get('Calle').strip()
-                numero      = row.get('Numero').strip()
+                numero      = row.get('Numero')
                 id_estado   = estados_map.get(row.get('Estado (catálogo)' or '').strip().upper())
              
                 id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').strip().upper() if row.get('Municipio Dirección (catálogo)') else None) 
