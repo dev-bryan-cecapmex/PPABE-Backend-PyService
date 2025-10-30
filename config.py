@@ -27,7 +27,7 @@ class Config:
         'Telefono 2':'telefono2',
         'Estado (catálogo)':'idEstado',
         'Municipio Dirección (catálogo)':'idMunicipio',
-        'Colonia':'idColonia',
+        'Colonia':'Colonia',
         'Calle':'calle',
         'Numero':'numero',
         'Estado Civil':'idEstadoCivil'
