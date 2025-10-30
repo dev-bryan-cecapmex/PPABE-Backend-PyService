@@ -134,7 +134,7 @@ class ExcelService:
             # Grupo 2 - Contactos
             estados_map = SearchService.get_estado_map()
             municipios_map = SearchService.get_municipio_map()
-            colonias_map = SearchService.get_colonia_map()
+           # colonias_map = SearchService.get_colonia_map()
             estados_civiles_map = SearchService.get_estado_civil_map()
         
             # Grupo 3 - Apoyos
@@ -462,8 +462,7 @@ class ExcelService:
                 # Agregar ID's de catálogos
                 contacto_data['idEstado']       = id_estado
                 contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
-                Logger.add_to_log('info', f"Colonia -> {colonia}")
-                contacto_data['colonia']        = str(colonia) if colonia else None
+                
                 contacto_data['idEstadoCivil']  = id_estado_civil
                 
                 
