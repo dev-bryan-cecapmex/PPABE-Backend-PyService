@@ -181,9 +181,9 @@ class ExcelService:
                 # Grupo 2 - Contacto
                 calle       = row.get('Calle').strip()
                 numero      = row.get('Numero').strip()
-                id_estado = estados_map.get(row.get('Estado (catálogo)'))
+                id_estado   = estados_map.get(row.get('Estado (catálogo)' or '').strip().upper())
              
-                id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').rstrip() if row.get('Municipio Dirección (catálogo)') else None) 
+                id_municipio = municipios_map.get(row.get('Municipio Dirección (catálogo)').strip().upper() if row.get('Municipio Dirección (catálogo)') else None) 
                 #id_municipio if id_municipio else None
                
                 #Logger.add_to_log("debug", row.get('Municipio Dirección (catálogo)').rstrip())
