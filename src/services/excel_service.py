@@ -455,9 +455,7 @@ class ExcelService:
                 }
                 
                 for excel_col in Config.GROUP_TWO_KEYS:
-                    Logger.add_to_log("info", excel_col)
                     if excel_col in Config.COLUMN_MAP_GROUP_TWO:
-                        Logger.add_to_log("info", excel_col)
                         db_col = Config.COLUMN_MAP_GROUP_TWO[excel_col]
                         contacto_data[db_col] = row.get(excel_col)
                 
