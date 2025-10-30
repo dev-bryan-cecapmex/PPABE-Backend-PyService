@@ -455,7 +455,9 @@ class ExcelService:
                 }
                 
                 for excel_col in Config.GROUP_TWO_KEYS:
+                    Logger.add_to_log("info", excel_col)
                     if excel_col in Config.COLUMN_MAP_GROUP_TWO:
+                        Logger.add_to_log("info", excel_col)
                         db_col = Config.COLUMN_MAP_GROUP_TWO[excel_col]
                         contacto_data[db_col] = row.get(excel_col)
                 
@@ -464,7 +466,7 @@ class ExcelService:
                 contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
                 
                 contacto_data['idEstadoCivil']  = id_estado_civil
-                
+                contacto_data['colonia']        = colonia
                 
                 # Construccion de objeto de APOYO
                 apoyo_data = {
