@@ -175,7 +175,7 @@ class ExcelService:
         
             
                 # Grupo 1 - Beneficiarios
-                id_sexo = sexos_map.get(row.get('Sexo').strip())
+                id_sexo = sexos_map.get(row.get('Sexo' or '').strip().upper())
                
                 
                 # Grupo 2 - Contacto
@@ -190,7 +190,7 @@ class ExcelService:
                
                 
                 
-                id_estado_civil = estados_civiles_map.get(row.get('Estado Civil'))
+                id_estado_civil = estados_civiles_map.get(row.get('Estado Civil' or '').strip().upper())
     
                 
                 telefono    = row.get('Telefono')
@@ -215,7 +215,7 @@ class ExcelService:
                 id_acciones = acciones_map.get(row.get('Accion').strip())
                 
                 
-                id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio').strip())
+                id_tipo_beneficiario = tipos_beneficiarios_map.get(row.get('Tipo de Beneficio' or '').strip().upper())
                 
                 
                 # Carpeta Beneficiario
