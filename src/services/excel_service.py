@@ -462,7 +462,8 @@ class ExcelService:
                 # Agregar ID's de catálogos
                 contacto_data['idEstado']       = id_estado
                 contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
-                contacto_data['colonia']        = str(colonia[0]) if colonia else None
+                Logger.add_to_log('info', f"Colonia -> {colonia}")
+                contacto_data['colonia']        = str(colonia) if colonia else None
                 contacto_data['idEstadoCivil']  = id_estado_civil
                 
                 
