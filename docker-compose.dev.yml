@@ -17,22 +17,6 @@ services:
     networks:
       - backend_net
 
-  db:
-    image: mariadb:10.11
-    container_name: db_pyservice
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "3306:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - backend_net
-
 networks:
   backend_net:
 
