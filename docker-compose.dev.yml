@@ -1,10 +1,9 @@
-
 services:
   api-pyservice:
     build: .
     container_name: api-pyservice
     restart: unless-stopped
-    env_file: 
+    env_file:
       - .env
     ports:
       - "4001:4001"
@@ -12,13 +11,8 @@ services:
       - ./.env:/app/.env
       - ./src:/app/src
       - ./index.py:/app/index.py
-    depends_on:
-      - db
     networks:
       - backend_net
 
 networks:
   backend_net:
-
-volumes:
-  mariadb_data:
