@@ -1,4 +1,4 @@
-# Etapa base: Rocky Linux 9.2
+# Etapa base: Rocky Linux 9.3
 FROM rockylinux:9.3
 
 # Variables de entorno para no generar pyc ni buffer
@@ -18,7 +18,7 @@ RUN wget https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz && \
     cd Python-3.13.7 && \
     ./configure --enable-optimizations && \
     make altinstall && \
-    rm -rf /opt/Python-3.13.7* 
+    rm -rf /opt/Python-3.13.7*
 
 # Crear directorio de la app
 WORKDIR /app
@@ -26,27 +26,24 @@ WORKDIR /app
 # Copiar requirements y dependencias
 COPY requirements.txt .
 
-# Instalar dependencias de Python
+# Instalar dependencias de Python (incluye polars-lts-cpu compatible)
 RUN python3.13 -m ensurepip && \
     python3.13 -m pip install --upgrade pip && \
-    pip3.13 install --no-cache-dir -r requirements.txt
+    pip3.13 install --no-cache-dir -r requirements.txt && \
+    pip3.13 install --no-cache-dir polars-lts-cpu
 
 # Copiar código fuente
 COPY src /app/src
 COPY index.py /app
 COPY config.py /app
-# Establecer variable de entorno para Flask
-ENV FLASK_APP=src/index.py
 
-# Exponer el puerto definido en .env
-EXPOSE ${PORT}
-
-# Establecer variable de entorno de Flask
+# Variables de entorno para Flask
 ENV FLASK_APP=index.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=4001
 ENV FLASK_ENV=development
 ENV PYTHONPATH=/app/src
+
 # Exponer puerto
 EXPOSE 4001
 
