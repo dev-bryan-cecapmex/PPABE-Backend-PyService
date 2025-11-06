@@ -35,7 +35,7 @@ from openpyxl.workbook.defined_name import DefinedName
 class ExcelService:  
     
     @staticmethod
-    def process_file(file, id_user):
+    def process_file(file, id_user, id_dependencia_user):
         try:
             # ==== INICIO ====
             Logger.add_to_log("info", "== INICIO DE CARGA MASIVA ==")
@@ -129,6 +129,18 @@ class ExcelService:
                     correo = row.get('Correo')
                     monto = row.get('Monto')
                     id_dependencia = dependencias_map.get(row.get('Dependencia'))
+                    
+                    if id_dependencia != id_dependencia_user:
+                        Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
+                        return jsonify({
+                            'success': False,
+                            'message': 'No tienes permisos para cargar archivos de esta dependencia',
+                            'data': {'errores_detalle': 'tissss'},
+                            'error': 'Sin datos válidos',
+                            'error_dependencia': True 
+                        }), 400
+                
+                  
                     id_programa = programas_map.get((row.get('Programa'), id_dependencia)) if id_dependencia else None
                     id_subprograma = subprograma_map.get((row.get('Subprograma'), id_programa) if id_programa else None)
                     id_componente = componentes_map.get((row.get('Componente'), id_subprograma)) if id_subprograma else None
