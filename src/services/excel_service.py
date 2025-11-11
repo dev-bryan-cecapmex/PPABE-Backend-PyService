@@ -89,6 +89,8 @@ class ExcelService:
             tipos_beneficiarios_map = SearchService.get_tipos_beneficiarios_map()
             beneficiario_map = SearchService.get_beneficiarios_map()
             carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
+            Logger.add_to_log("info", "Esto es la carpeta Beneficiarios")
+            Logger.add_to_log("info", carpetas_beneficiarios_map)
 
             Logger.add_to_log("info", "Catálogos cargados correctamente")
 
@@ -175,7 +177,9 @@ class ExcelService:
                     if fecha:
                         mes = fecha.month
                         anio = fecha.year
+                        Logger.add_to_log("info", f"Mes:{mes} Anio:{anio}")
                         id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                        Logger.add_to_log("info", f"Id Carpeta Beneficiario {id_carpeta_beneficiario}")
                     else:
                         validacion_errores['Fecha de Registro'] = 'Error en formato'
 
