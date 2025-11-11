@@ -289,7 +289,7 @@ class ExcelService:
                 if not id_municipio:
                     validacion_errores['Municipio'] = row.get('Municipio Dirección (catálogo)')
                     
-                if not colonia or colonia is None:
+                if not colonia:
                     validacion_errores['Colonia'] = 'Celda vacía'
                     
                 if not telefono:
