@@ -178,7 +178,7 @@ class ExcelService:
                         mes = fecha.month
                         anio = fecha.year
                         Logger.add_to_log("info", f"Mes:{mes} Anio:{anio}")
-                        id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                        id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
                         Logger.add_to_log("info", f"Id Carpeta Beneficiario {id_carpeta_beneficiario}")
                     else:
                         validacion_errores['Fecha de Registro'] = 'Error en formato'
