@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, send_file
 #import polars as pl 
 from io import BytesIO
 
+import json
+
 from src.services.datos_plantilla_service import CatalogosService 
 #import uuid
 
@@ -45,8 +47,14 @@ def uploader_file():
    
     try:
         
-        id_usuario = request.form.get('data')
-        respuesta = ExcelService.process_file(request.files['file'], id_usuario)
+        raw_data = request.form.get('data')
+        data = json.loads(raw_data) if raw_data else {}
+
+        id_usuario      = data.get('idUsuario')
+        id_dependencia  = data.get('idEntidad')
+        
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario, id_dependencia)
+        Logger.add_to_log("info", respuesta)
         if respuesta:
             return respuesta
 
