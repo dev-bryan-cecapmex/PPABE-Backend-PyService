@@ -418,8 +418,8 @@ class ExcelService:
                     # Objeto con beneficiario con mapeo correcto
                     nuevo_beneficiario = {
                         'id': id_beneficiario,
-                        'creador': id_user,
-                        'modificador': id_user,
+                        'creador': id_user.idUsuario,
+                        'modificador': id_user.idUsuario,
                     }
                     
                     # Mapeo columnas del Excel a columnas de BD
@@ -468,8 +468,8 @@ class ExcelService:
                     'id': id_apoyo_temp,
                     'idBeneficiario': id_beneficiario,
                     'idContacto': id_contacto_temp,
-                    'creador': id_user,
-                    'modificador': id_user,
+                    'creador': id_user.idUsuario,
+                    'modificador': id_user.idUsuario,
                 }
                 
                 # Mapear columnas del Excel a columnas de DB
