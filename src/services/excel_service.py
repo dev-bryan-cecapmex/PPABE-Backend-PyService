@@ -129,6 +129,7 @@ class ExcelService:
                     correo = row.get('Correo')
                     monto = row.get('Monto')
                     id_dependencia = dependencias_map.get(row.get('Dependencia'))
+                    id_dependencia = dependencias_map.get(row.get('Dependencia').rstrip())
                     
                     if id_dependencia != id_dependencia_user:
                         Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
