@@ -49,7 +49,7 @@ def uploader_file():
 
         id_usuario      = data.get('idUsuario')
         id_dependencia  = data.get('idEntidad')
-        Logger.add_to_log("info",f"Dependencia:{id_dependencia}")
+        
         respuesta = ExcelService.process_file(request.files['file'], id_usuario, id_dependencia)
         Logger.add_to_log("info", respuesta)
         if respuesta:
