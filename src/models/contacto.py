@@ -9,7 +9,7 @@ class Contacto(db.Model):
     telefono2       = db.Column(db.String(13))
     idEstado        = db.Column(db.String(36))
     idMunicipio     = db.Column(db.String(36))
-    Colonia         = db.Column(db.String(255))
+    colonia         = db.Column(db.String(255))
     calle           = db.Column(db.String(255))
     numero          = db.Column(db.String(10))
     creador         = db.Column(db.String(36))
