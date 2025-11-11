@@ -35,7 +35,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 class ExcelService:  
     
     @staticmethod
-    def process_file(file, id_user):
+    def process_file(file, id_user, id_dependencia_user):
         try:
             Logger.add_to_log("info", "="*30)
             Logger.add_to_log("info", f"INICIO DE CARGA MASIVA")
@@ -258,7 +258,7 @@ class ExcelService:
                     mes = fecha.month
                     anio = fecha.year
                    
-                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio))
+                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
                     
                 else:
                     validacion_errores['Fecha de Registro'] = 'Error en formato'

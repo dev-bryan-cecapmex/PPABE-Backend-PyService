@@ -4,7 +4,7 @@ from io import BytesIO
 
 from src.services.datos_plantilla_service import CatalogosService 
 #import uuid
-
+import json
 #from config import Config
 
 #from ..services.beneficiarios_service   import BeneficiariosService
@@ -44,9 +44,14 @@ def uploader_file():
     #file = request.files['file']
    
     try:
+        raw_data = request.form.get('data')
+        data = json.loads(raw_data) if raw_data else {}
+
+        id_usuario      = data.get('idUsuario')
+        id_dependencia  = data.get('idEntidad')
         
-        id_usuario = request.form.get('data')
-        respuesta = ExcelService.process_file(request.files['file'], id_usuario)
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario, id_dependencia)
+        Logger.add_to_log("info", respuesta)
         if respuesta:
             return respuesta
 
