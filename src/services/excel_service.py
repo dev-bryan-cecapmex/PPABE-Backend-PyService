@@ -193,7 +193,7 @@ class ExcelService:
                     if not fecha_nacimiento:
                         if not row["fecha_nac_vacia_original"]:
                             validacion_errores['Fecha de Nacimiento'] = 'Error en formato'
-
+                    Logger.add_to_log("info", id_sexo)
                     if not id_sexo:
                         if not row["sexo_vacio_original"]:
                             validacion_errores['Sexo'] = row.get('Sexo')
