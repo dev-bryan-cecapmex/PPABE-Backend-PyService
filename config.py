@@ -64,7 +64,7 @@ class Config:
         "Programa":pl.Utf8,
         "Componente":pl.Utf8,
         "Accion":pl.Utf8,
-        "Fecha de Registro":pl.Date,
+        "Fecha de Registro":pl.Utf8,
         "Monto":pl.Utf8,
         "Tipo de Beneficio":pl.Utf8,
         "RFC":pl.Utf8,
