@@ -492,6 +492,7 @@ class ExcelService:
                 
                 # Mapear columnas del Excel a columnas de DB
                 for excel_col in Config.GROUP_TREE_KEYS:
+                    Logger.add_to_log("info", f"excel Columnas: {excel_col}")
                     db_col = Config.COLUMN_MAP_GROUP_TREE.get(excel_col, excel_col)
                     apoyo_data[db_col] = row.get(excel_col)
                 
@@ -504,6 +505,10 @@ class ExcelService:
                 apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
                 # Agregar despues idCarpetaBeneficiarios
                 apoyo_data['idCarpetaBeneficiarios'] = id_carpeta_beneficiario
+                
+                Logger.add_to_log("info", f"Apoyos: {apoyo_data}")
+                 
+                 
                 # Registro de relación completa
                 relacion = {
                     'row_index': idx + 2,
