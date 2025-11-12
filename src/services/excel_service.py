@@ -208,6 +208,17 @@ class ExcelService:
                 dependencia = row.get('Dependencia')
                 id_dependencia = dependencias_map.get(dependencia.upper().rstrip()) if dependencia else None
 
+                if id_dependencia != id_dependencia_user:
+                    Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
+                    return jsonify({
+                        'success': False,
+                        'message': 'No tienes permisos para cargar archivos de esta dependencia',
+                        'data': {'errores_detalle': 'tissss'},
+                        'error': 'Sin datos válidos',
+                        'error_dependencia': True 
+                    }), 400
+                
+
                 programa = row.get('Programa')
                 id_programa = programas_map.get((programa.upper().rstrip(), id_dependencia)) if programa and id_dependencia else None
 
