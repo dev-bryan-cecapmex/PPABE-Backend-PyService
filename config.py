@@ -32,13 +32,14 @@ class Config:
         'Numero':'numero',
         'Estado Civil':'idEstadoCivil'
     }
-    GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Monto']
+    GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Fecha de Registro','Monto']
     COLUMN_MAP_GROUP_TREE = {
         'Dependencia':'idDependencia',
         'Programa':'idPrograma',
         'Componente':'idComponente',
         'Accion':'idAccion',
         'Tipo de Beneficio':'idTipoBeneficio',
+        'Fecha de Registro': 'fRegistro',
         'Monto':'monto'
     }
     

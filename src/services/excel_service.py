@@ -271,7 +271,7 @@ class ExcelService:
                     anio = fecha.year
                    
                     id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
-                    Logger.add_to_log("info", f"Carpeta Beneficiario: {id_carpeta_beneficiario}")
+                    # Logger.add_to_log("info", f"Carpeta Beneficiario: {id_carpeta_beneficiario}")
                 else:
                     validacion_errores['Fecha de Registro'] = 'Error en formato'
                     
@@ -613,7 +613,6 @@ class ExcelService:
             if beneficiarios_to_insert:
                 try:
                     Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
-                    Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
                     # Llamada de al servicio de insercion
                     BeneficiariosService.bulk_insert(beneficiarios_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
@@ -652,7 +651,6 @@ class ExcelService:
             if contactos_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
-                    Logger.add_to_log('debug', f"Primeros 3 contactos: {contactos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
                     ContactosService.bulk_insert(contactos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
@@ -680,7 +678,6 @@ class ExcelService:
             if apoyos_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} contactos nuevos ...")
-                    Logger.add_to_log('debug', f"Primeros 3 apoyos: {apoyos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
                     ApoyosService.bulk_insert(apoyos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
