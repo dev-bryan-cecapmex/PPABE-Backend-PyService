@@ -234,69 +234,109 @@ class ExcelService:
                 tipo_beneficio = row.get('Tipo de Beneficio')
                 id_tipo_beneficiario = tipos_beneficiarios_map.get(tipo_beneficio.upper().rstrip()) if tipo_beneficio else None
 
-                
-                # Carpeta Beneficiario
-               
+               # Carpeta Beneficiario
+
+                # PROCESAR FECHA DE REGISTRO
                 fecha_plantilla = row.get('Fecha de Registro')
+                fecha_registro_obj = None
+
                 if fecha_plantilla:
                     try:
-                        # Convertir a string si es necesario
-                        fecha_str = str(fecha_plantilla)
-                        
-                        # Intentar diferentes formatos
-                        formatos_posibles = [
-                            '%d/%m/%Y',           # 12/02/2025
-                            '%Y-%m-%d %H:%M:%S',  # 2025-02-12 00:00:00
-                            '%Y-%m-%d',           # 2025-02-12
-                        ]
-                        
-                        fecha_registro_procesada = None
-                        for formato in formatos_posibles:
-                            try:
-                                fecha_registro_procesada = datetime.strptime(fecha_str, formato).strftime('%Y-%m-%d')
-                                break
-                            except ValueError:
-                                continue
-                        
-                        if fecha_registro_procesada:
-                            row['Fecha de Registro'] = fecha_registro_procesada
+                        # Si ya es un objeto datetime, usarlo directamente
+                        if isinstance(fecha_plantilla, datetime):
+                            fecha_registro_obj = fecha_plantilla
                         else:
-                            Logger.add_to_log("info", f"Formato de fecha incorrecto: {fecha_plantilla}")
-                            row['Fecha de Registro'] = None
+                            # Convertir a string y limpiar
+                            fecha_str = str(fecha_plantilla).strip()
                             
+                            # Si viene con hora, tomar solo la parte de la fecha
+                            if ' ' in fecha_str:
+                                fecha_str = fecha_str.split()[0]
+                            
+                            # Intentar diferentes formatos
+                            formatos_posibles = [
+                                '%d/%m/%Y',           # 12/02/2025
+                                '%Y-%m-%d',           # 2025-02-12
+                                '%d-%m-%Y',           # 12-02-2025
+                                '%Y/%m/%d',           # 2025/02/12
+                            ]
+                            
+                            for formato in formatos_posibles:
+                                try:
+                                    fecha_registro_obj = datetime.strptime(fecha_str, formato)
+                                    break
+                                except ValueError:
+                                    continue
+                            
+                            if not fecha_registro_obj:
+                                Logger.add_to_log("info", f"Formato de Fecha de Registro incorrecto: {fecha_plantilla}")
+                                
                     except Exception as e:
-                        Logger.add_to_log("error", f"Error procesando fecha {fecha_plantilla}: {str(e)}")
-                        row['Fecha de Registro'] = None
-               
-               
-                row['Fecha de Nacimiento'] = datetime.strptime(
-                row['Fecha de Nacimiento'], 
-                    '%d/%m/%Y'
-                ).strftime('%Y-%m-%d')
-                
-                fecha_nacimiento = row['Fecha de Nacimiento'] 
-            
-            
-                # Valicacciones
+                        Logger.add_to_log("error", f"Error procesando Fecha de Registro {fecha_plantilla}: {str(e)}")
+
+                if fecha_registro_obj:
+                    row['Fecha de Registro'] = fecha_registro_obj.strftime('%Y-%m-%d')
+                else:
+                    row['Fecha de Registro'] = None
+
+
+                # PROCESAR FECHA DE NACIMIENTO
+                fecha_nacimiento_raw = row.get('Fecha de Nacimiento')
+                fecha_nacimiento_obj = None
+
+                if fecha_nacimiento_raw:
+                    try:
+                        # Si ya es un objeto datetime, usarlo directamente
+                        if isinstance(fecha_nacimiento_raw, datetime):
+                            fecha_nacimiento_obj = fecha_nacimiento_raw
+                        else:
+                            # Convertir a string y limpiar
+                            fecha_str = str(fecha_nacimiento_raw).strip()
+                            
+                            # Si viene con hora, tomar solo la parte de la fecha
+                            if ' ' in fecha_str:
+                                fecha_str = fecha_str.split()[0]
+                            
+                            # Intentar diferentes formatos
+                            formatos_posibles = [
+                                '%d/%m/%Y',           # 12/02/2025
+                                '%Y-%m-%d',           # 2025-02-12
+                                '%d-%m-%Y',           # 12-02-2025
+                                '%Y/%m/%d',           # 2025/02/12
+                            ]
+                            
+                            for formato in formatos_posibles:
+                                try:
+                                    fecha_nacimiento_obj = datetime.strptime(fecha_str, formato)
+                                    break
+                                except ValueError:
+                                    continue
+                            
+                            if not fecha_nacimiento_obj:
+                                Logger.add_to_log("info", f"Formato de Fecha de Nacimiento incorrecto: {fecha_nacimiento_raw}")
+                                
+                    except Exception as e:
+                        Logger.add_to_log("error", f"Error procesando Fecha de Nacimiento {fecha_nacimiento_raw}: {str(e)}")
+
+                if fecha_nacimiento_obj:
+                    row['Fecha de Nacimiento'] = fecha_nacimiento_obj.strftime('%Y-%m-%d')
+                    fecha_nacimiento = row['Fecha de Nacimiento']
+                else:
+                    row['Fecha de Nacimiento'] = None
+                    fecha_nacimiento = None
+
+
+                # VALIDACIONES
                 validacion_errores = {}
                 msg_error = ""
-                
-                fecha = None
-                
+
+                fecha = fecha_registro_obj  # Usar el objeto datetime ya procesado
+
                 if not fecha_plantilla:
                     validacion_errores['Fecha de Registro'] = 'Celda vacía'
-                else:
-                    if isinstance(fecha_plantilla, str):
-                        # Plantilla del sistema
-                        fecha_str = fecha_plantilla
-                        fecha = datetime.strptime(fecha_str, "%d/%m/%Y" )
-                        
-                    else:
-                        # Plantilla Ruy
-                        fecha = fecha_plantilla
-                       
-                
-                
+                elif not fecha:
+                    validacion_errores['Fecha de Registro'] = 'Error en formato'
+
                 if fecha:
                     mes = fecha.month
                     anio = fecha.year
@@ -304,7 +344,9 @@ class ExcelService:
                     id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
                     # Logger.add_to_log("info", f"Carpeta Beneficiario: {id_carpeta_beneficiario}")
                 else:
-                    validacion_errores['Fecha de Registro'] = 'Error en formato'
+                    if 'Fecha de Registro' not in validacion_errores:
+                        validacion_errores['Fecha de Registro'] = 'Error en formato' 
+
                     
                 if not id_carpeta_beneficiario:
                     validacion_errores['Carpeta de Beneficiarios'] = f"No existe carpeta para {mes}/{anio}"
