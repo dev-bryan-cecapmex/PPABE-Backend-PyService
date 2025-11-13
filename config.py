@@ -32,11 +32,17 @@ class Config:
         'Numero':'numero',
         'Estado Civil':'idEstadoCivil'
     }
-    GROUP_TREE_KEYS = ['Dependencia']
+    GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Fecha de Registro','Monto']
     COLUMN_MAP_GROUP_TREE = {
-        'Dependencia':'idDependencia'
-
+        'Dependencia':'idDependencia',
+        'Programa':'idPrograma',
+        'Componente':'idComponente',
+        'Accion':'idAccion',
+        'Tipo de Beneficio':'idTipoBeneficio',
+        'Fecha de Registro': 'fRegistro',
+        'Monto':'monto'
     }
+
     
      # Lista de orígenes permitidos (convertimos el texto en lista)
     IP_SERVER_FRONT = os.getenv("IP_SERVER_FRONT", "").split(",") if os.getenv("IP_SERVER_FRONT") else []
