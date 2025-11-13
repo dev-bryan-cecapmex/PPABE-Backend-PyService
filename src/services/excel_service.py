@@ -236,9 +236,39 @@ class ExcelService:
 
                 
                 # Carpeta Beneficiario
-                
-                fecha_plantilla= row.get('Fecha de Registro')
+               
+                fecha_plantilla = row.get('Fecha de Registro')
                 if fecha_plantilla:
+                    try:
+                        # Convertir a string si es necesario
+                        fecha_str = str(fecha_plantilla)
+                        
+                        # Intentar diferentes formatos
+                        formatos_posibles = [
+                            '%d/%m/%Y',           # 12/02/2025
+                            '%Y-%m-%d %H:%M:%S',  # 2025-02-12 00:00:00
+                            '%Y-%m-%d',           # 2025-02-12
+                        ]
+                        
+                        fecha_registro_procesada = None
+                        for formato in formatos_posibles:
+                            try:
+                                fecha_registro_procesada = datetime.strptime(fecha_str, formato).strftime('%Y-%m-%d')
+                                break
+                            except ValueError:
+                                continue
+                        
+                        if fecha_registro_procesada:
+                            row['Fecha de Registro'] = fecha_registro_procesada
+                        else:
+                            Logger.add_to_log("info", f"Formato de fecha incorrecto: {fecha_plantilla}")
+                            row['Fecha de Registro'] = None
+                            
+                    except Exception as e:
+                        Logger.add_to_log("error", f"Error procesando fecha {fecha_plantilla}: {str(e)}")
+                        row['Fecha de Registro'] = None
+               
+               
                 row['Fecha de Nacimiento'] = datetime.strptime(
                 row['Fecha de Nacimiento'], 
                     '%d/%m/%Y'
