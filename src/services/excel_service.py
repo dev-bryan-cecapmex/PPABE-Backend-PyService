@@ -238,6 +238,7 @@ class ExcelService:
                 # Carpeta Beneficiario
                 
                 fecha_plantilla= row.get('Fecha de Registro')
+                if fecha_plantilla:
                 row['Fecha de Nacimiento'] = datetime.strptime(
                 row['Fecha de Nacimiento'], 
                     '%d/%m/%Y'
