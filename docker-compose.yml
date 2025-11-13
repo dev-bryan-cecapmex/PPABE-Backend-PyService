@@ -1,0 +1,18 @@
+services:
+  api-pyservice:
+    build: .
+    container_name: api-pyservice
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./.env:/app/.env
+      - ./src:/app/src
+      - ./index.py:/app/index.py
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
