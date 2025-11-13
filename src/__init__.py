@@ -23,7 +23,14 @@ def create_app():
     print(f"🔗 Orígenes permitidos: {origins}")
 
     # --- Configurar CORS usando los dominios del .env ---
-    CORS(app, resources={r"/api/*": {"origins": origins}}, supports_credentials=True)
+    CORS(
+    app,
+    resources={r"/*": {"origins": origins}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+)
+
 
     # --- Registrar Blueprints ---
     app.register_blueprint(root_bp)
