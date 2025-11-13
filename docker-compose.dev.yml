@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  api-pyservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: api-pyservice-dev
+    restart: unless-stopped
+
+    # Cargar variables de entorno
+    env_file:
+      - .env
+
+    ports:
+      - "4001:4001"
+
+    volumes:
+      # 🔥 MONTA TODO EL CÓDIGO → git pull = cambios en caliente
+      - .:/app
+      # Asegura que el .env exista dentro del contenedor
+      - ./.env:/app/.env
+
+    environment:
+      FLASK_APP: index.py
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+      PYTHONPATH: /app/src
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_RUN_PORT: 4001
+
+    # Autoreload real
+    command: flask run --reload
+
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
+# correr con docker compose -f docker-compose.dev.yml up -d 
