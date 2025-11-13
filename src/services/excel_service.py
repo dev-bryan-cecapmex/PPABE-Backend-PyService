@@ -53,16 +53,22 @@ class ExcelService:
                     infer_schema_length=10000
                 )
 
+            # Normalizar FECHA DE NACIMIENTO
             data = data.with_columns(
-                
-                pl.col("Fecha de Nacimiento").is_null().alias("fecha_nac_vacia_original"),
-                
                 pl.col("Fecha de Nacimiento")
-                .str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S", strict=False)
-                .dt.strftime("%d/%m/%Y")
-                .alias("Fecha de Nacimiento")
+                    .str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S", strict=False)
+                    .cast(pl.Date)
+                    .dt.strftime("%Y-%m-%d")
             )
-            
+
+            # Normalizar FECHA DE REGISTRO
+            data = data.with_columns(
+                pl.col("Fecha de Registro")
+                    .str.strptime(pl.Datetime, "%Y-%m-%d %H:%M:%S", strict=False)
+                    .cast(pl.Date)
+                    .dt.strftime("%Y-%m-%d")
+            )
+
             data = data.with_columns([
                     pl.col("Estado Civil").is_null().alias("estado_civil_vacio_original"),
                     pl.col("Sexo").is_null().alias("sexo_vacio_original"),
