@@ -7,7 +7,8 @@ class CarpetaBeneficiarios(db.Model):
     idDependencia   = db.Column(db.String(50), unique=True, nullable=False)
     mes             = db.Column(db.Integer)
     anio            = db.Column(db.Integer)
-    #deleted         = db.Column(db.String(1))
+    estado          = db.Column(db.String(65))
+    deleted         = db.Column(db.String(1))
     
     deleted = db.Column(db.Boolean, nullable=False, default=False)
 

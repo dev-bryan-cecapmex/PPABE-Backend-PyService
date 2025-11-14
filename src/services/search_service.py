@@ -156,3 +156,30 @@ class SearchService:
         )
         
         return {(mes,anio,id_dep) : id_cbe for id_cbe, mes, anio, id_dep in carpetas_beneficiarios}
+    
+    
+    @staticmethod
+    def validate_carpeta_beneficiarios(anio, meses, id_dependencia):
+        # Base query (1)
+        base = db.session.query(CarpetaBeneficiarios).filter(
+            CarpetaBeneficiarios.deleted == 0,
+            CarpetaBeneficiarios.anio == anio,
+            CarpetaBeneficiarios.mes.in_(meses),
+            CarpetaBeneficiarios.idDependencia == id_dependencia
+        )
+
+        existen = base.count()
+
+        # Base query (2) — nueva instancia!
+        base2 = db.session.query(CarpetaBeneficiarios).filter(
+            CarpetaBeneficiarios.deleted == 0,
+            CarpetaBeneficiarios.anio == anio,
+            CarpetaBeneficiarios.mes.in_(meses),
+            CarpetaBeneficiarios.idDependencia == id_dependencia
+        )
+
+        en_proceso = base2.filter(
+            CarpetaBeneficiarios.estado == "En Proceso"
+        ).count()
+
+        return existen, en_proceso

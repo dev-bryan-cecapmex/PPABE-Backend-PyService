@@ -32,7 +32,85 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-class ExcelService:  
+class ExcelService: 
+    
+
+    def status_folders(rows, id_dependencia):
+        try:
+            fechas = {}  # {anio: {mes1, mes2, ...}}
+
+            for row in rows:
+                fecha_plantilla = row.get("Fecha de Registro")
+
+                if not fecha_plantilla:
+                    Logger.add_to_log("warning", f"Fecha vacía en row: {row}")
+                    continue
+
+                # Parseo flexible
+                try:
+                    if isinstance(fecha_plantilla, str):
+                        if " " in fecha_plantilla:
+                            # Formato: 2025-02-12 00:00:00
+                            fecha = datetime.strptime(fecha_plantilla, "%Y-%m-%d %H:%M:%S")
+                        else:
+                            # Formato: 12/02/2025
+                            fecha = datetime.strptime(fecha_plantilla, "%d/%m/%Y")
+                    else:
+                        fecha = fecha_plantilla  # ya es datetime
+
+                except Exception:
+                    Logger.add_to_log("error", f"Formato desconocido de fecha: {fecha_plantilla}")
+                    continue
+
+                anio = fecha.year
+                mes  = fecha.month
+
+                if anio not in fechas:
+                    fechas[anio] = set()
+
+                fechas[anio].add(mes)
+
+            for anio, meses_set in fechas.items():
+                meses = list(meses_set)
+                meses.sort()
+                
+
+               
+                existen, en_proceso = SearchService.validate_carpeta_beneficiarios(anio,meses,id_dependencia)
+                
+
+                
+                # No existen carpetas
+                if existen != len(meses):
+                    return jsonify({
+                        'success': False,
+                        'message': 'Las carpetas a las que haces referencia no existen. '
+                                'Asegúrate de crearlas antes de cargar.',
+                        'error_existencia': True
+                    }), 400
+
+                # No todas están "En Proceso"
+                if en_proceso != len(meses):
+                    return jsonify({
+                        'success': False,
+                        'message': 'Las carpetas referenciadas no están en estatus En Proceso.',
+                        'error_procesado': True
+                    }), 400
+                    
+            Logger.add_to_log("info", f"new carpeta - Fechas Registro {existen}, {en_proceso}")
+            # Si todos los años pasan validación
+            return fechas
+                
+            
+          
+        except Exception as e:
+            Logger.add_to_log("error", f"ERROR general en status_folders: {e}")
+    
+           
+             
+        
+            
+        
     
     @staticmethod
     def process_file(file, id_user, id_dependencia_user):
@@ -67,7 +145,7 @@ class ExcelService:
                 .dt.strftime("%d/%m/%Y")
                 .alias("Fecha de Nacimiento")
             )
-
+            
             data = data.with_columns([
                     pl.col("Estado Civil").is_null().alias("estado_civil_vacio_original"),
                     pl.col("Sexo").is_null().alias("sexo_vacio_original"),
@@ -167,6 +245,8 @@ class ExcelService:
                 'duplicados_en_excel': 0,
                 'errores_validacion': 0
             }
+            
+            
 
             for idx, row in enumerate(rows):
                 curp = row.get('Curp') or None
@@ -222,6 +302,12 @@ class ExcelService:
                         'error': 'Sin datos válidos',
                         'error_dependencia': True 
                     }), 400
+                
+                resultado = ExcelService.status_folders(rows, id_dependencia_user)
+            
+                if isinstance(resultado, tuple):
+                    return resultado
+                
                 
 
                 programa = row.get('Programa')
@@ -345,7 +431,7 @@ class ExcelService:
                 if fecha:
                     mes = fecha.month
                     anio = fecha.year
-                   
+                    
                     id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
                     # Logger.add_to_log("info", f"Carpeta Beneficiario: {id_carpeta_beneficiario}")
                 else:
@@ -696,8 +782,9 @@ class ExcelService:
             if beneficiarios_to_insert:
                 try:
                     Logger.add_to_log('info', f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
+                    #Logger.add_to_log('debug', f"Primeros 3 beneficiarios: { beneficiarios_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    BeneficiariosService.bulk_insert(beneficiarios_to_insert)
+                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:  
                     Logger.add_to_log('error', "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
@@ -734,8 +821,9 @@ class ExcelService:
             if contactos_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
+                    #Logger.add_to_log('debug', f"Primeros 3 contactos: {contactos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
-                    ContactosService.bulk_insert(contactos_to_insert)
+                    #ContactosService.bulk_insert(contactos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
 
                 except Exception as e:
@@ -761,6 +849,7 @@ class ExcelService:
             if apoyos_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} contactos nuevos ...")
+                    #Logger.add_to_log('debug', f"Primeros 3 apoyos: {apoyos_to_insert[:3]}")
                     # Llamada de al servicio de insercion
                     ApoyosService.bulk_insert(apoyos_to_insert)
                     Logger.add_to_log('info', f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
@@ -800,7 +889,8 @@ class ExcelService:
                 'traceback': traceback.format_exc()
             }
         }), 500 
-       
+     
+     
     @staticmethod
     def generate_template(catalogos):
         wb = Workbook()
