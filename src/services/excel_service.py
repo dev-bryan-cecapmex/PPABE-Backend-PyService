@@ -32,7 +32,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-class ExcelService:  
+class ExcelService:    
     
     @staticmethod
     def process_file(file, id_user, id_dependencia_user):
@@ -44,9 +44,6 @@ class ExcelService:
             Logger.add_to_log("info", f"Id User: {id_user}")
             Logger.add_to_log("info",f"Dependencia:{id_dependencia_user}")
             
-            #data = pl.read_excel(io.BytesIO(file.read()))
-            #Logger.add_to_log("info", data)
-            #data = data.filter(~pl.all_horizontal(pl.all().is_null()))
             data = pl.read_excel(
                     io.BytesIO(file.read()),
                     schema_overrides = Config.CELLS_DATA_TYPES,
@@ -239,8 +236,6 @@ class ExcelService:
                 tipo_beneficio = row.get('Tipo de Beneficio')
                 id_tipo_beneficiario = tipos_beneficiarios_map.get(tipo_beneficio.upper().rstrip()) if tipo_beneficio else None
 
-               # Carpeta Beneficiario
-
                 # PROCESAR FECHA DE REGISTRO
                 fecha_plantilla = row.get('Fecha de Registro')
                 fecha_registro_obj = None
@@ -337,26 +332,45 @@ class ExcelService:
 
                 fecha = fecha_registro_obj  # Usar el objeto datetime ya procesado
 
+                # ----------------------------------
+                # VALIDACIÓN FECHA DE REGISTRO
+                # ----------------------------------
                 if not fecha_plantilla:
                     validacion_errores['Fecha de Registro'] = 'Celda vacía'
                 elif not fecha:
                     validacion_errores['Fecha de Registro'] = 'Error en formato'
 
+                # ----------------------------------
+                # VALIDACIÓN CARPETA BENEFICIARIOS
+                # (fila por fila, opción A + 1)
+                # ----------------------------------
+                id_carpeta_beneficiario = None
+                mes = None
+                anio = None
+
                 if fecha:
                     mes = fecha.month
                     anio = fecha.year
-                   
-                    id_carpeta_beneficiario = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
-                    # Logger.add_to_log("info", f"Carpeta Beneficiario: {id_carpeta_beneficiario}")
+
+                    carpeta_info = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
+
+                    if not carpeta_info:
+                        validacion_errores['Carpeta de Beneficiarios'] = f"No existe carpeta para {mes}/{anio}"
+                    else:
+                        estado_carpeta = carpeta_info.get("estado")
+                        if estado_carpeta == "Publicado":
+                            validacion_errores['Carpeta de Beneficiarios'] = (
+                                f"La carpeta {mes}/{anio} ya está PUBLICADA y no puede recibir registros."
+                            )
+                        else:
+                            id_carpeta_beneficiario = carpeta_info.get("id")
                 else:
                     if 'Fecha de Registro' not in validacion_errores:
                         validacion_errores['Fecha de Registro'] = 'Error en formato' 
 
-                    
-                if not id_carpeta_beneficiario:
-                    validacion_errores['Carpeta de Beneficiarios'] = f"No existe carpeta para {mes}/{anio}"
-                
-                
+                # ----------------------------------
+                # RESTO DE VALIDACIONES DE CAMPOS
+                # ----------------------------------
                 if (len(curp or '') > 18 or len(curp or '') < 18 ) and curp != None:
                     validacion_errores['Curp'] = row.get('Curp')
                     msg_error = "Curp inválida. Debe tener 18 caracteres."
@@ -421,7 +435,6 @@ class ExcelService:
                 if validacion_errores:
                     stats['errores_validacion'] += 1
                     for validador in validacion_errores:
-                    
                         error_detail = {
                             'row_index': idx + 2,
                             'curp': row.get('Curp'),
@@ -435,19 +448,16 @@ class ExcelService:
                         Logger.add_to_log("info","Errores fatales")
                         rows_errors.append(error_detail)
                     
-                   
                     continue
                 
-                
-                    
-                
-
-
+                # ============================
+                # LÓGICA BENEFICIARIOS
+                # ============================
                 id_beneficiario = None
                 es_nuevo = False
                 origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
                 
-                # Buscar en CHACHE LOCAL del Excel
+                # Buscar en CACHE LOCAL del Excel
                 if curp or rfc:
                     key_beneficiario = (curp, rfc)
                     
@@ -458,20 +468,18 @@ class ExcelService:
                    
                 # Busqueda por solo CURP en cache
                 elif curp and not id_beneficiario:
-                    for(c,r), id_ben in cache_beneficiarios_excel.items():
+                    for (c,r), id_ben in cache_beneficiarios_excel.items():
                         if c == curp:
                             id_beneficiario = id_ben
                             stats['duplicados_en_excel'] += 1
                             origen = "cache_excel"
-                           
                             break
                             
                 # Busqueda por solo RFC en cache  
                 elif rfc and not id_beneficiario:
-                    for(c,r), id_ben in cache_beneficiarios_excel.items():
+                    for (c,r), id_ben in cache_beneficiarios_excel.items():
                         stats['duplicados_en_excel'] += 1
                         origen = "cache_excel"
-                        
                         break
                     
                 # Busqueda en Base de Datos
@@ -533,8 +541,9 @@ class ExcelService:
                     if curp or rfc:
                         cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
                                        
-                    
-                # Preparacion de contacto y apoyo
+                # ============================
+                # CONTACTO Y APOYO
+                # ============================
                 
                 # Pre-generar UUIDs temporales
                 id_contacto_temp    = str(uuid.uuid4())
@@ -605,8 +614,6 @@ class ExcelService:
                 
                 relaciones.append(relacion)
                  
-                
-                # Fin de loop
             # Estadistica y reporte de duplicados
             Logger.add_to_log("info", "")
             Logger.add_to_log("info", "=" * 60)
@@ -641,7 +648,7 @@ class ExcelService:
                 
                 # Filtrar solo los que aparecen más de una vez
                 duplicados = {k: v for k, v in beneficiario_ocurrencias.items() if v['count'] > 1}
-                """ 
+                """
                 for id_ben, info in duplicados.items():
                     Logger.add_to_log("warn", f"  • {info['nombre']}")
                     Logger.add_to_log("warn", f"    CURP: {info['curp']}, RFC: {info['rfc']}")
@@ -785,22 +792,18 @@ class ExcelService:
             else:
                 Logger.add_to_log("warn", "✅ 💾 No hay contactos para insertar")       
             
-            
-            
-            
         except Exception as ex:
-            
             return jsonify({
-            'success': False,
-            'message': 'Error crítico en el proceso de carga masiva',
-            'data': None,
-            'error': {
-                'type': type(ex).__name__,
-                'message': str(ex),
-                'traceback': traceback.format_exc()
-            }
-        }), 500 
-       
+                'success': False,
+                'message': 'Error crítico en el proceso de carga masiva',
+                'data': None,
+                'error': {
+                    'type': type(ex).__name__,
+                    'message': str(ex),
+                    'traceback': traceback.format_exc()
+                }
+            }), 500
+
     @staticmethod
     def generate_template(catalogos):
         wb = Workbook()
