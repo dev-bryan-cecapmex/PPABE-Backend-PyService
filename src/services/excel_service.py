@@ -195,8 +195,10 @@ class ExcelService:
                 id_estado = estados_map.get(estado.upper().rstrip()) if estado else None
 
                 municipio = row.get('Municipio Dirección (catálogo)')
-                id_municipio = municipios_map.get(municipio.upper().rstrip()) if municipio else None
-
+               
+                raw_value = municipios_map.get(municipio.upper().rstrip()) if municipio else None
+                id_municipio = raw_value[0] if isinstance(raw_value, list) else raw_value
+               
                 estado_civil = row.get('Estado Civil')
                 id_estado_civil = estados_civiles_map.get(estado_civil.upper().rstrip()) if estado_civil else None
 
@@ -547,7 +549,7 @@ class ExcelService:
                 
                 # Agregar ID's de catálogos
                 contacto_data['idEstado']       = id_estado
-                contacto_data['idMunicipio']    = str(id_municipio[1]) if id_municipio else None
+                contacto_data['idMunicipio']    = str(id_municipio) if id_municipio else None
                 contacto_data['colonia']        = colonia if colonia else None
                 contacto_data['idEstadoCivil']  = id_estado_civil
                 
@@ -563,7 +565,7 @@ class ExcelService:
                 
                 # Mapear columnas del Excel a columnas de DB
                 for excel_col in Config.GROUP_TREE_KEYS:
-                    Logger.add_to_log("info", f"excel Columnas: {excel_col}")
+                    #Logger.add_to_log("info", f"excel Columnas: {excel_col}")
                     db_col = Config.COLUMN_MAP_GROUP_TREE.get(excel_col, excel_col)
                     apoyo_data[db_col] = row.get(excel_col)
                 
@@ -577,7 +579,7 @@ class ExcelService:
                 # Agregar despues idCarpetaBeneficiarios
                 apoyo_data['idCarpetaBeneficiarios'] = id_carpeta_beneficiario
                 
-                Logger.add_to_log("info", f"Apoyos: {apoyo_data}")
+                #Logger.add_to_log("info", f"Apoyos: {apoyo_data}")
                  
                  
                 # Registro de relación completa

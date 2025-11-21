@@ -45,8 +45,10 @@ def uploader_file():
     #file = request.files['file']
    
     try:
+       
         raw_data = request.form.get('data')
         data = json.loads(raw_data) if raw_data else {}
+        Logger.add_to_log("info", data)
 
         id_usuario      = request.form.get('idUsuario')
         id_dependencia  = request.form.get('idEntidad')
