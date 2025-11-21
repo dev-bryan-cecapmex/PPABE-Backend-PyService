@@ -9,6 +9,7 @@ import json
 
 #from ..services.beneficiarios_service   import BeneficiariosService
 from ...services.excel_service           import ExcelService
+from ...services.search_service          import SearchService
 
 #from ..services.search_service          import SearchService
 
@@ -166,6 +167,48 @@ def getTemplate():
         return jsonify({
             "success": False,
             "message": "Error al generar catálogos",
+            "data": {},
+            "error": str(ex)
+        }), 500
+
+@private_bp.route("/cache_stats", methods=["GET"])
+def get_cache_stats():
+    """Endpoint para monitorear el estado del cache optimizado."""
+    try:
+        stats = SearchService.get_cache_stats()
+
+        return jsonify({
+            "success": True,
+            "message": "Estadísticas del cache obtenidas correctamente",
+            "data": stats,
+            "error": None
+        }), 200
+
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al obtener estadísticas del cache",
+            "data": {},
+            "error": str(ex)
+        }), 500
+
+@private_bp.route("/cache_refresh", methods=["POST"])
+def force_cache_refresh():
+    """Endpoint para forzar refresco del cache (útil para actualizaciones manuales)."""
+    try:
+        SearchService.force_refresh_cache()
+
+        return jsonify({
+            "success": True,
+            "message": "Cache refrescado exitosamente",
+            "data": SearchService.get_cache_stats(),
+            "error": None
+        }), 200
+
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al refrescar cache",
             "data": {},
             "error": str(ex)
         }), 500

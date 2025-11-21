@@ -128,17 +128,19 @@ class ExcelService:
             
             # FIN de agrupamiento
             
-            # MAPEO por Grupos
+            # OPTIMIZACIÓN CRÍTICA: Cargar todos los catálogos UNA SOLA VEZ usando cache
+            Logger.add_to_log("info", "🚀 Cargando catálogos desde cache optimizado...")
+            catalog_start_time = datetime.now()
+
             # Grupo 1 - Beneficiarios
             sexos_map = SearchService.get_sexo_map()
-          
-            
+
             # Grupo 2 - Contactos
             estados_map = SearchService.get_estado_map()
             municipios_map = SearchService.get_municipio_map()
             colonias_map = SearchService.get_colonia_map()
             estados_civiles_map = SearchService.get_estado_civil_map()
-        
+
             # Grupo 3 - Apoyos
             dependencias_map = SearchService.get_dependencias_map()
             programas_map = SearchService.get_programas_map()
@@ -146,15 +148,17 @@ class ExcelService:
             componentes_map = SearchService.get_componentes_map()
             acciones_map = SearchService.get_acciones_map()
             tipos_beneficiarios_map = SearchService.get_tipos_beneficiarios_map()
-            
+
             # Mapa de beneficiarios existentes en BD (para detectar duplicados con BD)
             beneficiario_map = SearchService.get_beneficiarios_map()
-            Logger.add_to_log("info", f"  ✓ Beneficiarios existentes en BD: {len(beneficiario_map)} registros")
-        
-            # Carpeta de Beneficiarios 
+
+            # Carpeta de Beneficiarios
             carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
+
+            catalog_elapsed = (datetime.now() - catalog_start_time).total_seconds()
+            Logger.add_to_log("info", f"✅ Catálogos cargados en {catalog_elapsed:.2f}s (OPTIMIZADO)")
+            Logger.add_to_log("info", f"  ✓ Beneficiarios existentes en BD: {len(beneficiario_map)} registros")
             Logger.add_to_log("info", f"  ✓ Carpetas Beneficiarios: {len(carpetas_beneficiarios_map)} registros")
-            Logger.add_to_log("info", "✓ Todos los catálogos cargados exitosamente")
             
             # Diccionario de Estadistica
             stats = {
@@ -451,64 +455,44 @@ class ExcelService:
                     continue
                 
                 # ============================
-                # LÓGICA BENEFICIARIOS
+                # LÓGICA BENEFICIARIOS OPTIMIZADA
                 # ============================
                 id_beneficiario = None
                 es_nuevo = False
                 origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
-                
-                # Buscar en CACHE LOCAL del Excel
+
+                # 1. Buscar en CACHE LOCAL del Excel (duplicados dentro del archivo)
                 if curp or rfc:
                     key_beneficiario = (curp, rfc)
-                    
-                if key_beneficiario in cache_beneficiarios_excel:
-                    id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
-                    stats['duplicados_en_excel'] +=1
-                    origen = 'cache_excel'
-                   
-                # Busqueda por solo CURP en cache
-                elif curp and not id_beneficiario:
-                    for (c,r), id_ben in cache_beneficiarios_excel.items():
-                        if c == curp:
-                            id_beneficiario = id_ben
-                            stats['duplicados_en_excel'] += 1
-                            origen = "cache_excel"
-                            break
-                            
-                # Busqueda por solo RFC en cache  
-                elif rfc and not id_beneficiario:
-                    for (c,r), id_ben in cache_beneficiarios_excel.items():
+
+                    if key_beneficiario in cache_beneficiarios_excel:
+                        id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
                         stats['duplicados_en_excel'] += 1
-                        origen = "cache_excel"
-                        break
-                    
-                # Busqueda en Base de Datos
-                if not id_beneficiario:
-                    # Busqueda por CURP y RFC
-                    if curp and rfc:
-                        id_beneficiario = beneficiario_map.get((curp, rfc))
-                        if id_beneficiario:
-                            origen = 'db'
-                            
-                    # Busqueda solo por CURP
+                        origen = 'cache_excel'
+
+                    # Búsqueda por solo CURP en cache local
                     elif curp and not id_beneficiario:
-                        id_beneficiario = next(
-                            (id_ben for (c,_), id_ben in beneficiario_map.items() if c == curp),
-                            None
-                        )
-                        if id_beneficiario:
-                            origen ='db'
-                            
-                    # Busqueda solo por RFC
+                        for (c, r), id_ben in cache_beneficiarios_excel.items():
+                            if c == curp:
+                                id_beneficiario = id_ben
+                                stats['duplicados_en_excel'] += 1
+                                origen = "cache_excel"
+                                break
+
+                    # Búsqueda por solo RFC en cache local
                     elif rfc and not id_beneficiario:
-                        id_beneficiario = next(
-                            (id_ben for (_,r), id_ben in beneficiario_map.items() if r == rfc),
-                            None
-                        )
-                        if id_beneficiario:
-                            origen = 'db'
-                    
-                    if id_beneficiario and origen == 'db':
+                        for (c, r), id_ben in cache_beneficiarios_excel.items():
+                            if r == rfc:
+                                id_beneficiario = id_ben
+                                stats['duplicados_en_excel'] += 1
+                                origen = "cache_excel"
+                                break
+
+                # 2. OPTIMIZACIÓN: Usar búsqueda O(1) en BD usando cache service
+                if not id_beneficiario:
+                    id_beneficiario = SearchService.find_beneficiario_optimized(curp, rfc)
+                    if id_beneficiario:
+                        origen = 'db'
                         stats['beneficiarios_existentes_db'] += 1
                        
                 # Crea Nuevo beneficiario
