@@ -214,3 +214,25 @@ def force_cache_refresh():
             "data": {},
             "error": str(ex)
         }), 500
+
+@private_bp.route("/cache_refresh_individual", methods=["POST"])
+def individual_cache_refresh():
+    try:
+        
+        type_catalog = request.args.get("num_catalog")
+        
+        SearchService.individual_refresh_cache(type_catalog)
+        
+        return jsonify({
+            "success": True,
+            "message": "Cache refrescado exitosamente",
+            "data": SearchService.get_cache_stats(),
+            "error": None
+        }), 200
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al refrescar cache",
+            "data": {},
+            "error": str(ex)
+        }), 50
