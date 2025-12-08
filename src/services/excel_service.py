@@ -32,7 +32,9 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-class ExcelService:    
+class ExcelService: 
+    
+
     
     @staticmethod
     def process_file(file, id_user, id_dependencia_user):
@@ -44,11 +46,47 @@ class ExcelService:
             Logger.add_to_log("info", f"Id User: {id_user}")
             Logger.add_to_log("info",f"Dependencia:{id_dependencia_user}")
             
+            # 1. Leer el Excel SIN schema_overrides
+            file_bytes = file.read()
+
+            data_preview = pl.read_excel(
+                io.BytesIO(file_bytes),
+                infer_schema_length=5000  # suficiente para prevenir errores
+            )
+
+            columnas_excel = set(data_preview.columns)
+            Logger.add_to_log("info", f"Columnas detectadas en el Excel: {columnas_excel}")
+
+           
+            # 2. Validar encabezados obligatorios
+            faltantes = [c for c in Config.CAMPOS_OBLIGATORIOS if c not in columnas_excel]
+
+            if faltantes:
+                Logger.add_to_log("error", f"Faltan columnas obligatorias: {faltantes}")
+                
+                return jsonify({
+                    "success": False,
+                    "message": "Faltan columnas en el encabezado del archivo",
+                    "data": { "faltantes": faltantes },
+                    "error": "ENCABEZADO_INCOMPLETO"
+                }), 400
+
+            
+            # 3. Filtrar schema_overrides solo a columnas EXISTENTES
+            schema_filtrado = {
+                col: dtype for col, dtype in Config.CELLS_DATA_TYPES.items()
+                if col in columnas_excel
+            }
+
+            Logger.add_to_log("info", f"Schema aplicado a Polars: {schema_filtrado}")
+
+            # 4. Ahora sí leer el Excel con schema_overrides SEGURO
             data = pl.read_excel(
-                    io.BytesIO(file.read()),
-                    schema_overrides = Config.CELLS_DATA_TYPES,
-                    infer_schema_length=10000
-                )
+                io.BytesIO(file_bytes),
+                schema_overrides=schema_filtrado,
+                infer_schema_length=10000
+            )
+
 
             data = data.with_columns(
                 
@@ -170,6 +208,7 @@ class ExcelService:
             }
 
             for idx, row in enumerate(rows):
+                
                 curp = row.get('Curp') or None
                 rfc = row.get('RFC') or None
 

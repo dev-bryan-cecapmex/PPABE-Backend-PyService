@@ -77,3 +77,36 @@ class Config:
         "Dependencia":pl.Utf8,
         "Subprograma":pl.Utf8,
     }
+
+    # Lista de columnas 
+    CAMPOS_OBLIGATORIOS = [
+        "Curp", 
+        "Nombre", 
+        "Apellido paterno", 
+        "Apellido Materno",
+        "Fecha de Nacimiento", 
+        "Estado (catálogo)", 
+        "Estado Civil", 
+        "Sexo",
+        "Calle", 
+        "Numero", 
+        "Colonia", 
+        "Municipio Dirección (catálogo)",
+        "Telefono", 
+        "Telefono 2", 
+        "Correo",
+        "Programa", 
+        "Componente", 
+        "Accion",
+        "Fecha de Registro", 
+        "Monto", 
+        "Tipo de Beneficio",
+        "RFC", 
+        "Regimen Capital", 
+        "Actividad", 
+        "Nombre Comercial",
+        "Razón Social", 
+        "Localidad", 
+        "Dependencia", 
+        "Subprograma"
+    ]
