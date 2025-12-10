@@ -568,34 +568,52 @@ class ExcelService:
                     if curp or rfc:
                         cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
                                        
-                # ============================
-                # CONTACTO Y APOYO
-                # ============================
-                
-                # Pre-generar UUIDs temporales
-                id_contacto_temp    = str(uuid.uuid4())
-                id_apoyo_temp       = str(uuid.uuid4())
-                
-                # Construccion de objeto de CONTACTO
+                # SOLO se genera contacto y apoyo SI LA FILA ES VÁLIDA
+
+                # ==========================================
+                # VALIDACIONES (ya las tienes arriba)
+                # ==========================================
+                if validacion_errores:
+                    stats['errores_validacion'] += 1
+                    for validador in validacion_errores:
+                        error_detail = {
+                            'row_index': idx + 2,
+                            'curp': row.get('Curp'),
+                            'nombre_completo': f"{row.get('Nombre', '')} {row.get('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
+                            'error': msg_error or 'Error de validación en campos obligatorios',
+                            'campos_invalidos': validador,
+                            'valor': validacion_errores[validador],
+                            'data': row
+                        }
+                        rows_errors.append(error_detail)
+                    continue  # ← AQUÍ se corta correctamente
+                        
+
+                # ==========================================
+                # SOLO AQUI SE GENERA CONTACTO Y APOYO
+                # ==========================================
+
+                id_contacto_temp = str(uuid.uuid4())
+                id_apoyo_temp = str(uuid.uuid4())
+
+                # CONTACTO
                 contacto_data = {
                     'id': id_contacto_temp,
                     'creador': id_user,
                     'modificador': id_user,
                 }
-                
+
                 for excel_col in Config.GROUP_TWO_KEYS:
                     if excel_col in Config.COLUMN_MAP_GROUP_TWO:
                         db_col = Config.COLUMN_MAP_GROUP_TWO[excel_col]
                         contacto_data[db_col] = row.get(excel_col)
-                
-                # Agregar ID's de catálogos
-                contacto_data['idEstado']       = id_estado
-                contacto_data['idMunicipio']    = str(id_municipio) if id_municipio else None
-                contacto_data['colonia']        = colonia if colonia else None
-                contacto_data['idEstadoCivil']  = id_estado_civil
-                
-                
-                # Construccion de objeto de APOYO
+
+                contacto_data['idEstado']      = id_estado
+                contacto_data['idMunicipio']   = str(id_municipio) if id_municipio else None
+                contacto_data['colonia']       = colonia
+                contacto_data['idEstadoCivil'] = id_estado_civil
+
+                # APOYO
                 apoyo_data = {
                     'id': id_apoyo_temp,
                     'idBeneficiario': id_beneficiario,
@@ -603,27 +621,20 @@ class ExcelService:
                     'creador': id_user,
                     'modificador': id_user,
                 }
-                
-                # Mapear columnas del Excel a columnas de DB
+
                 for excel_col in Config.GROUP_TREE_KEYS:
-                    #Logger.add_to_log("info", f"excel Columnas: {excel_col}")
                     db_col = Config.COLUMN_MAP_GROUP_TREE.get(excel_col, excel_col)
                     apoyo_data[db_col] = row.get(excel_col)
-                
-                # Agregar IDs de catálogos
+
                 apoyo_data['idDependencia']     = id_dependencia
                 apoyo_data['idPrograma']        = id_programa
                 apoyo_data['idSubprograma']     = id_subprograma
                 apoyo_data['idComponente']      = id_componente
                 apoyo_data['idAccion']          = id_acciones
-                apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario  
-                # Agregar despues idCarpetaBeneficiarios
+                apoyo_data['idTipoBeneficio']   = id_tipo_beneficiario
                 apoyo_data['idCarpetaBeneficiarios'] = id_carpeta_beneficiario
-                
-                #Logger.add_to_log("info", f"Apoyos: {apoyo_data}")
-                 
-                 
-                # Registro de relación completa
+
+                # Registrar relación válida
                 relacion = {
                     'row_index': idx + 2,
                     'id_beneficiario': id_beneficiario,
@@ -633,13 +644,16 @@ class ExcelService:
                     'origen_beneficiario': origen,
                     'contacto_data': contacto_data,
                     'apoyo_data': apoyo_data,
-                    # Datos para reporte
                     'curp': curp,
                     'rfc': rfc,
                     'nombre_completo': f"{row.get('Nombre',' ')} {row.get('Apellido paterno','')} {row.get('Apellido Materno','')}".strip()
                 }
-                
+
                 relaciones.append(relacion)
+
+                
+                
+                
                  
             # Estadistica y reporte de duplicados
             Logger.add_to_log("info", "")
