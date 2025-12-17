@@ -131,8 +131,6 @@ class ExcelService:
             # Listado de Beneficiarios Nuevos para insertar en BD
             beneficiarios_to_insert = []
             
-            # Set de IDs de beneficiarios nuevos 
-            beneficiarios_nuevos_ids = set()
             
             # Lista de relacciones completas: fila -> beneficiario -> contacto -> apoyo
             relaciones = []
@@ -140,11 +138,6 @@ class ExcelService:
             # Lista de filas con errores de validacion
             rows_errors = []
             
-            """
-                CACHE LOCAL: Detecta duplicidad DENTRO del Excel
-                Estrucutura: {(curp, rfc): id_beneficiario}
-            """
-            cache_beneficiarios_excel = {}
             
             Logger.add_to_log("info", f"Inicio de estrucutura correctamente")
             
@@ -187,23 +180,18 @@ class ExcelService:
             acciones_map = SearchService.get_acciones_map()
             tipos_beneficiarios_map = SearchService.get_tipos_beneficiarios_map()
 
-            # Mapa de beneficiarios existentes en BD (para detectar duplicados con BD)
-            beneficiario_map = SearchService.get_beneficiarios_map()
 
             # Carpeta de Beneficiarios
             carpetas_beneficiarios_map = SearchService.get_carpeta_beneficiarios_map()
 
             catalog_elapsed = (datetime.now() - catalog_start_time).total_seconds()
             Logger.add_to_log("info", f"✅ Catálogos cargados en {catalog_elapsed:.2f}s (OPTIMIZADO)")
-            Logger.add_to_log("info", f"  ✓ Beneficiarios existentes en BD: {len(beneficiario_map)} registros")
             Logger.add_to_log("info", f"  ✓ Carpetas Beneficiarios: {len(carpetas_beneficiarios_map)} registros")
             
             # Diccionario de Estadistica
             stats = {
                 'total_filas': len(rows),
                 'beneficiarios_nuevos': 0,
-                'beneficiarios_existentes_db': 0,
-                'duplicados_en_excel': 0,
                 'errores_validacion': 0
             }
 
@@ -498,81 +486,11 @@ class ExcelService:
                     continue
                 
                 # ============================
-                # LÓGICA BENEFICIARIOS OPTIMIZADA
+                # NUEVA LÓGICA: SIEMPRE CREAR BENEFICIARIO NUEVO POR FILA
+                # (Se elimina por completo la búsqueda de existencia)
                 # ============================
-                id_beneficiario = None
-                es_nuevo = False
-                origen = "" # Para Tracking: 'cache_excel', 'db', 'nuevo'
-
-                # 1. Buscar en CACHE LOCAL del Excel (duplicados dentro del archivo)
-                if curp or rfc:
-                    key_beneficiario = (curp, rfc)
-
-                    if key_beneficiario in cache_beneficiarios_excel:
-                        id_beneficiario = cache_beneficiarios_excel[key_beneficiario]
-                        stats['duplicados_en_excel'] += 1
-                        origen = 'cache_excel'
-
-                    # Búsqueda por solo CURP en cache local
-                    elif curp and not id_beneficiario:
-                        for (c, r), id_ben in cache_beneficiarios_excel.items():
-                            if c == curp:
-                                id_beneficiario = id_ben
-                                stats['duplicados_en_excel'] += 1
-                                origen = "cache_excel"
-                                break
-
-                    # Búsqueda por solo RFC en cache local
-                    elif rfc and not id_beneficiario:
-                        for (c, r), id_ben in cache_beneficiarios_excel.items():
-                            if r == rfc:
-                                id_beneficiario = id_ben
-                                stats['duplicados_en_excel'] += 1
-                                origen = "cache_excel"
-                                break
-
-                # 2. OPTIMIZACIÓN: Usar búsqueda O(1) en BD usando cache service
-                if not id_beneficiario:
-                    id_beneficiario = SearchService.find_beneficiario_optimized(curp, rfc)
-                    if id_beneficiario:
-                        origen = 'db'
-                        stats['beneficiarios_existentes_db'] += 1
-                       
-                # Crea Nuevo beneficiario
-                if not id_beneficiario:
-                    id_beneficiario = str(uuid.uuid4())
-                    es_nuevo = True
-                    origen = "nuevo"
-                    stats['beneficiarios_nuevos'] += 1
-                    beneficiarios_nuevos_ids.add(id_beneficiario)
-                    
-                    # Objeto con beneficiario con mapeo correcto
-                    nuevo_beneficiario = {
-                        'id': id_beneficiario,
-                        'creador': id_user,
-                        'modificador': id_user,
-                    }
-                    
-                    # Mapeo columnas del Excel a columnas de BD
-                    for excel_col in Config.GROUP_ONE_KEYS:
-                        db_col = Config.COLUMN_MAP_GROUP_ONE.get(excel_col, excel_col)
-                        nuevo_beneficiario[db_col] = row.get((excel_col))
-                    
-                    # Asegurar que tenga el idSexo correcto
-                    nuevo_beneficiario['idSexo'] = id_sexo
-
-                    # Agregar a lista de inserción 
-                    beneficiarios_to_insert.append(nuevo_beneficiario) 
-                    
-                    # REGISTRO en CACHE LOCAL
-                    if curp or rfc:
-                        cache_beneficiarios_excel[(curp, rfc)] = id_beneficiario
-                                       
-                # SOLO se genera contacto y apoyo SI LA FILA ES VÁLIDA
-
-                # ==========================================
-                # VALIDACIONES (ya las tienes arriba)
-                # ==========================================
+                
+                # Si la fila tiene errores, NO se genera Beneficiario/Contacto/Apoyo
                 if validacion_errores:
                     stats['errores_validacion'] += 1
                     for validador in validacion_errores:
@@ -587,8 +505,30 @@ class ExcelService:
                         }
                         rows_errors.append(error_detail)
                     continue  # ← AQUÍ se corta correctamente
-                        
-
+                
+                # Crear siempre un beneficiario nuevo
+                id_beneficiario = str(uuid.uuid4())
+                es_nuevo = True
+                origen = "nuevo"
+                stats['beneficiarios_nuevos'] += 1
+                
+                nuevo_beneficiario = {
+                    'id': id_beneficiario,
+                    'creador': id_user,
+                    'modificador': id_user,
+                }
+                
+                # Mapeo columnas del Excel a columnas de BD
+                for excel_col in Config.GROUP_ONE_KEYS:
+                    db_col = Config.COLUMN_MAP_GROUP_ONE.get(excel_col, excel_col)
+                    nuevo_beneficiario[db_col] = row.get(excel_col)
+                
+                # Asegurar que tenga el idSexo correcto
+                nuevo_beneficiario['idSexo'] = id_sexo
+                
+                # Agregar a lista de inserción
+                beneficiarios_to_insert.append(nuevo_beneficiario)
+                
                 # ==========================================
                 # SOLO AQUI SE GENERA CONTACTO Y APOYO
                 # ==========================================
@@ -662,70 +602,10 @@ class ExcelService:
             Logger.add_to_log("info", "=" * 60)
             Logger.add_to_log("info", f"  Total de filas procesadas: {stats['total_filas']}")
             Logger.add_to_log("info", f"  ✨ Beneficiarios NUEVOS: {stats['beneficiarios_nuevos']}")
-            Logger.add_to_log("info", f"  ✓ Beneficiarios EXISTENTES en BD: {stats['beneficiarios_existentes_db']}")
-            Logger.add_to_log("info", f"  ♻️  Duplicados EN EXCEL: {stats['duplicados_en_excel']}")
             Logger.add_to_log("info", f"  ⚠️  Errores de validación: {stats['errores_validacion']}")
             Logger.add_to_log("info", f"  📝 Relaciones válidas creadas: {len(relaciones)}")
             Logger.add_to_log("info", "=" * 60)
             Logger.add_to_log("info", "")
-            
-            # Reporte detallado de duplicados en Excel
-            if stats['duplicados_en_excel'] > 0:
-    
-                # Contar ocurrencias de cada beneficiario
-                beneficiario_ocurrencias = {}
-                for rel in relaciones:
-                    id_ben = rel['id_beneficiario']
-                    if id_ben not in beneficiario_ocurrencias:
-                        beneficiario_ocurrencias[id_ben] = {
-                            'count': 0,
-                            'curp': rel['curp'],
-                            'rfc': rel['rfc'],
-                            'nombre': rel['nombre_completo'],
-                            'filas': []
-                        }
-                    beneficiario_ocurrencias[id_ben]['count'] += 1
-                    beneficiario_ocurrencias[id_ben]['filas'].append(rel['row_index'])
-                
-                # Filtrar solo los que aparecen más de una vez
-                duplicados = {k: v for k, v in beneficiario_ocurrencias.items() if v['count'] > 1}
-                """
-                for id_ben, info in duplicados.items():
-                    Logger.add_to_log("warn", f"  • {info['nombre']}")
-                    Logger.add_to_log("warn", f"    CURP: {info['curp']}, RFC: {info['rfc']}")
-                    Logger.add_to_log("warn", f"    Aparece {info['count']} veces en filas: {info['filas']}")
-                    Logger.add_to_log("warn", "")
-                """
-            
-            # Reporte de errores de validación 
-            if rows_errors:
-                Logger.add_to_log("error", "REPORTE DE ERRORES DE VALIDACIÓN")
-                Logger.add_to_log("error","-" * 60)
-                
-                for error in rows_errors[:10]: # Muesta solo primero 10
-                    Logger.add_to_log("error", f"  Fila {error['row_index']}: {error.get('nombre_completo', 'N/A')}")
-                    Logger.add_to_log("error", f"    CURP: {error.get('curp', 'N/A')}")
-                    Logger.add_to_log("error", f"    Error: {error['error']}")
-                    Logger.add_to_log("error", f"    Campos inválidos: {error['campos_invalidos']}")
-                    Logger.add_to_log("error", "")
-                
-                if len(rows_errors) > 10:
-                    Logger.add_to_log("error", f"  ... y {len(rows_errors) - 10} errores más")
-                
-                return jsonify({
-                    'success':False,
-                    'message':'No se encontraron registros validos para procesar',
-                     'data':{
-                        'total_filas':stats['total_filas'],
-                        'errores': stats['errores_validacion'],
-                        'errores_detalle': rows_errors
-                    },
-                    'error':'Sin datos válidos'
-                }),400
-
-
-            
-            Logger.add_to_log("info","INICIANDO INSERCIÓN EN BASE DE DATOS ...")
             
             if not relaciones:
                 Logger.add_to_log("warn", "No hay datos validos para insertar")
