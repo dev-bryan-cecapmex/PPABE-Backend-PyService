@@ -1,20 +1,12 @@
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional, Tuple, Set
-import threading
+# src/services/cache_service.py
 
-from ..models.dependencias import Dependencias
-from ..models.programas import Programas
-from ..models.subprogramas import Subprogramas
-from ..models.componentes import Componentes
-from ..models.sexos import Sexos
-from ..models.estados import Estados
-from ..models.municipios import Municipios
-from ..models.colonias import Colonias
-from ..models.estados_civiles import EstadosCiviles
-from ..models.acciones import Acciones
-from ..models.tipos_beneficios import TiposBeneficiarios
-from ..models.carpeta_beneficiarios import CarpetaBeneficiarios
-from ..models.beneficiarios import Beneficiarios
+from __future__ import annotations
+
+import time
+import threading
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import text
 
 from ..database.connection import db
 from ..utils.Logger import Logger
@@ -22,585 +14,203 @@ from ..utils.Logger import Logger
 
 class CacheService:
     """
-    Servicio de cache inteligente para catálogos y beneficiarios.
-    Elimina consultas repetidas y optimiza búsquedas con índices O(1).
+    Cache en memoria (por proceso) SOLO para catálogos.
+    ✅ Ya NO existe cache de beneficiarios.
     """
 
-    _instance = None
-    _lock = threading.Lock()
+    def __init__(self, ttl_seconds: int = 3600):
+        self.ttl_seconds = ttl_seconds
+        self._lock = threading.RLock()
 
-    def __new__(cls):
-        if cls._instance is None:
-            with cls._lock:
-                if cls._instance is None:
-                    cls._instance = super().__new__(cls)
-                    cls._instance._initialized = False
-        return cls._instance
+        # Cache de catálogos:
+        # {
+        #   "TIPO_CATALOGO": {
+        #        "loaded_at": float,
+        #        "rows": [ {..}, {..} ],
+        #        "by_id": { "<id>": {...} },
+        #        "by_name": { "<nombre_normalizado>": {...} }
+        #   },
+        #   ...
+        # }
+        self._catalogs_cache: Dict[str, Dict[str, Any]] = {}
+        self._catalogs_loaded_at: Optional[float] = None
 
-    def __init__(self):
-        if not self._initialized:
-            self._catalogs_cache: Dict[str, Any] = {}
-            self._beneficiarios_cache: Dict[str, Any] = {}
-            self._last_refresh: Optional[datetime] = None
-            self._cache_ttl = timedelta(hours=1)  # TTL de 1 hora
-            self._initialized = True
+    # -------------------------
+    # Helpers
+    # -------------------------
+    def _now(self) -> float:
+        return time.time()
 
-    def _is_cache_valid(self) -> bool:
-        """Verifica si el cache sigue siendo válido basado en TTL."""
-        if self._last_refresh is None:
+    def _is_valid(self, loaded_at: Optional[float]) -> bool:
+        if loaded_at is None:
             return False
-        return datetime.now() - self._last_refresh < self._cache_ttl
+        return (self._now() - loaded_at) <= self.ttl_seconds
 
-    def refresh_catalogs_cache(self) -> None:
-        """Refresca todos los catálogos en una sola operación."""
-        Logger.add_to_log("info", "🔄 Refrescando cache de catálogos...")
-        start_time = datetime.now()
+    @staticmethod
+    def _norm_name(value: Any) -> str:
+        if value is None:
+            return ""
+        return str(value).strip().lower()
 
-        try:
-            # Sexos
-            sexos = (
-                Sexos.query
-                .with_entities(Sexos.nombre, Sexos.id)
-                .filter(Sexos.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['sexos'] = {nombre.upper().strip(): id_sex for nombre, id_sex in sexos}
+    # -------------------------
+    # DB fetch (ajusta aquí si tu SP/consulta es distinta)
+    # -------------------------
+    def _fetch_catalog_rows(self, catalog_type: str) -> List[Dict[str, Any]]:
+        """
+        Obtiene el catálogo desde BD.
+        Por defecto intenta usar: CALL sp_ListaPorCatalogo(:tipo)
 
-            # Estados
-            estados = (
-                Estados.query
-                .with_entities(Estados.nombre, Estados.id)
-                .filter(Estados.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['estados'] = {nombre.upper().strip(): id_est for nombre, id_est in estados}
+        Ajusta este método si tus catálogos se obtienen con otro SP/consulta.
+        """
+        sql = text("CALL sp_ListaPorCatalogo(:tipo)")
+        result = db.session.execute(sql, {"tipo": catalog_type})
 
-            # Municipios
-            municipios = (
-                Municipios.query
-                .with_entities(Municipios.nombre, Municipios.id, Municipios.idEstado)
-                .filter(Municipios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['municipios'] = {nombre.upper().strip(): [id_mun, id_est] for nombre, id_mun, id_est in municipios}
+        rows: List[Dict[str, Any]] = []
+        # SQLAlchemy RowMapping -> dict
+        for r in result.mappings():
+            rows.append(dict(r))
+        return rows
 
-            # Colonias
-            colonias = (
-                Colonias.query
-                .with_entities(Colonias.nombre, Colonias.id, Colonias.idMunicipio)
-                .filter(Colonias.deleted == 0)
-                .all()
-            )
-            # self._catalogs_cache['colonias'] = {nombre.upper().strip(): [id_col, id_mun] for nombre, id_col, id_mun in colonias}
+    def _index_catalog(self, rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Construye índices para búsqueda rápida por id / nombre.
+        Detecta columnas comunes: id/Id/ID y nombre/Nombre/descripcion/Descripcion.
+        """
+        by_id: Dict[str, Dict[str, Any]] = {}
+        by_name: Dict[str, Dict[str, Any]] = {}
 
-            # Estados Civiles
-            estados_civiles = (
-                EstadosCiviles.query
-                .with_entities(EstadosCiviles.nombre, EstadosCiviles.id)
-                .filter(EstadosCiviles.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['estados_civiles'] = {nombre.upper().strip(): id_est_civ for nombre, id_est_civ in estados_civiles}
+        # posibles llaves
+        id_keys = ("id", "Id", "ID")
+        name_keys = ("nombre", "Nombre", "descripcion", "Descripcion", "descripción", "Descripción")
 
-            # Dependencias
-            dependencias = (
-                Dependencias.query
-                .with_entities(Dependencias.nombre, Dependencias.id)
-                .filter(Dependencias.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['dependencias'] = {nombre.upper().strip(): id_dep for nombre, id_dep in dependencias}
+        for row in rows:
+            # id
+            _id = None
+            for k in id_keys:
+                if k in row and row[k] is not None:
+                    _id = str(row[k])
+                    break
 
-            # Programas
-            programas = (
-                Programas.query
-                .with_entities(Programas.nombre, Programas.id, Programas.idDependencia)
-                .filter(Programas.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['programas'] = {(nombre.upper().strip(), id_dep): id_prog for nombre, id_prog, id_dep in programas}
+            # nombre/descripcion
+            _name = None
+            for k in name_keys:
+                if k in row and row[k] is not None:
+                    _name = self._norm_name(row[k])
+                    break
 
-            # Subprogramas
-            subprogramas = (
-                Subprogramas.query
-                .with_entities(Subprogramas.nombre, Subprogramas.id, Subprogramas.idPrograma)
-                .filter(Subprogramas.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['subprogramas'] = {(nombre.upper().strip(), id_prog): id_sub for nombre, id_sub, id_prog in subprogramas}
+            if _id:
+                by_id[_id] = row
+            if _name:
+                by_name[_name] = row
 
-            # Componentes
-            componentes = (
-                Componentes.query
-                .with_entities(Componentes.nombre, Componentes.id, Componentes.idSubPrograma)
-                .filter(Componentes.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['componentes'] = {(nombre.upper().strip(), id_sub): id_com for nombre, id_com, id_sub in componentes}
+        return {"rows": rows, "by_id": by_id, "by_name": by_name}
 
-            # Acciones
-            acciones = (
-                Acciones.query
-                .with_entities(Acciones.nombre, Acciones.id)
-                .filter(Acciones.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['acciones'] = {nombre.upper().strip(): id_act for nombre, id_act in acciones}
+    # -------------------------
+    # Public API
+    # -------------------------
+    def refresh_catalogs_cache(self, catalog_types: Optional[List[str]] = None) -> None:
+        """
+        Refresca (reconstruye) el cache de catálogos.
+        Si no se pasan tipos, usa los que ya existan en cache; si no hay, no hace nada.
+        """
+        with self._lock:
+            start = time.perf_counter()
 
-            # Tipos Beneficiarios
-            tipos_beneficiarios = (
-                TiposBeneficiarios.query
-                .with_entities(TiposBeneficiarios.nombre, TiposBeneficiarios.id)
-                .filter(TiposBeneficiarios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['tipos_beneficiarios'] = {nombre.upper().strip(): id_tben for nombre, id_tben in tipos_beneficiarios}
+            if catalog_types is None:
+                catalog_types = list(self._catalogs_cache.keys())
 
-            # Carpetas Beneficiarios
-            carpetas_beneficiarios = (
-                CarpetaBeneficiarios.query
-                .with_entities(
-                    CarpetaBeneficiarios.id,
-                    CarpetaBeneficiarios.mes,
-                    CarpetaBeneficiarios.anio,
-                    CarpetaBeneficiarios.idDependencia,
-                    CarpetaBeneficiarios.estado,
-                )
-                .filter(CarpetaBeneficiarios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['carpetas_beneficiarios'] = {
-                (mes, anio, id_dep): {
-                    "id": id_carpeta,
-                    "estado": estado
+            if not catalog_types:
+                Logger.add_to_log("info", "ℹ️ No hay tipos de catálogo definidos para refrescar.")
+                self._catalogs_loaded_at = self._now()
+                return
+
+            Logger.add_to_log("info", "🔄 Refrescando cache de catálogos...")
+
+            new_cache: Dict[str, Dict[str, Any]] = {}
+            for ctype in catalog_types:
+                rows = self._fetch_catalog_rows(ctype)
+                indexed = self._index_catalog(rows)
+                new_cache[ctype] = {
+                    "loaded_at": self._now(),
+                    **indexed,
                 }
-                for id_carpeta, mes, anio, id_dep, estado in carpetas_beneficiarios
-            }
 
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
+            self._catalogs_cache = new_cache
+            self._catalogs_loaded_at = self._now()
 
-            Logger.add_to_log("info", f"✅ Cache de catálogos refrescado exitosamente en {elapsed_time:.2f}s")
+            elapsed = time.perf_counter() - start
+            Logger.add_to_log("info", f"✅ Cache de catálogos refrescado exitosamente en {elapsed:.2f}s")
             Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
 
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de catálogos: {str(ex)}")
-            raise
-
-#     def refresh_beneficiarios_cache(self) -> None:
-#         """Refresca cache de beneficiarios con índices optimizados."""
-#         Logger.add_to_log("info", "🔄 Refrescando cache de beneficiarios...")
-#         start_time = datetime.now()
-# 
-#         try:
-#             # Cargar todos los beneficiarios activos
-#             beneficiarios = (
-#                 Beneficiarios.query
-#                 .with_entities(Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
-#                 .filter(Beneficiarios.deleted == 0)
-#                 .all()
-#             )
-# 
-#             # Crear múltiples índices para búsquedas O(1)
-#             combined_index = {}  # (curp, rfc) -> id
-#             curp_index = {}      # curp -> set(ids)
-#             rfc_index = {}       # rfc -> set(ids)
-# 
-#             for curp, rfc, id_ben in beneficiarios:
-#                 # Normalizar valores
-#                 curp_clean = curp.strip() if curp else None
-#                 rfc_clean = rfc.strip() if rfc else None
-# 
-#                 # Índice combinado
-#                 if curp_clean and rfc_clean:
-#                     combined_index[(curp_clean, rfc_clean)] = id_ben
-# 
-#                 # Índice por CURP
-#                 if curp_clean:
-#                     if curp_clean not in curp_index:
-#                         curp_index[curp_clean] = set()
-#                     curp_index[curp_clean].add(id_ben)
-# 
-#                 # Índice por RFC
-#                 if rfc_clean:
-#                     if rfc_clean not in rfc_index:
-#                         rfc_index[rfc_clean] = set()
-#                     rfc_index[rfc_clean].add(id_ben)
-# 
-#             self._beneficiarios_cache = {
-#                 'combined': combined_index,
-#                 'curp': curp_index,
-#                 'rfc': rfc_index,
-#                 'total_count': len(beneficiarios)
-#             }
-# 
-#             elapsed_time = (datetime.now() - start_time).total_seconds()
-#             Logger.add_to_log("info", f"✅ Cache de beneficiarios refrescado en {elapsed_time:.2f}s")
-#             Logger.add_to_log("info", f"   📊 Beneficiarios indexados: {len(beneficiarios)}")
-# 
-#         except Exception as ex:
-#             Logger.add_to_log("error", f"❌ Error refrescando cache de beneficiarios: {str(ex)}")
-#             raise
-
-    def get_catalogs(self) -> Dict[str, Any]:
-        """Obtiene todos los catálogos, refrescando cache si es necesario."""
-        if not self._is_cache_valid() or not self._catalogs_cache:
-            self.refresh_catalogs_cache()
-        return self._catalogs_cache
-
-    def get_beneficiarios_cache(self) -> Dict[str, Any]:
-        """Obtiene cache de beneficiarios, refrescando si es necesario."""
-        if not self._beneficiarios_cache:
-            self.refresh_beneficiarios_cache()
-        return self._beneficiarios_cache
-
-    def find_beneficiario(self, curp: Optional[str] = None, rfc: Optional[str] = None) -> Optional[str]:
+    def get_catalogs_cache(self) -> Dict[str, Dict[str, Any]]:
         """
-        Búsqueda optimizada O(1) de beneficiario por CURP y/o RFC.
-
-        Args:
-            curp: CURP del beneficiario
-            rfc: RFC del beneficiario
-
-        Returns:
-            ID del beneficiario si existe, None en caso contrario
+        Devuelve el cache de catálogos. Si está expirado, lo refresca.
         """
-        if not curp and not rfc:
-            return None
+        with self._lock:
+            if not self._is_valid(self._catalogs_loaded_at):
+                # Si nunca se definieron tipos, aquí no podemos adivinar cuáles son;
+                # por eso refresca solo si ya existen tipos en cache.
+                self.refresh_catalogs_cache()
+            return self._catalogs_cache
 
-        cache = self.get_beneficiarios_cache()
+    def get_catalog(self, catalog_type: str) -> Dict[str, Any]:
+        """
+        Obtiene un catálogo en específico. Si no existe o expiró, lo carga.
+        """
+        with self._lock:
+            entry = self._catalogs_cache.get(catalog_type)
+            if entry and self._is_valid(entry.get("loaded_at")):
+                return entry
 
-        # Normalizar entradas
-        curp_clean = curp.strip() if curp else None
-        rfc_clean = rfc.strip() if rfc else None
+            # cargar solo ese tipo
+            rows = self._fetch_catalog_rows(catalog_type)
+            indexed = self._index_catalog(rows)
+            self._catalogs_cache[catalog_type] = {
+                "loaded_at": self._now(),
+                **indexed,
+            }
+            self._catalogs_loaded_at = self._now()
+            return self._catalogs_cache[catalog_type]
 
-        # Búsqueda por combinación (más específica)
-        if curp_clean and rfc_clean:
-            return cache['combined'].get((curp_clean, rfc_clean))
+    def find_in_catalog_by_id(self, catalog_type: str, _id: str) -> Optional[Dict[str, Any]]:
+        cat = self.get_catalog(catalog_type)
+        return cat["by_id"].get(str(_id))
 
-        # Búsqueda solo por CURP
-        elif curp_clean:
-            curp_matches = cache['curp'].get(curp_clean, set())
-            return next(iter(curp_matches)) if curp_matches else None
+    def find_in_catalog_by_name(self, catalog_type: str, name: str) -> Optional[Dict[str, Any]]:
+        cat = self.get_catalog(catalog_type)
+        return cat["by_name"].get(self._norm_name(name))
 
-        # Búsqueda solo por RFC
-        elif rfc_clean:
-            rfc_matches = cache['rfc'].get(rfc_clean, set())
-            return next(iter(rfc_matches)) if rfc_matches else None
+    def force_refresh(self, catalog_types: Optional[List[str]] = None) -> None:
+        """
+        Forza refresco SOLO de catálogos.
+        ✅ Ya NO refresca beneficiarios.
+        """
+        Logger.add_to_log("info", "🔄 Forzando refresco completo del cache...")
+        self.refresh_catalogs_cache(catalog_types=catalog_types)
+        Logger.add_to_log("info", "✅ Refresco completo del cache finalizado")
 
-        return None
+    def clear_catalogs_cache(self) -> None:
+        """
+        Limpia SOLO catálogos (por si tienes un endpoint admin).
+        """
+        with self._lock:
+            self._catalogs_cache = {}
+            self._catalogs_loaded_at = None
+            Logger.add_to_log("info", "🧹 Cache de catálogos limpiado.")
 
     def get_cache_stats(self) -> Dict[str, Any]:
-        """Obtiene estadísticas del cache para monitoring."""
-        return {
-            'catalogs_loaded': len(self._catalogs_cache),
-            'beneficiarios_indexed': self._beneficiarios_cache.get('total_count', 0),
-            'last_refresh': self._last_refresh.isoformat() if self._last_refresh else None,
-            'cache_valid': self._is_cache_valid(),
-            'ttl_remaining_minutes': (self._cache_ttl - (datetime.now() - self._last_refresh)).total_seconds() / 60 if self._last_refresh else 0
-        }
-
-    def force_refresh(self) -> None:
-        """Fuerza refresco completo del cache."""
-        Logger.add_to_log("info", "🔄 Forzando refresco completo del cache...")
-        self.refresh_catalogs_cache()
-        self.refresh_beneficiarios_cache()
-        Logger.add_to_log("info", "✅ Refresco completo del cache finalizado")
-    
-    def refresh_dependencias_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de dependencias...")
-            start_time = datetime.now()
-            
-            # Dependencias
-            dependencias = (
-                Dependencias.query
-                .with_entities(Dependencias.nombre, Dependencias.id)
-                .filter(Dependencias.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['dependencias'] = {nombre.upper().strip(): id_dep for nombre, id_dep in dependencias}
-            
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de Dependencias refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Dependencias: {str(ex)}")
-            raise
-    
-    def refresh_programas_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de programas...")
-            start_time = datetime.now()
-            
-            # Programas
-            programas = (
-                Programas.query
-                .with_entities(Programas.nombre, Programas.id, Programas.idDependencia)
-                .filter(Programas.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['programas'] = {(nombre.upper().strip(), id_dep): id_prog for nombre, id_prog, id_dep in programas}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de Programas refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Programas: {str(ex)}")
-            raise
-    
-    def refresh_subprogramas_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de subprogramas...")
-            start_time = datetime.now()
-            
-            # Subprogramas
-            subprogramas = (
-                Subprogramas.query
-                .with_entities(Subprogramas.nombre, Subprogramas.id, Subprogramas.idPrograma)
-                .filter(Subprogramas.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['subprogramas'] = {(nombre.upper().strip(), id_prog): id_sub for nombre, id_sub, id_prog in subprogramas}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de subprogramas refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Subprogramas: {str(ex)}")
-            raise
-        
-        
-    def refresh_componentes_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de componentes...")
-            start_time = datetime.now()
-            
-            # Componentes
-            componentes = (
-                Componentes.query
-                .with_entities(Componentes.nombre, Componentes.id, Componentes.idSubPrograma)
-                .filter(Componentes.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['componentes'] = {(nombre.upper().strip(), id_sub): id_com for nombre, id_com, id_sub in componentes}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de componentes refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Componentes: {str(ex)}")
-            raise
-        
-    def refresh_acciones_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de acciones...")
-            start_time = datetime.now()
-            
-            # Acciones
-            acciones = (
-                Acciones.query
-                .with_entities(Acciones.nombre, Acciones.id)
-                .filter(Acciones.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['acciones'] = {nombre.upper().strip(): id_act for nombre, id_act in acciones}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de acciones refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Acciones: {str(ex)}")
-            raise
-    
-    def refresh_estados_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de estados...")
-            start_time = datetime.now()
-            
-            # Estados
-            estados = (
-                Estados.query
-                .with_entities(Estados.nombre, Estados.id)
-                .filter(Estados.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['estados'] = {nombre.upper().strip(): id_est for nombre, id_est in estados}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de estados refrescado exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Estados: {str(ex)}")
-            raise
-    
-    def refresh_municipios_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de municipios...")
-            start_time = datetime.now()
-            
-            # Municipios
-            municipios = (
-                Municipios.query
-                .with_entities(Municipios.nombre, Municipios.id, Municipios.idEstado)
-                .filter(Municipios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['municipios'] = {nombre.upper().strip(): [id_mun, id_est] for nombre, id_mun, id_est in municipios}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de municipios refrescado exitosamente en {elapsed_time:.2f}s")
-            # Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Municipios: {str(ex)}")
-            raise
-        
-    def refresh_colonias_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de colonias...")
-            start_time = datetime.now()
-            
-            # Colonias
-            colonias = (
-                Colonias.query
-                .with_entities(Colonias.nombre, Colonias.id, Colonias.idMunicipio)
-                .filter(Colonias.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['colonias'] = {nombre.upper().strip(): [id_col, id_mun] for nombre, id_col, id_mun in colonias}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de colonias refrescado exitosamente en {elapsed_time:.2f}s")
-            # Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de Colonias: {str(ex)}")
-            raise
-    
-    def refresh_sexos_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de sexos...")
-            start_time = datetime.now()
-            
-            # Sexos
-            sexos = (
-                Sexos.query
-                .with_entities(Sexos.nombre, Sexos.id)
-                .filter(Sexos.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['sexos'] = {nombre.upper().strip(): id_sex for nombre, id_sex in sexos}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de sexos refrescado exitosamente en {elapsed_time:.2f}s")
-            #Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de sexos: {str(ex)}")
-            raise
-
-    def refresh_estados_civiles_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de estados civiles...")
-            start_time = datetime.now()
-            
-            # Estados Civiles
-            estados_civiles = (
-                EstadosCiviles.query
-                .with_entities(EstadosCiviles.nombre, EstadosCiviles.id)
-                .filter(EstadosCiviles.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['estados_civiles'] = {nombre.upper().strip(): id_est_civ for nombre, id_est_civ in estados_civiles}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de estados civiles refrescado exitosamente en {elapsed_time:.2f}s")
-            # Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de estados civiles: {str(ex)}")
-            raise
-        
-    def refresh_tipos_beneficiarios_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de tipo beneficiario...")
-            start_time = datetime.now()
-            
-            # Tipos Beneficiarios
-            tipos_beneficiarios = (
-                TiposBeneficiarios.query
-                .with_entities(TiposBeneficiarios.nombre, TiposBeneficiarios.id)
-                .filter(TiposBeneficiarios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['tipos_beneficiarios'] = {nombre.upper().strip(): id_tben for nombre, id_tben in tipos_beneficiarios}
-
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de tipo beneficiario refrescados exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de tipo beneficiarios: {str(ex)}")
-            raise
-    
-    def refresh_carpetas_beneficiarios_cache(self) -> None:
-        try:
-            Logger.add_to_log("info", "🔄 Refrescando cache de carpetas beneficiarios...")
-            start_time = datetime.now()
-            
-            # Carpetas Beneficiarios
-            carpetas_beneficiarios = (
-                CarpetaBeneficiarios.query
-                .with_entities(
-                    CarpetaBeneficiarios.id,
-                    CarpetaBeneficiarios.mes,
-                    CarpetaBeneficiarios.anio,
-                    CarpetaBeneficiarios.idDependencia,
-                    CarpetaBeneficiarios.estado,
-                )
-                .filter(CarpetaBeneficiarios.deleted == 0)
-                .all()
-            )
-            self._catalogs_cache['carpetas_beneficiarios'] = {
-                (mes, anio, id_dep): {
-                    "id": id_carpeta,
-                    "estado": estado
-                }
-                for id_carpeta, mes, anio, id_dep, estado in carpetas_beneficiarios
+        """
+        Estadísticas del cache.
+        ✅ Sin beneficiarios.
+        """
+        with self._lock:
+            stats = {
+                "catalogs_types": len(self._catalogs_cache),
+                "catalogs_loaded_at": self._catalogs_loaded_at,
+                "ttl_seconds": self.ttl_seconds,
             }
+            return stats
 
-            self._last_refresh = datetime.now()
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            
-            Logger.add_to_log("info", f"✅ Cache de carpetas beneficiario refrescados exitosamente en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"Datos: {self._catalogs_cache}")
-            Logger.add_to_log("info", f"   📊 Catálogos cargados: {len(self._catalogs_cache)} tipos")
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de carpetas beneficiarios: {str(ex)}")
-            raise
-        
-# Instancia singleton global
-cache_service = CacheService()
+
+# Singleton (si tu proyecto lo usa así)
+cache_service = CacheService(ttl_seconds=3600)

@@ -169,27 +169,27 @@ class SearchService:
             )
             return {(nombre.upper().strip(), id_sub): id_com for nombre, id_com, id_sub in componentes}
 
-    @staticmethod
-    def get_beneficiarios_map():
-        """
-        OPTIMIZADO: Usa cache de beneficiarios con índices O(1).
-
-        IMPORTANTE: Para compatibilidad con código existente, devuelve el
-        formato original pero con performance mejorada.
-        """
-        try:
-            beneficiarios_cache = cache_service.get_beneficiarios_cache()
-            # Convertir índice combinado al formato esperado por el código existente
-            return beneficiarios_cache.get('combined', {})
-        except Exception as ex:
-            Logger.add_to_log("warning", f"Cache fallback para beneficiarios: {str(ex)}")
-            beneficiarios = (
-                Beneficiarios.query
-                .with_entities(Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
-                .filter(Beneficiarios.deleted == 0)
-                .all()
-            )
-            return {(curp, rfc): id_ben for curp, rfc, id_ben in beneficiarios}
+#     @staticmethod
+#     def get_beneficiarios_map():
+#         """
+#         OPTIMIZADO: Usa cache de beneficiarios con índices O(1).
+# 
+#         IMPORTANTE: Para compatibilidad con código existente, devuelve el
+#         formato original pero con performance mejorada.
+#         """
+#         try:
+#             beneficiarios_cache = cache_service.get_beneficiarios_cache()
+#             # Convertir índice combinado al formato esperado por el código existente
+#             return beneficiarios_cache.get('combined', {})
+#         except Exception as ex:
+#             Logger.add_to_log("warning", f"Cache fallback para beneficiarios: {str(ex)}")
+#             beneficiarios = (
+#                 Beneficiarios.query
+#                 .with_entities(Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
+#                 .filter(Beneficiarios.deleted == 0)
+#                 .all()
+#             )
+#             return {(curp, rfc): id_ben for curp, rfc, id_ben in beneficiarios}
 
     @staticmethod
     def get_acciones_map():
