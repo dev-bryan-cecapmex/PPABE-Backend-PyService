@@ -1108,13 +1108,7 @@ class ExcelService:
                 if id_dependencia != id_dependencia_user:
                     Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
                     validacion_errores["Dependecia"] = row.get("Dependencia")
-                    return jsonify({
-                        "success": False,
-                        "message": "No tienes permisos para cargar archivos de esta dependencia",
-                        "data": {"errores_detalle": "dependencia_no_valida"},
-                        "error": "Sin datos válidos",
-                        "error_dependencia": True
-                    }), 400
+                    
 
                 programa = row.get("Programa")
                 id_programa = programas_map.get((programa.upper().rstrip(), id_dependencia)) if programa and id_dependencia else None
