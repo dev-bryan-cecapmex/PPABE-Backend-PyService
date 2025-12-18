@@ -91,7 +91,7 @@ class CacheService:
                 .filter(Colonias.deleted == 0)
                 .all()
             )
-            self._catalogs_cache['colonias'] = {nombre.upper().strip(): [id_col, id_mun] for nombre, id_col, id_mun in colonias}
+            # self._catalogs_cache['colonias'] = {nombre.upper().strip(): [id_col, id_mun] for nombre, id_col, id_mun in colonias}
 
             # Estados Civiles
             estados_civiles = (
@@ -187,60 +187,60 @@ class CacheService:
             Logger.add_to_log("error", f"❌ Error refrescando cache de catálogos: {str(ex)}")
             raise
 
-    def refresh_beneficiarios_cache(self) -> None:
-        """Refresca cache de beneficiarios con índices optimizados."""
-        Logger.add_to_log("info", "🔄 Refrescando cache de beneficiarios...")
-        start_time = datetime.now()
-
-        try:
-            # Cargar todos los beneficiarios activos
-            beneficiarios = (
-                Beneficiarios.query
-                .with_entities(Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
-                .filter(Beneficiarios.deleted == 0)
-                .all()
-            )
-
-            # Crear múltiples índices para búsquedas O(1)
-            combined_index = {}  # (curp, rfc) -> id
-            curp_index = {}      # curp -> set(ids)
-            rfc_index = {}       # rfc -> set(ids)
-
-            for curp, rfc, id_ben in beneficiarios:
-                # Normalizar valores
-                curp_clean = curp.strip() if curp else None
-                rfc_clean = rfc.strip() if rfc else None
-
-                # Índice combinado
-                if curp_clean and rfc_clean:
-                    combined_index[(curp_clean, rfc_clean)] = id_ben
-
-                # Índice por CURP
-                if curp_clean:
-                    if curp_clean not in curp_index:
-                        curp_index[curp_clean] = set()
-                    curp_index[curp_clean].add(id_ben)
-
-                # Índice por RFC
-                if rfc_clean:
-                    if rfc_clean not in rfc_index:
-                        rfc_index[rfc_clean] = set()
-                    rfc_index[rfc_clean].add(id_ben)
-
-            self._beneficiarios_cache = {
-                'combined': combined_index,
-                'curp': curp_index,
-                'rfc': rfc_index,
-                'total_count': len(beneficiarios)
-            }
-
-            elapsed_time = (datetime.now() - start_time).total_seconds()
-            Logger.add_to_log("info", f"✅ Cache de beneficiarios refrescado en {elapsed_time:.2f}s")
-            Logger.add_to_log("info", f"   📊 Beneficiarios indexados: {len(beneficiarios)}")
-
-        except Exception as ex:
-            Logger.add_to_log("error", f"❌ Error refrescando cache de beneficiarios: {str(ex)}")
-            raise
+#     def refresh_beneficiarios_cache(self) -> None:
+#         """Refresca cache de beneficiarios con índices optimizados."""
+#         Logger.add_to_log("info", "🔄 Refrescando cache de beneficiarios...")
+#         start_time = datetime.now()
+# 
+#         try:
+#             # Cargar todos los beneficiarios activos
+#             beneficiarios = (
+#                 Beneficiarios.query
+#                 .with_entities(Beneficiarios.CURP, Beneficiarios.RFC, Beneficiarios.id)
+#                 .filter(Beneficiarios.deleted == 0)
+#                 .all()
+#             )
+# 
+#             # Crear múltiples índices para búsquedas O(1)
+#             combined_index = {}  # (curp, rfc) -> id
+#             curp_index = {}      # curp -> set(ids)
+#             rfc_index = {}       # rfc -> set(ids)
+# 
+#             for curp, rfc, id_ben in beneficiarios:
+#                 # Normalizar valores
+#                 curp_clean = curp.strip() if curp else None
+#                 rfc_clean = rfc.strip() if rfc else None
+# 
+#                 # Índice combinado
+#                 if curp_clean and rfc_clean:
+#                     combined_index[(curp_clean, rfc_clean)] = id_ben
+# 
+#                 # Índice por CURP
+#                 if curp_clean:
+#                     if curp_clean not in curp_index:
+#                         curp_index[curp_clean] = set()
+#                     curp_index[curp_clean].add(id_ben)
+# 
+#                 # Índice por RFC
+#                 if rfc_clean:
+#                     if rfc_clean not in rfc_index:
+#                         rfc_index[rfc_clean] = set()
+#                     rfc_index[rfc_clean].add(id_ben)
+# 
+#             self._beneficiarios_cache = {
+#                 'combined': combined_index,
+#                 'curp': curp_index,
+#                 'rfc': rfc_index,
+#                 'total_count': len(beneficiarios)
+#             }
+# 
+#             elapsed_time = (datetime.now() - start_time).total_seconds()
+#             Logger.add_to_log("info", f"✅ Cache de beneficiarios refrescado en {elapsed_time:.2f}s")
+#             Logger.add_to_log("info", f"   📊 Beneficiarios indexados: {len(beneficiarios)}")
+# 
+#         except Exception as ex:
+#             Logger.add_to_log("error", f"❌ Error refrescando cache de beneficiarios: {str(ex)}")
+#             raise
 
     def get_catalogs(self) -> Dict[str, Any]:
         """Obtiene todos los catálogos, refrescando cache si es necesario."""
