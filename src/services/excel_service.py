@@ -1101,6 +1101,9 @@ class ExcelService:
                 dependencia = row.get("Dependencia")
                 id_dependencia = dependencias_map.get(dependencia.upper().rstrip()) if dependencia else None
 
+                Logger.add_to_log("info", f"  ✓ dependencia {dependencia} registros")
+                Logger.add_to_log("info", f"  ✓ dependencias_map {dependencias_map} registros")
+
                 if id_dependencia != id_dependencia_user:
                     Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
                     return jsonify({
