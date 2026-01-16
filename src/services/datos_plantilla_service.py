@@ -10,6 +10,7 @@ from ..models.acciones import Acciones
 from ..models.tipos_beneficios import TiposBeneficiarios
 from ..models.colonias import Colonias
 from ..models.dependenciaprogramaanio import DependenciaProgramaAnio
+from ..models.subprogramas import Subprogramas
 
 
 class CatalogosService:
@@ -54,13 +55,16 @@ class CatalogosService:
     def get_componentes(id_dependencia, anio):
         return (
             db.session.query(Componentes.id, Componentes.nombre)
+            .join(Subprogramas, Componentes.idSubPrograma == Subprogramas.id)
             .join(
                 DependenciaProgramaAnio,
-                Componentes.idPrograma == DependenciaProgramaAnio.idPrograma
+                Subprogramas.idPrograma == DependenciaProgramaAnio.idPrograma
             )
             .filter(
                 DependenciaProgramaAnio.idDependencia == id_dependencia,
-                DependenciaProgramaAnio.anio == anio
+                DependenciaProgramaAnio.anio == anio,
+                Componentes.deleted == False,
+                Subprogramas.deleted == False
             )
             .all()
         )
