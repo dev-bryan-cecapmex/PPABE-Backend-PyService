@@ -73,7 +73,7 @@ class SearchService:
                 .filter(Municipios.deleted == 0)
                 .all()
             )
-            return {nombre.upper().strip(): [id_mun, id_est] for nombre, id_mun, id_est in municipios}
+            return {nombre.upper().strip(): [id_mun] for nombre, id_mun in municipios}
 
     @staticmethod
     def get_colonia_map():
