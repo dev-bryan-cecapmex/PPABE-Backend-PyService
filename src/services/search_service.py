@@ -67,7 +67,9 @@ class SearchService:
             Logger.add_to_log("warning", f"Cache fallback para municipios: {str(ex)}")
             municipios = (
                 Municipios.query
-                .with_entities(Municipios.nombre, Municipios.id, Municipios.idEstado)
+                # Se quito el idEstado por el tema que no esta relacion Municipio con el Estado
+                # .with_entities(Municipios.nombre, Municipios.id, Municipios.idEstado)
+                .with_entities(Municipios.nombre, Municipios.id)
                 .filter(Municipios.deleted == 0)
                 .all()
             )
