@@ -1247,10 +1247,14 @@ class ExcelService:
                     validacion_errores["Telefono"] = "Celda vacía"
                 elif len(telefono) != 10:
                     validacion_errores["Telefono"] = "El teléfono principal debe tener 10 dígitos."
-
-                if not telefono_2:
-                    validacion_errores["Telefono 2"] = "Celda vacía"
-
+                
+                if not telefono_2 :
+                    row["Telefono 2"] = 1111111111
+                elif  telefono_2 or len(telefono) != 10:
+                    validacion_errores["Telefono 2"] = "Error en el segundo numero telefónico"
+                    
+               
+                    
                 if not correo:
                     validacion_errores["Correo"] = "Celda vacía"
 
