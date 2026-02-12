@@ -1120,7 +1120,7 @@ class ExcelService:
                 # Grupo 3 - Apoyos
                 # ==============================
                 validacion_errores = {}
-                msg_error = ""
+                msg_error = {}
 
                 dependencia = row.get("Dependencia")
                 id_dependencia = dependencias_map.get(dependencia.upper().rstrip()) if dependencia else None
@@ -1235,37 +1235,39 @@ class ExcelService:
 
                 if (len(curp or "") != 18) and curp is not None:
                     validacion_errores["Curp"] = row.get("Curp")
-                    msg_error = "Curp inválida. Debe tener 18 caracteres."
+                    msg_error["Curp"] = "Curp inválida. Debe tener 18 caracteres."
                 
                 if rfc is not None :
                     if len(rfc or "") < 12 or len(rfc or "") > 13:
                         validacion_errores["RFC"] = row.get("RFC")
-                        msg_error = "La longitud del RFC es incorrecta, el RFC debe tener 12 caracteres (persona moral) o 13 caracteres (persona física)."
+                        msg_error["RFC"] = "La longitud del RFC es incorrecta, el RFC debe tener 12 caracteres (persona moral) o 13 caracteres (persona física)."
 
                 if rfc and regimen_capital == "":
                     validacion_errores["Regimen Capital"] = row.get("Regimen Capital")
-                    msg_error = "El campo Región Capital es obligatorio para personas físicas y morales."
+                    msg_error["Regimen Capital"] = "El campo Región Capital es obligatorio para personas físicas y morales."
                   
                 if rfc and actividad == "":
                     validacion_errores["Actividad"] = row.get("Actividad")
-                    msg_error = "El campo Actividad es obligatorio para personas físicas y morales."
+                    msg_error["Actividad"] = "El campo Actividad es obligatorio para personas físicas y morales."
                     
                 if rfc and nombre_comercial == "":
                     validacion_errores["Nombre Comercial"] = row.get("Nombre Comercial")
-                    msg_error = "El campo Nombre Comercial es obligatorio para personas físicas y morales."
+                    msg_error["Nombre Comercial"] = "El campo Nombre Comercial es obligatorio para personas físicas y morales."
                 
                 if rfc and razon_social == "":
                     validacion_errores["Razón Social"] = row.get("Razón Social")
-                    msg_error = "El campo Razón Social es obligatorio para personas físicas y morales."                
+                    msg_error["Razón Social"] = "El campo Razón Social es obligatorio para personas físicas y morales."                
                        
                 if not fecha_nacimiento:
                     if not row["fecha_nac_vacia_original"]:
                         validacion_errores["Fecha de Nacimiento"] = "Error en formato"
-
+                        msg_error["Fecha de Nacimiento"] = "El formato de fecha no es el correcto"
+                        
                 if not id_sexo:
                     if not row["sexo_vacio_original"]:
                         validacion_errores["Sexo"] = row.get("Sexo")
-
+                        msg_error["Sexo"] = "Error en sexo ingresado"
+                        
                 if calle is None or calle.strip() == "":
                     validacion_errores["Calle"] = "Celda vacía"
 
@@ -1293,8 +1295,8 @@ class ExcelService:
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
                 elif  telefono_2 or len(telefono) != 10:
-                    validacion_errores["Telefono 2"] = "Error en el segundo numero telefónico"
-                    
+                    validacion_errores["Telefono 2"] = row["Telefono 2"]
+                    msg_error["Telefono 2"] = "Error en el segundo numero telefónico"
                
                     
                 if not correo:
@@ -1328,7 +1330,7 @@ class ExcelService:
                             "row_index": idx + 2,
                             "curp": row.get("Curp"),
                             "nombre_completo": f"{row.get('Nombre', '')} {row.get('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
-                            "error": msg_error or "Error de validación en campos obligatorios",
+                            "error": msg_error[validador] or "Error de validación en campos obligatorios",
                             "campos_invalidos": validador,
                             "valor": validacion_errores[validador],
                             "data": row
@@ -1340,6 +1342,7 @@ class ExcelService:
                 # ✅ NUEVO COMPORTAMIENTO:
                 #   SIEMPRE crear beneficiario nuevo (sin buscar en BD, sin cache)
                 # ==========================================================
+                
                 id_beneficiario = str(uuid.uuid4())
                 id_contacto_temp = str(uuid.uuid4())
                 id_apoyo_temp = str(uuid.uuid4())
