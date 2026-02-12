@@ -904,6 +904,22 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
 class ExcelService:
+    
+    @staticmethod      
+    def limpiar_texto(value):
+        if not value:
+            return ""
+        texto = str(value)
+        
+        # Se quita tabulaciones y saltos de linea
+        texto = texto.replace("/t", "").replace("/n","").replace("/r","")
+        
+        # Quita los espacios del inicio y en la afinal 
+        texto = texto.strip()
+        
+        texto = re.split(r"\s+", " ", texto)
+        
+        return texto
 
     @staticmethod
     def process_file(file, id_user, id_dependencia_user):
@@ -1094,6 +1110,11 @@ class ExcelService:
 
                 colonia = row.get("Colonia")
                 colonia = colonia.upper().rstrip() if colonia else None
+                
+                regimen_capital     = ExcelService.limpiar_texto(row.get("Regimen Capital"))
+                actividad           = ExcelService.limpiar_texto(row.get("Actividad"))
+                nombre_comercial    = ExcelService.limpiar_texto(row.get("Nombre Comercial"))
+                razon_social        = ExcelService.limpiar_texto(row.get("Razón Social"))
 
                 # ==============================
                 # Grupo 3 - Apoyos
@@ -1215,7 +1236,28 @@ class ExcelService:
                 if (len(curp or "") != 18) and curp is not None:
                     validacion_errores["Curp"] = row.get("Curp")
                     msg_error = "Curp inválida. Debe tener 18 caracteres."
+                
+                if rfc is not None :
+                    if len(rfc or "") < 12 or len(rfc or "") > 13:
+                        validacion_errores["RFC"] = row.get("RFC")
+                        msg_error = "La longitud del RFC es incorrecta, el RFC debe tener 12 caracteres (persona moral) o 13 caracteres (persona física)."
 
+                if rfc and regimen_capital == "":
+                    validacion_errores["Regimen Capital"] = row.get("Regimen Capital")
+                    msg_error = "El campo Región Capital es obligatorio para personas físicas y morales."
+                  
+                if rfc and actividad == "":
+                    validacion_errores["Actividad"] = row.get("Actividad")
+                    msg_error = "El campo Actividad es obligatorio para personas físicas y morales."
+                    
+                if rfc and nombre_comercial == "":
+                    validacion_errores["Nombre Comercial"] = row.get("Nombre Comercial")
+                    msg_error = "El campo Nombre Comercial es obligatorio para personas físicas y morales."
+                
+                if rfc and razon_social == "":
+                    validacion_errores["Razón Social"] = row.get("Razón Social")
+                    msg_error = "El campo Razón Social es obligatorio para personas físicas y morales."                
+                       
                 if not fecha_nacimiento:
                     if not row["fecha_nac_vacia_original"]:
                         validacion_errores["Fecha de Nacimiento"] = "Error en formato"
@@ -1530,6 +1572,8 @@ class ExcelService:
         finally:
             # ✅ SIEMPRE liberar el job cache (aunque haya return o error)
             cache_service.delete_job_cache(job.job_id)
+            
+
     @staticmethod
     def generate_template(catalogos):
         wb = Workbook()
