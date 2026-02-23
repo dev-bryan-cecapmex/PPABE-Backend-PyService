@@ -885,9 +885,10 @@ from ..utils.Logger import Logger
 # Mapeos
 from ..utils.Mapeo import Mapeo
 
-from ..services.beneficiarios_service import BeneficiariosService
-from ..services.contacto_service      import ContactosService
-from ..services.apoyo_service         import ApoyosService
+from ..services.beneficiarios_service   import BeneficiariosService
+from ..services.contacto_service        import ContactosService
+from ..services.apoyo_service           import ApoyosService
+from ..services.historial_carga_service import HistoriaCargaService
 
 # OJO: SearchService lo seguimos usando SOLO para catálogos.
 #      Ya NO se usa para buscar beneficiarios existentes.
@@ -902,23 +903,26 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
+import uuid
 
 class ExcelService:
     
     @staticmethod      
     def limpiar_texto(value):
-        if not value:
+        if value is None:
             return ""
+        
         texto = str(value)
-        
-        # Se quita tabulaciones y saltos de linea
-        texto = texto.replace("/t", "").replace("/n","").replace("/r","")
-        
-        # Quita los espacios del inicio y en la afinal 
+
+        # Quitar tabulaciones y saltos de línea
+        texto = texto.replace("\t", " ").replace("\n", " ").replace("\r", " ")
+
+        # Normalizar espacios múltiples
+        texto = re.sub(r"\s+", " ", texto)
+
+        # Quitar espacios al inicio y final
         texto = texto.strip()
-        
-        texto = re.split(r"\s+", " ", texto)
-        
+
         return texto
 
     @staticmethod
@@ -932,6 +936,9 @@ class ExcelService:
 
             Logger.add_to_log("info", f"Id User: {id_user}")
             Logger.add_to_log("info", f"Dependencia:{id_dependencia_user}")
+            
+            id_historia_carga = uuid.uuid4()
+            Logger.add_to_log("info", f"Id de Carga: {id_historia_carga}")
 
             # 1. Leer el Excel SIN schema_overrides
             file_bytes = file.read()
@@ -1222,6 +1229,8 @@ class ExcelService:
                     anio = fecha.year
 
                     carpeta_info = carpetas_beneficiarios_map.get((mes, anio, id_dependencia_user))
+    
+                   
                     if not carpeta_info:
                         validacion_errores["Carpeta de Beneficiarios"] = f"No existe carpeta para {mes}/{anio}"
                     else:
@@ -1232,8 +1241,10 @@ class ExcelService:
                             )
                         else:
                             id_carpeta_beneficiario = carpeta_info.get("id")
-
-                if (len(curp or "") != 18) and curp is not None:
+                
+                if curp is None or len(curp.strip()) != 18:
+                    Logger.add_to_log("info", len(curp.strip()))
+                    Logger.add_to_log("info", curp)
                     validacion_errores["Curp"] = row.get("Curp")
                     msg_error["Curp"] = "Curp inválida. Debe tener 18 caracteres."
                 
@@ -1294,7 +1305,7 @@ class ExcelService:
                 
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
-                elif  telefono_2 or len(telefono) != 10:
+                elif  telefono_2 and len(telefono) != 10:
                     validacion_errores["Telefono 2"] = row["Telefono 2"]
                     msg_error["Telefono 2"] = "Error en el segundo numero telefónico"
                
@@ -1322,10 +1333,12 @@ class ExcelService:
 
                 if not id_acciones:
                     validacion_errores["Accion"] = row.get("Accion")
-
+                
                 if validacion_errores:
                     stats["errores_validacion"] += 1
+                    Logger.add_to_log("info", f"Validador recibido: {validacion_errores}")
                     for validador in validacion_errores:
+                        
                         error_detail = {
                             "row_index": idx + 2,
                             "curp": row.get("Curp"),
@@ -1397,6 +1410,7 @@ class ExcelService:
                 apoyo_data["idAccion"] = id_acciones
                 apoyo_data["idTipoBeneficio"] = id_tipo_beneficiario
                 apoyo_data["idCarpetaBeneficiarios"] = id_carpeta_beneficiario
+                apoyo_data["idHistorialCarga"] = id_historia_carga
 
                 relaciones.append({
                     "row_index": idx + 2,
@@ -1525,9 +1539,12 @@ class ExcelService:
             # Insert apoyos
             if apoyos_to_insert:
                 try:
+                    
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} apoyos nuevos ...")
                     ApoyosService.bulk_insert(apoyos_to_insert, batch_size=5000, commit_every_batches=1)
                     Logger.add_to_log("info", f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
+                    
+                    HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)
                 except Exception as e:
                     Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR APOYOS")
                     Logger.add_to_log("error", f"Detalles: {str(e)}")
