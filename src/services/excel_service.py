@@ -1242,32 +1242,46 @@ class ExcelService:
                         else:
                             id_carpeta_beneficiario = carpeta_info.get("id")
                 
-                if curp is None or len(curp.strip()) != 18:
-                    Logger.add_to_log("info", len(curp.strip()))
-                    Logger.add_to_log("info", curp)
-                    validacion_errores["Curp"] = row.get("Curp")
-                    msg_error["Curp"] = "Curp inválida. Debe tener 18 caracteres."
-                
-                if rfc is not None :
-                    if len(rfc or "") < 12 or len(rfc or "") > 13:
-                        validacion_errores["RFC"] = row.get("RFC")
-                        msg_error["RFC"] = "La longitud del RFC es incorrecta, el RFC debe tener 12 caracteres (persona moral) o 13 caracteres (persona física)."
+                #if(curp is None and rfc is None) or len(curp.strip()) != 18:
+                rfc = (row.get("RFC") or "").strip().upper()
+                curp = (row.get("Curp") or "").strip().upper()
 
-                if rfc and regimen_capital == "":
-                    validacion_errores["Regimen Capital"] = row.get("Regimen Capital")
-                    msg_error["Regimen Capital"] = "El campo Región Capital es obligatorio para personas físicas y morales."
+                # Validar que al menos uno exista
+                if not rfc and not curp:
+                    msg_error["General"] = "Debe proporcionar RFC o CURP."
+                    validacion_errores["RFC"] = row.get("RFC")
+                    validacion_errores["Curp"] = row.get("Curp")
+
+                # ============================
+                # Validar RFC si viene
+                # ============================
+                if rfc:
+                    if len(rfc) not in (12, 13):
+                        validacion_errores["RFC"] = rfc
+                        msg_error["RFC"] = "RFC inválido. Debe tener 12 (moral) o 13 (física)."
+
+                # ============================
+                # Validar CURP si viene
+                # ============================
+                if curp:
+                    if len(curp) != 18:
+                        validacion_errores["Curp"] = curp
+                        msg_error["Curp"] = "CURP inválida. Debe tener 18 caracteres."
+                # if rfc and regimen_capital == "":
+                #     validacion_errores["Regimen Capital"] = row.get("Regimen Capital")
+                #     msg_error["Regimen Capital"] = "El campo Región Capital es obligatorio para personas físicas y morales."
                   
-                if rfc and actividad == "":
-                    validacion_errores["Actividad"] = row.get("Actividad")
-                    msg_error["Actividad"] = "El campo Actividad es obligatorio para personas físicas y morales."
+                # if rfc and actividad == "":
+                #     validacion_errores["Actividad"] = row.get("Actividad")
+                #     msg_error["Actividad"] = "El campo Actividad es obligatorio para personas físicas y morales."
                     
-                if rfc and nombre_comercial == "":
-                    validacion_errores["Nombre Comercial"] = row.get("Nombre Comercial")
-                    msg_error["Nombre Comercial"] = "El campo Nombre Comercial es obligatorio para personas físicas y morales."
+                # if rfc and nombre_comercial == "":
+                #     validacion_errores["Nombre Comercial"] = row.get("Nombre Comercial")
+                #     msg_error["Nombre Comercial"] = "El campo Nombre Comercial es obligatorio para personas físicas y morales."
                 
-                if rfc and razon_social == "":
-                    validacion_errores["Razón Social"] = row.get("Razón Social")
-                    msg_error["Razón Social"] = "El campo Razón Social es obligatorio para personas físicas y morales."                
+                # if rfc and razon_social == "":
+                #     validacion_errores["Razón Social"] = row.get("Razón Social")
+                #     msg_error["Razón Social"] = "El campo Razón Social es obligatorio para personas físicas y morales."                
                        
                 if not fecha_nacimiento:
                     if not row["fecha_nac_vacia_original"]:
@@ -1336,7 +1350,6 @@ class ExcelService:
                 
                 if validacion_errores:
                     stats["errores_validacion"] += 1
-                    Logger.add_to_log("info", f"Validador recibido: {validacion_errores}")
                     for validador in validacion_errores:
                         
                         error_detail = {
