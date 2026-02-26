@@ -904,6 +904,8 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 import uuid
+import re
+import unicodedata
 
 class ExcelService:
     
@@ -922,6 +924,24 @@ class ExcelService:
 
         # Quitar espacios al inicio y final
         texto = texto.strip()
+
+        return texto
+
+
+    def limpiar_curp(value):
+        if not value:
+            return ""
+
+        texto = str(value)
+
+        # Normalizar unicode (convierte caracteres similares a su equivalente ASCII)
+        texto = unicodedata.normalize("NFKD", texto)
+        
+        # Codificar a ASCII ignorando lo que no sea ASCII y decodificar
+        texto = texto.encode("ascii", errors="ignore").decode("ascii")
+
+        # Solo A-Z y 0-9
+        texto = re.sub(r"[^A-Z0-9]", "", texto.upper())
 
         return texto
 
@@ -1243,7 +1263,7 @@ class ExcelService:
                             id_carpeta_beneficiario = carpeta_info.get("id")
                 
                 #if(curp is None and rfc is None) or len(curp.strip()) != 18:
-                rfc = (row.get("RFC") or "").strip().upper()
+                rfc  = (row.get("RFC") or "").strip().upper()
                 curp = (row.get("Curp") or "").strip().upper()
 
                 # Validar que al menos uno exista
@@ -1386,6 +1406,10 @@ class ExcelService:
                     nuevo_beneficiario[db_col] = row.get(excel_col)
 
                 nuevo_beneficiario["idSexo"] = id_sexo
+                
+                nuevo_beneficiario["CURP"] = ExcelService.limpiar_curp(curp) if curp else None
+                nuevo_beneficiario["RFC"] = rfc if rfc else None
+                
                 beneficiarios_to_insert.append(nuevo_beneficiario)
 
                 # CONTACTO
