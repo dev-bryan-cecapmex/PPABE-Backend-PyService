@@ -71,7 +71,7 @@ class BeneficiariosService:
             raise
 
     @staticmethod
-    def bulk_insert(rows, batch_size=5000, commit_every_batches=1):
+    def bulk_insert(rows, batch_size=1000, commit_every_batches=1):
         """
         Inserción masiva por lotes con COMMIT por batch (o cada N batches).
         Nota: aquí NO desactivamos FKs porque Beneficiarios suele ser tabla “base”.

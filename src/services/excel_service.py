@@ -1519,7 +1519,7 @@ class ExcelService:
             if beneficiarios_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
-                    BeneficiariosService.bulk_insert(beneficiarios_to_insert, batch_size=5000, commit_every_batches=1)
+                    BeneficiariosService.bulk_insert(beneficiarios_to_insert, batch_size=1000, commit_every_batches=1)
                     Logger.add_to_log("info", f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:
                     Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
@@ -1553,7 +1553,7 @@ class ExcelService:
             if contactos_to_insert:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
-                    ContactosService.bulk_insert(contactos_to_insert, batch_size=5000, commit_every_batches=1)
+                    ContactosService.bulk_insert(contactos_to_insert, batch_size=1000, commit_every_batches=1)
                     Logger.add_to_log("info", f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
                 except Exception as e:
                     Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR CONTACTOS")
@@ -1578,7 +1578,7 @@ class ExcelService:
                 try:
                     
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} apoyos nuevos ...")
-                    ApoyosService.bulk_insert(apoyos_to_insert, batch_size=5000, commit_every_batches=1)
+                    ApoyosService.bulk_insert(apoyos_to_insert, batch_size=1000, commit_every_batches=1)
                     Logger.add_to_log("info", f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
                     
                     HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)

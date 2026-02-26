@@ -77,7 +77,7 @@ from ..utils.Logger import Logger
 
 class ApoyosService:
     @staticmethod
-    def bulk_insert(rows, batch_size=5000, commit_every_batches=1):
+    def bulk_insert(rows, batch_size=1000, commit_every_batches=1):
         """
         Inserta apoyos en lotes (batch) con COMMIT por batch (o cada N batches)
         y desactiva foreign_key_checks/unique_checks por SESIÓN durante la carga.
