@@ -78,6 +78,76 @@ class Config:
         "Subprograma":pl.Utf8,
     }
 
+    # ── ApoyoIntegral ─────────────────────────────────────────
+    APOYO_INTEGRAL_KEYS = [
+        'Curp', 
+        'Nombre', 
+        'Apellido paterno', 
+        'Apellido Materno',
+        'Fecha de Nacimiento', 
+        'Estado Civil', 
+        'Sexo',
+        'Estado (catálogo)', 
+        'Municipio Dirección (catálogo)',
+        'Colonia', 
+        'Calle', 
+        'Numero', 
+        'Telefono', 
+        'Telefono 2', 
+        'Correo',
+        'Dependencia', 
+        'Programa', 
+        'Subprograma',
+        'Componente', 
+        'Accion',
+        'Fecha de Registro', 
+        'Monto', 
+        'Tipo de Beneficio',
+        'RFC',
+        'Regimen Capital', 
+        'Actividad', 
+        'Nombre Comercial', 
+        'Razón Social',
+        'Nombre Captura',
+        'Nombre Valida'
+    ]
+
+    COLUMN_MAP_APOYO_INTEGRAL = {
+        "Curp":                             "CURP",
+        "Nombre":                           "nombre",
+        "Apellido paterno":                 "aPaterno",
+        "Apellido Materno":                 "aMaterno",
+        "Fecha de Nacimiento":              "fNacimiento",
+        "Estado Civil":                     "estado_civil",
+        "Sexo":                             "idSexo",           # lookup catálogo → también llena `sexo`
+        "Estado (catálogo)":                "idEstado",         # lookup catálogo → también llena `estado`
+        "Municipio Dirección (catálogo)":   "idMunicipio",      # lookup catálogo → también llena `municipio`
+        "Colonia":                          "colonia",
+        "Calle":                            "calle",
+        "Numero":                           "numero",
+        "Telefono":                         "telefono1",
+        "Telefono 2":                       "telefono2",
+        "Correo":                           "correo",
+        "Dependencia":                      "idDependencia",    # lookup catálogo → también llena `dependencia`
+        "Programa":                         "idPrograma",       # lookup catálogo → también llena `programa`
+        "Subprograma":                      "idSubprograma",    # lookup catálogo → también llena `subprograma`
+        "Componente":                       "idComponente",     # lookup catálogo → también llena `componente`
+        "Accion":                           "idAccion",         # lookup catálogo → también llena `accion`
+        "Fecha de Registro":                "fRegistro",
+        "Monto":                            "monto",
+        "Tipo de Beneficio":                "idTipoBeneficio",  # lookup catálogo → también llena `tipoBeneficio`
+        "RFC":                              "RFC",
+        "Regimen Capital":                  "regimenCapital",
+        "Actividad":                        "actividad",
+        "Nombre Comercial":                 "nombreComercial",
+        "Razón Social":                     "razonSocial",
+        "Localidad":                        "localidad",                  
+        "Nombre Captura":                   "creador",    
+        "Nombre Valida":                    "modificador",          
+    }
+
+
+
     # Lista de columnas 
     CAMPOS_OBLIGATORIOS = [
         "Curp", 
