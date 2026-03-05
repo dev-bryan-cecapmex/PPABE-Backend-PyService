@@ -43,6 +43,30 @@ import unicodedata
 
 class ExcelService:
     
+    @staticmethod
+    def generate_sequential_uuid():
+        """
+        Generates a sequential UUID (UUIDv1-like structure) suitable for
+        MySQL InnoDB Primary Keys to prevent B-Tree fragmentation.
+        Format: 8-4-4-4-12 string.
+        """
+        import time
+        import os
+        import binascii
+        
+        # 1. Get current time in milliseconds
+        now_ms = int(time.time() * 1000)
+        
+        # 2. Convert to hex (will be ~11-12 chars for modern dates), pad to 12
+        time_hex = f"{now_ms:012x}"[-12:] # Ensure strictly 12 characters
+        
+        # 3. Generate 24 characters (12 bytes) of random entropy
+        random_hex = binascii.b2a_hex(os.urandom(12)).decode('ascii')
+        
+        # 4. Construct the UUID format: exactly 36 chars (8-4-4-4-12)
+        seq_uuid = f"{time_hex[:8]}-{time_hex[8:12]}-{random_hex[:4]}-{random_hex[4:8]}-{random_hex[8:20]}"
+        return seq_uuid
+
     @staticmethod      
     def limpiar_texto(value):
         if value is None:
@@ -91,7 +115,7 @@ class ExcelService:
             Logger.add_to_log("info", f"Id User: {id_user}")
             Logger.add_to_log("info", f"Dependencia:{id_dependencia_user}")
             
-            id_historia_carga = uuid.uuid4()
+            id_historia_carga = ExcelService.generate_sequential_uuid()
             Logger.add_to_log("info", f"Id de Carga: {id_historia_carga}")
 
             # 1. Leer el Excel SIN schema_overrides
@@ -259,6 +283,7 @@ class ExcelService:
 
                 estado = row.get("Estado (catálogo)")
                 id_estado = estados_map.get(estado.upper().rstrip()) if estado else None
+                
 
                 municipio = row.get("Municipio Dirección (catálogo)")
                 raw_value = municipios_map.get(municipio.upper().rstrip()) if municipio else None
@@ -526,9 +551,9 @@ class ExcelService:
                 #   SIEMPRE crear beneficiario nuevo (sin buscar en BD, sin cache)
                 # ==========================================================
                 
-                id_beneficiario = str(uuid.uuid4())
-                id_contacto_temp = str(uuid.uuid4())
-                id_apoyo_temp = str(uuid.uuid4())
+                id_beneficiario = ExcelService.generate_sequential_uuid()
+                id_contacto_temp = ExcelService.generate_sequential_uuid()
+                id_apoyo_temp = ExcelService.generate_sequential_uuid()
 
                 stats["beneficiarios_nuevos"] += 1
 
@@ -564,10 +589,24 @@ class ExcelService:
                         contacto_data[db_col] = row.get(excel_col)
 
                 contacto_data["idEstado"] = id_estado
+                if id_estado:
+                    contacto_data["estado"] = estado
+                else:
+                    contacto_data["estado"] = ""
+                    
                 contacto_data["idMunicipio"] = str(id_municipio) if id_municipio else None
+                if id_municipio:
+                    contacto_data["municipio"] = municipio
+                else:
+                    contacto_data["municipio"] = ""
+                    
                 contacto_data["colonia"] = colonia
                 contacto_data["idEstadoCivil"] = id_estado_civil
-
+                if id_estado_civil:
+                    contacto_data["estadoCivil"] = estado_civil
+                else:
+                    contacto_data["estadoCivil"] = ""
+                    
                 # APOYO
                 apoyo_data = {
                     "id": id_apoyo_temp,
@@ -581,11 +620,41 @@ class ExcelService:
                     apoyo_data[db_col] = row.get(excel_col)
 
                 apoyo_data["idDependencia"] = id_dependencia
+                if id_dependencia:
+                    apoyo_data["dependencia"] = dependencia
+                else:
+                    apoyo_data["dependencia"] = ""
+                    
                 apoyo_data["idPrograma"] = id_programa
+                if id_programa:
+                    apoyo_data["programa"] = programa
+                else:
+                    apoyo_data["programa"] = ""
+                    
                 apoyo_data["idSubprograma"] = id_subprograma
+                if id_subprograma:
+                    apoyo_data["subprograma"] = subprograma
+                else:
+                    apoyo_data["componente"] = ""
+                    
                 apoyo_data["idComponente"] = id_componente
+                if id_componente:
+                    apoyo_data["componente"] = componente
+                else:
+                    apoyo_data["componente"] = ""
+                    
                 apoyo_data["idAccion"] = id_acciones
+                if id_acciones :
+                    apoyo_data["accion"] = accion
+                else:
+                    apoyo_data["accion"] = ""
+                    
                 apoyo_data["idTipoBeneficio"] = id_tipo_beneficiario
+                if id_tipo_beneficiario:
+                    apoyo_data["tipoBeneficio"] = tipo_beneficio
+                else:
+                    contacto_data["tipoBeneficio"] = ""
+                    
                 apoyo_data["idCarpetaBeneficiarios"] = id_carpeta_beneficiario
                 apoyo_data["idHistorialCarga"] = id_historia_carga
 
@@ -680,22 +749,20 @@ class ExcelService:
              # Insert beneficiarios
             if apoyosIntegral_to_insert:
                 try:
-                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(beneficiarios_to_insert)} beneficiarios nuevos ...")
-                    # Logger.add_to_log("info", f"Datos {apoyosIntegral_to_insert}")
+                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyosIntegral_to_insert)} Apoyos Integrales nuevos ...")
                     ApoyoIntegralService.bulk_insert(apoyosIntegral_to_insert, batch_size=5000, commit_every_batches=1)
-                    
                     HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)
-                    #BeneficiariosService.bulk_insert(beneficiarios_to_insert, batch_size=5000, commit_every_batches=1)
-                    Logger.add_to_log("info", f"✅ 💾 {len(beneficiarios_to_insert)} beneficiarios insertados exitosamente")
+                    Logger.add_to_log("debug", f"ID Carga: {id_historia_carga}")
+                    Logger.add_to_log("info", f"✅ 💾 {len(apoyosIntegral_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:
-                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR BENEFICIARIOS")
+                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR APOYOS INTEGRAL")
                     Logger.add_to_log("error", f"Detalles: {str(e)}")
                     Logger.add_to_log("error", traceback.format_exc())
                     return jsonify({
                         "success": False,
-                        "message": "Error al insertar beneficiarios",
+                        "message": "Error al insertar APOYOS INTEGRAL",
                         "data": {
-                            "fase_fallida": "Insercion de Beneficiarios",
+                            "fase_fallida": "Insercion de Apoyos Integral",
                             "beneficiarios_intentados": len(beneficiarios_to_insert)
                         },
                         "error": str(e)
@@ -703,60 +770,9 @@ class ExcelService:
             else:
                 Logger.add_to_log("info", "✅ 💾 No hay beneficiarios nuevos para insertar")
 
-            # Insert contactos
-            if contactos_to_insert:
-                try:
-                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(contactos_to_insert)} contactos nuevos ...")
-                    #ApoyoIntegralService.bulk_insert(contactos_to_insert, batch_size=5000, commit_every_batches=1)
-                    # ContactosService.bulk_insert(contactos_to_insert, batch_size=5000, commit_every_batches=1)
-                    Logger.add_to_log("info", f"✅ 💾 {len(contactos_to_insert)} contactos insertados exitosamente")
-                except Exception as e:
-                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR CONTACTOS")
-                    Logger.add_to_log("error", f"Detalles: {str(e)}")
-                    Logger.add_to_log("error", traceback.format_exc())
-                    return jsonify({
-                        "success": False,
-                        "message": "Error al insertar contactos",
-                        "data": {
-                            "fase_fallida": "Insercion de contactos",
-                            "beneficiarios_insertados": len(beneficiarios_to_insert),
-                            "contactos_intentados": len(contactos_to_insert),
-                            "warning": "Los beneficiarios quedaron en BD sin contactos asociados"
-                        },
-                        "error": str(e)
-                    }), 500
-            else:
-                Logger.add_to_log("warn", "✅ 💾 No hay contactos para insertar")
+        
 
-            # Insert apoyos
-            if apoyos_to_insert:
-                try:
-                    
-                    Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyos_to_insert)} apoyos nuevos ...")
-                    # ApoyosService.bulk_insert(apoyos_to_insert, batch_size=5000, commit_every_batches=1)
-                    #ApoyoIntegralService.bulk_insert(apoyos_to_insert, batch_size=5000, commit_every_batches=1)
-                    Logger.add_to_log("info", f"✅ 💾 {len(apoyos_to_insert)} apoyos insertados exitosamente")
-                    
-                    # HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)
-                except Exception as e:
-                    Logger.add_to_log("error", "❌ 💾 ERROR AL INSERTAR APOYOS")
-                    Logger.add_to_log("error", f"Detalles: {str(e)}")
-                    Logger.add_to_log("error", traceback.format_exc())
-                    return jsonify({
-                        "success": False,
-                        "message": "Error al insertar apoyos",
-                        "data": {
-                            "fase_fallida": "Insercion de apoyos",
-                            "beneficiarios_insertados": len(beneficiarios_to_insert),
-                            "contactos_intentados": len(contactos_to_insert),
-                            "apoyos_intentados": len(apoyos_to_insert),
-                            "warning": "Los beneficiarios quedaron en BD sin contactos asociados"
-                        },
-                        "error": str(e)
-                    }), 500
-            else:
-                Logger.add_to_log("warn", "✅ 💾 No hay apoyos para insertar")
-
+          
             # ✅ OK
             return jsonify({
                 "success": True,
