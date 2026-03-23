@@ -32,15 +32,17 @@ class Config:
         'Numero':'numero',
         'Estado Civil':'idEstadoCivil'
     }
-    GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Monto']
+    GROUP_TREE_KEYS = ['Dependencia','Programa','Componente','Accion','Tipo de Beneficio','Fecha de Registro','Monto']
     COLUMN_MAP_GROUP_TREE = {
         'Dependencia':'idDependencia',
         'Programa':'idPrograma',
         'Componente':'idComponente',
         'Accion':'idAccion',
         'Tipo de Beneficio':'idTipoBeneficio',
+        'Fecha de Registro': 'fRegistro',
         'Monto':'monto'
     }
+
     
      # Lista de orígenes permitidos (convertimos el texto en lista)
     IP_SERVER_FRONT = os.getenv("IP_SERVER_FRONT", "").split(",") if os.getenv("IP_SERVER_FRONT") else []
@@ -63,7 +65,7 @@ class Config:
         "Programa":pl.Utf8,
         "Componente":pl.Utf8,
         "Accion":pl.Utf8,
-        "Fecha de Registro":pl.Date,
+        "Fecha de Registro":pl.Utf8,
         "Monto":pl.Utf8,
         "Tipo de Beneficio":pl.Utf8,
         "RFC":pl.Utf8,
@@ -75,3 +77,106 @@ class Config:
         "Dependencia":pl.Utf8,
         "Subprograma":pl.Utf8,
     }
+
+    # ── ApoyoIntegral ─────────────────────────────────────────
+    APOYO_INTEGRAL_KEYS = [
+        'Curp', 
+        'Nombre', 
+        'Apellido paterno', 
+        'Apellido Materno',
+        'Fecha de Nacimiento', 
+        'Estado Civil', 
+        'Sexo',
+        'Estado (catálogo)', 
+        'Municipio Dirección (catálogo)',
+        'Colonia', 
+        'Calle', 
+        'Numero', 
+        'Telefono', 
+        'Telefono 2', 
+        'Correo',
+        'Dependencia', 
+        'Programa', 
+        'Subprograma',
+        'Componente', 
+        'Accion',
+        'Fecha de Registro', 
+        'Monto', 
+        'Tipo de Beneficio',
+        'RFC',
+        'Regimen Capital', 
+        'Actividad', 
+        'Nombre Comercial', 
+        'Razón Social',
+        'Nombre Captura',
+        'Nombre Valida'
+    ]
+
+    COLUMN_MAP_APOYO_INTEGRAL = {
+        "Curp":                             "CURP",
+        "Nombre":                           "nombre",
+        "Apellido paterno":                 "aPaterno",
+        "Apellido Materno":                 "aMaterno",
+        "Fecha de Nacimiento":              "fNacimiento",
+        "Estado Civil":                     "estado_civil",
+        "Sexo":                             "idSexo",           # lookup catálogo → también llena `sexo`
+        "Estado (catálogo)":                "idEstado",         # lookup catálogo → también llena `estado`
+        "Municipio Dirección (catálogo)":   "idMunicipio",      # lookup catálogo → también llena `municipio`
+        "Colonia":                          "colonia",
+        "Calle":                            "calle",
+        "Numero":                           "numero",
+        "Telefono":                         "telefono1",
+        "Telefono 2":                       "telefono2",
+        "Correo":                           "correo",
+        "Dependencia":                      "idDependencia",    # lookup catálogo → también llena `dependencia`
+        "Programa":                         "idPrograma",       # lookup catálogo → también llena `programa`
+        "Subprograma":                      "idSubprograma",    # lookup catálogo → también llena `subprograma`
+        "Componente":                       "idComponente",     # lookup catálogo → también llena `componente`
+        "Accion":                           "idAccion",         # lookup catálogo → también llena `accion`
+        "Fecha de Registro":                "fRegistro",
+        "Monto":                            "monto",
+        "Tipo de Beneficio":                "idTipoBeneficio",  # lookup catálogo → también llena `tipoBeneficio`
+        "RFC":                              "RFC",
+        "Regimen Capital":                  "regimenCapital",
+        "Actividad":                        "actividad",
+        "Nombre Comercial":                 "nombreComercial",
+        "Razón Social":                     "razonSocial",
+        "Localidad":                        "localidad",                  
+        "Nombre Captura":                   "creador",    
+        "Nombre Valida":                    "modificador",          
+    }
+
+
+
+    # Lista de columnas 
+    CAMPOS_OBLIGATORIOS = [
+        "Curp", 
+        "Nombre", 
+        "Apellido paterno", 
+        "Apellido Materno",
+        "Fecha de Nacimiento", 
+        "Estado (catálogo)", 
+        "Estado Civil", 
+        "Sexo",
+        "Calle", 
+        "Numero", 
+        "Colonia", 
+        "Municipio Dirección (catálogo)",
+        "Telefono", 
+        "Telefono 2", 
+        "Correo",
+        "Programa", 
+        "Componente", 
+        "Accion",
+        "Fecha de Registro", 
+        "Monto", 
+        "Tipo de Beneficio",
+        "RFC", 
+        "Regimen Capital", 
+        "Actividad", 
+        "Nombre Comercial",
+        "Razón Social", 
+        "Localidad", 
+        "Dependencia", 
+        "Subprograma"
+    ]

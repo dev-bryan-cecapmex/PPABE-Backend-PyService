@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  api-pyservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: api-pyservice
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    ports:
+      - "4001:4001"
+
+    # PRODUCCIÓN SEGURA: solo montamos .env
+    volumes:
+      - ./.env:/app/.env
+
+    # Gunicorn con 4 workers (ajustable)
+    command: gunicorn --bind 0.0.0.0:4001 index:app --workers 4 --timeout 120
+
+    networks:
+      - backend_net
+
+networks:
+  backend_net:
+
+# correr con docker compose -f docker-compose.prod.yml up -d

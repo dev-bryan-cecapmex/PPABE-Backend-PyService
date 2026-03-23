@@ -10,6 +10,14 @@ class CarpetaBeneficiarios(db.Model):
     #deleted         = db.Column(db.String(1))
     
     deleted = db.Column(db.Boolean, nullable=False, default=False)
+    
+    estado = db.Column(
+        db.Enum("En Proceso", "En Validación", "Publicado"),
+        nullable=False,
+        default="En Proceso"
+    )
+
+    
 
     # `id` CHAR(50) NOT NULL DEFAULT uuid() COLLATE 'utf8mb4_spanish_ci',
 	# `idDependencia` CHAR(50) NOT NULL COLLATE 'utf8mb4_spanish_ci',

@@ -11,6 +11,7 @@ from ..models.acciones import Acciones
 from ..models.tipos_beneficios import TiposBeneficiarios
 from ..models.colonias import Colonias
 from ..models.dependenciaprogramaanio import DependenciaProgramaAnio
+from ..models.subprogramas import Subprogramas
 
 
 class CatalogosService:

@@ -20,6 +20,7 @@ class Apoyos(db.Model):
     fCreacion                   = db.Column(db.Date)
     fModificacion               = db.Column(db.Date)
     deleted                     = db.Column(db.Boolean)
-
+    idHistorialCarga            = db.Column(db.String(36))
+    
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

@@ -5,7 +5,9 @@ class Municipios(db.Model):
     
     id          = db.Column(db.String(36), primary_key = True)
     nombre      = db.Column(db.String(255))
-    idEstado    = db.Column(db.String(36))
+    # Se quito por el tema de que el Estado es el estado de nacimiento
+    # idEstado    = db.Column(db.String(36))
+    
     deleted     = db.Column(db.String(4))
     # `id` CHAR(36) NOT NULL DEFAULT uuid() COLLATE 'utf8mb4_spanish_ci',
 	# `nombre` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_spanish_ci',

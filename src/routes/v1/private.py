@@ -6,11 +6,12 @@ import json
 
 from src.services.datos_plantilla_service import CatalogosService 
 #import uuid
-
+import json
 #from config import Config
 
 #from ..services.beneficiarios_service   import BeneficiariosService
 from ...services.excel_service           import ExcelService
+from ...services.search_service          import SearchService
 
 #from ..services.search_service          import SearchService
 
@@ -46,6 +47,16 @@ def uploader_file():
     #file = request.files['file']
    
     try:
+       
+        raw_data = request.form.get('data')
+        data = json.loads(raw_data) if raw_data else {}
+        Logger.add_to_log("info", data)
+
+        id_usuario      = request.form.get('idUsuario')
+        id_dependencia  = request.form.get('idEntidad')
+        
+        respuesta = ExcelService.process_file(request.files['file'], id_usuario, id_dependencia)
+        Logger.add_to_log("info", respuesta)
         
         raw_data = request.form.get('data')
         data = json.loads(raw_data) if raw_data else {}
@@ -175,3 +186,67 @@ def getTemplate():
             "data": {},
             "error": str(ex)
         }), 500
+
+@private_bp.route("/cache_stats", methods=["GET"])
+def get_cache_stats():
+    """Endpoint para monitorear el estado del cache optimizado."""
+    try:
+        stats = SearchService.get_cache_stats()
+
+        return jsonify({
+            "success": True,
+            "message": "Estadísticas del cache obtenidas correctamente",
+            "data": stats,
+            "error": None
+        }), 200
+
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al obtener estadísticas del cache",
+            "data": {},
+            "error": str(ex)
+        }), 500
+
+@private_bp.route("/cache_refresh", methods=["POST"])
+def force_cache_refresh():
+    """Endpoint para forzar refresco del cache (útil para actualizaciones manuales)."""
+    try:
+        SearchService.force_refresh_cache()
+
+        return jsonify({
+            "success": True,
+            "message": "Cache refrescado exitosamente",
+            "data": SearchService.get_cache_stats(),
+            "error": None
+        }), 200
+
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al refrescar cache",
+            "data": {},
+            "error": str(ex)
+        }), 500
+
+@private_bp.route("/cache_refresh_individual", methods=["POST"])
+def individual_cache_refresh():
+    try:
+        
+        type_catalog = request.args.get("num_catalog")
+        
+        SearchService.individual_refresh_cache(type_catalog)
+        
+        return jsonify({
+            "success": True,
+            "message": "Cache refrescado exitosamente",
+            "data": SearchService.get_cache_stats(),
+            "error": None
+        }), 200
+    except Exception as ex:
+        return jsonify({
+            "success": False,
+            "message": "Error al refrescar cache",
+            "data": {},
+            "error": str(ex)
+        }), 50
