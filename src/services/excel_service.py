@@ -293,7 +293,6 @@ class ExcelService:
                 id_estado_civil = estados_civiles_map.get(estado_civil.upper().rstrip()) if estado_civil else None
 
                 telefono = row.get("Telefono")
-                Logger.add_to_log("info", f"Telefonos: {telefono}")
                 
                 telefono_2 = row.get("Telefono 2")
                 correo = row.get("Correo")
@@ -545,7 +544,6 @@ class ExcelService:
                             "valor": validacion_errores[validador],
                             "data": row
                         }
-                        Logger.add_to_log("info", f"Detalles de error: {error_detail}");
                         rows_errors.append(error_detail)
                     continue
 
