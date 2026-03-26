@@ -494,7 +494,7 @@ class ExcelService:
                 if not colonia:
                     validacion_errores["Colonia"] = "Celda vacía"
                 if telefono == 0 or telefono == '0':
-                    row["Telefono"] = 0000000000
+                    row["Telefono"] = "0000000000"
                 if not telefono:
                     validacion_errores["Telefono"] = "Celda vacía"
                 
