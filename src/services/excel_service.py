@@ -493,11 +493,13 @@ class ExcelService:
 
                 if not colonia:
                     validacion_errores["Colonia"] = "Celda vacía"
-
+                if telefono == 0 or telefono == '0':
+                    row["Telefono"] = 0000000000
                 if not telefono:
                     validacion_errores["Telefono"] = "Celda vacía"
-                elif len(telefono) != 10:
-                    validacion_errores["Telefono"] = "El teléfono principal debe tener 10 dígitos."
+                
+                # elif len(telefono) != 10:
+                #     validacion_errores["Telefono"] = "El teléfono principal debe tener 10 dígitos."
                 
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
