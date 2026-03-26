@@ -540,7 +540,7 @@ class ExcelService:
                             "row_index": idx + 2,
                             "curp": row.get("Curp") or "Sin CURP",
                             "nombre_completo": f"{row.get('Nombre', '')} {row.get('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
-                            "error": msg_error[validador] or "Error de validación en campos obligatorios",
+                            "error": msg_error.get(validador, "Error de validación en campos obligatorios"),
                             "campos_invalidos": validador,
                             "valor": validacion_errores[validador],
                             "data": row
