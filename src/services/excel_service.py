@@ -853,7 +853,7 @@ class ExcelService:
 
         # ---------- Encabezados visibles (una sola fila) ----------
         headers = [
-            "Curp", "Nombre", "Apellido paterno", "Apellido materno",
+            "Curp", "Nombre", "Apellido Paterno", "Apellido Materno",
             "Fecha de Nacimiento", "Estado (catálogo)", "Estado Civil", "Sexo",
             "Calle", "Numero", "Colonia", "Municipio Dirección (catálogo)",
             "Telefono", "Telefono 2", "Correo", "Dependencia","Programa", "Subprograma", "Componente",
