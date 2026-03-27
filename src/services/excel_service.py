@@ -326,9 +326,9 @@ class ExcelService:
                 subprograma = row.get("Subprograma")
                 id_subprograma = subprograma_map.get((subprograma.upper().rstrip(), id_programa)) if subprograma and id_programa else None
 
-                Logger.add_to_log("info", subprograma)
-                Logger.add_to_log("info", id_programa)
-                Logger.add_to_log("info", id_subprograma)
+                # Logger.add_to_log("info", subprograma)
+                # Logger.add_to_log("info", id_programa)
+                # Logger.add_to_log("info", id_subprograma)
                 componente = row.get("Componente")
                 id_componente = componentes_map.get((componente.upper().rstrip(), id_subprograma)) if componente and id_subprograma else None
 
