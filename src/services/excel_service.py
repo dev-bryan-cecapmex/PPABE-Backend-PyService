@@ -853,13 +853,13 @@ class ExcelService:
 
         # ---------- Encabezados visibles (una sola fila) ----------
         headers = [
-            "Curp", "Nombre", "Apellido paterno", "Apellido Materno",
+            "Curp", "Nombre", "Apellido paterno", "Apellido materno",
             "Fecha de Nacimiento", "Estado (catálogo)", "Estado Civil", "Sexo",
             "Calle", "Numero", "Colonia", "Municipio Dirección (catálogo)",
-            "Telefono", "Telefono 2", "Correo", "Programa", "Componente",
+            "Telefono", "Telefono 2", "Correo", "Dependencia","Programa", "Subprograma", "Componente",
             "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
             "RFC", "Regimen Capital", "Actividad", "Nombre Comercial",
-            "Razón Social", "Localidad", "Dependencia", "Subprograma"
+            "Razón Social"
         ]
         ws.append(headers)
 
