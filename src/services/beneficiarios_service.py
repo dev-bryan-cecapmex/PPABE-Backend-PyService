@@ -53,7 +53,7 @@ class BeneficiariosService:
                 CURP=data.get("Curp"),
                 RFC=data.get("RFC"),
                 nombre=data.get("Nombre"),
-                aPaterno=data.get("Apellido paterno"),
+                aPaterno=data.get("Apellido Paterno"),
                 aMaterno=data.get("Apellido Materno"),
                 fNacimiento=data.get("Fecha de Nacimiento"),
                 creador=id_user,

@@ -281,11 +281,11 @@ class ExcelService:
                 calle = row.get("Calle")
                 numero = row.get("Numero")
 
-                estado = row.get("Estado (catálogo)")
+                estado = row.get("Estado")
                 id_estado = estados_map.get(estado.upper().rstrip()) if estado else None
                 
 
-                municipio = row.get("Municipio Dirección (catálogo)")
+                municipio = row.get("Municipio Dirección")
                 raw_value = municipios_map.get(municipio.upper().rstrip()) if municipio else None
                 id_municipio = raw_value[0] if isinstance(raw_value, list) else raw_value
 
@@ -492,7 +492,7 @@ class ExcelService:
                     validacion_errores["Estado"] = row.get("Estado (catálogo)")
 
                 if not id_municipio:
-                    validacion_errores["Municipio"] = row.get("Municipio Dirección (catálogo)")
+                    validacion_errores["Municipio"] = row.get("Municipio Dirección")
 
                 if not colonia:
                     validacion_errores["Colonia"] = "Celda vacía"
@@ -542,7 +542,7 @@ class ExcelService:
                         error_detail = {
                             "row_index": idx + 2,
                             "curp": row.get("Curp"),
-                            "nombre_completo": f"{row.get('Nombre', '')} {row.get('Apellido paterno', '')} {row.get('Apellido Materno', '')}".strip(),
+                            "nombre_completo": f"{row.get('Nombre', '')} {row.get('Apellido Paterno', '')} {row.get('Apellido Materno', '')}".strip(),
                             "error": msg_error[validador] or "Error de validación en campos obligatorios",
                             "campos_invalidos": validador,
                             "valor": validacion_errores[validador],
@@ -675,7 +675,7 @@ class ExcelService:
                     "apoyo_data": apoyo_data,
                     "curp": curp,
                     "rfc": rfc,
-                    "nombre_completo": f"{row.get('Nombre',' ')} {row.get('Apellido paterno','')} {row.get('Apellido Materno','')}".strip()
+                    "nombre_completo": f"{row.get('Nombre',' ')} {row.get('Apellido Paterno','')} {row.get('Apellido Materno','')}".strip()
                 })
 
             # Estadística
@@ -853,9 +853,9 @@ class ExcelService:
 
         # ---------- Encabezados visibles (una sola fila) ----------
         headers = [
-            "Curp", "Nombre", "Apellido paterno", "Apellido Materno",
-            "Fecha de Nacimiento", "Estado (catálogo)", "Estado Civil", "Sexo",
-            "Calle", "Numero", "Colonia", "Municipio Dirección (catálogo)",
+            "Curp", "Nombre", "Apellido Paterno", "Apellido Materno",
+            "Fecha de Nacimiento", "Estado", "Estado Civil", "Sexo",
+            "Calle", "Numero", "Colonia", "Municipio Dirección",
             "Telefono", "Telefono 2", "Correo", "Dependencia","Programa", "Subprograma", "Componente",
             "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
             "RFC", "Regimen Capital", "Actividad", "Nombre Comercial",
@@ -878,8 +878,8 @@ class ExcelService:
 
         # Campos que llevan listas (catálogos)
         catalog_fields = {
-            "Estado (catálogo)": "Estado",
-            "Municipio Dirección (catálogo)": "Municipio",
+            "Estado": "Estado",
+            "Municipio Dirección": "Municipio",
             "Sexo": "Sexo",
             "Estado Civil": "EstadoCivil",
             "Programa": "Programa",

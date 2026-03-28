@@ -6,11 +6,11 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = (f"mysql+pymysql://{os.environ.get('DB_USER')}:{os.environ.get('DB_PASSWORD')}@" f"{os.environ.get('DB_HOST')}/{os.environ.get('DB_NAME')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    GROUP_ONE_KEYS = ['Curp','Nombre','Apellido paterno','Apellido Materno','Fecha de Nacimiento','Sexo','RFC',"Regimen Capital","Actividad","Nombre Comercial","Razón Social"]
+    GROUP_ONE_KEYS = ['Curp','Nombre','Apellido Paterno','Apellido Materno','Fecha de Nacimiento','Sexo','RFC',"Regimen Capital","Actividad","Nombre Comercial","Razón Social"]
     COLUMN_MAP_GROUP_ONE = {
         "Curp": "CURP",
         "Nombre": "nombre",
-        "Apellido paterno": "aPaterno",
+        "Apellido Paterno": "aPaterno",
         "Apellido Materno": "aMaterno",
         "Fecha de Nacimiento": "fNacimiento",
         "Sexo": "idSexo",
@@ -20,13 +20,13 @@ class Config:
         "Nombre Comercial":"nombreComercial",
         "Razón Social":"razonSocial",
     }
-    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado (catálogo)','Estado Civil','Municipio Dirección (catálogo)','Colonia','Calle','Numero']
+    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado','Estado Civil','Municipio Dirección','Colonia','Calle','Numero']
     COLUMN_MAP_GROUP_TWO = {
         'Correo':'correo',
         'Telefono':'telefono1',
         'Telefono 2':'telefono2',
-        'Estado (catálogo)':'idEstado',
-        'Municipio Dirección (catálogo)':'idMunicipio',
+        'Estado':'idEstado',
+        'Municipio Dirección':'idMunicipio',
         'Colonia':'idColonia',
         'Calle':'calle',
         'Numero':'numero',
@@ -49,16 +49,16 @@ class Config:
     CELLS_DATA_TYPES = {
         "Curp" : pl.Utf8,
         "Nombre" : pl.Utf8,
-        "Apellido paterno" :pl.Utf8,
+        "Apellido Paterno" :pl.Utf8,
         "Apellido Materno" :pl.Utf8,
         "Fecha de Nacimiento":pl.Utf8,
-        "Estado (catálogo)" :pl.Utf8,
+        "Estado" :pl.Utf8,
         "Estado Civil" :pl.Utf8,
         "Sexo":pl.Utf8,
         "Calle":pl.Utf8,
         "Numero" :pl.Utf8,
         "Colonia":pl.Utf8,
-        "Municipio Dirección (catálogo)":pl.Utf8,
+        "Municipio Dirección":pl.Utf8,
         "Telefono" :pl.Utf8,
         "Telefono 2" :pl.Utf8,
         "Correo":pl.Utf8,
@@ -81,13 +81,13 @@ class Config:
     APOYO_INTEGRAL_KEYS = [
         'Curp', 
         'Nombre', 
-        'Apellido paterno', 
+        'Apellido Paterno', 
         'Apellido Materno',
         'Fecha de Nacimiento', 
         'Estado Civil', 
         'Sexo',
-        'Estado (catálogo)', 
-        'Municipio Dirección (catálogo)',
+        'Estado', 
+        'Municipio Dirección',
         'Colonia', 
         'Calle', 
         'Numero', 
@@ -114,13 +114,13 @@ class Config:
     COLUMN_MAP_APOYO_INTEGRAL = {
         "Curp":                             "CURP",
         "Nombre":                           "nombre",
-        "Apellido paterno":                 "aPaterno",
+        "Apellido Paterno":                 "aPaterno",
         "Apellido Materno":                 "aMaterno",
         "Fecha de Nacimiento":              "fNacimiento",
         "Estado Civil":                     "estado_civil",
         "Sexo":                             "idSexo",           # lookup catálogo → también llena `sexo`
-        "Estado (catálogo)":                "idEstado",         # lookup catálogo → también llena `estado`
-        "Municipio Dirección (catálogo)":   "idMunicipio",      # lookup catálogo → también llena `municipio`
+        "Estado":                           "idEstado",         # lookup catálogo → también llena `estado`
+        "Municipio Dirección":   "idMunicipio",      # lookup catálogo → también llena `municipio`
         "Colonia":                          "colonia",
         "Calle":                            "calle",
         "Numero":                           "numero",
@@ -150,16 +150,16 @@ class Config:
     CAMPOS_OBLIGATORIOS = [
         "Curp", 
         "Nombre", 
-        "Apellido paterno", 
+        "Apellido Paterno", 
         "Apellido Materno",
         "Fecha de Nacimiento", 
-        "Estado (catálogo)", 
+        "Estado", 
         "Estado Civil", 
         "Sexo",
         "Calle", 
         "Numero", 
         "Colonia", 
-        "Municipio Dirección (catálogo)",
+        "Municipio Dirección",
         "Telefono", 
         "Telefono 2", 
         "Correo",
