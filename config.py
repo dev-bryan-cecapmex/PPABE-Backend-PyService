@@ -73,7 +73,6 @@ class Config:
         "Actividad":pl.Utf8,
         "Nombre Comercial":pl.Utf8,
         "Razón Social":pl.Utf8,
-        "Localidad":pl.Utf8,
         "Dependencia":pl.Utf8,
         "Subprograma":pl.Utf8,
     }
@@ -140,8 +139,7 @@ class Config:
         "Regimen Capital":                  "regimenCapital",
         "Actividad":                        "actividad",
         "Nombre Comercial":                 "nombreComercial",
-        "Razón Social":                     "razonSocial",
-        "Localidad":                        "localidad",                  
+        "Razón Social":                     "razonSocial",                 
         "Nombre Captura":                   "creador",    
         "Nombre Valida":                    "modificador",          
     }
@@ -176,7 +174,6 @@ class Config:
         "Actividad", 
         "Nombre Comercial",
         "Razón Social", 
-        "Localidad", 
         "Dependencia", 
         "Subprograma"
     ]
