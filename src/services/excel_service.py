@@ -169,15 +169,33 @@ class ExcelService:
             ])
 
             # eliminar filas vacías
+            # data = data.filter(
+            #     pl.any_horizontal(
+            #         pl.when(pl.col(c).is_not_null() & (pl.col(c).cast(pl.Utf8).str.strip_chars() != ""))
+            #         .then(True)
+            #         .otherwise(False)
+            #         for c in data.columns
+            #     )
+            # )
+            
+            COLS_CLAVE = [
+                "Curp", "RFC", "Nombre", "Apellido Paterno", "Apellido Materno",
+                "Fecha de Nacimiento", "Estado", "Estado Civil", "Sexo",
+                "Calle", "Numero", "Colonia", "Municipio Dirección",
+                "Telefono", "Telefono 2", "Correo",
+                "Dependencia", "Programa", "Subprograma", "Componente",
+                "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
+                "Regimen Capital", "Actividad", "Nombre Comercial", "Razón Social"
+            ]
+            cols_existentes = [c for c in COLS_CLAVE if c in data.columns]
+
             data = data.filter(
                 pl.any_horizontal(
-                    pl.when(pl.col(c).is_not_null() & (pl.col(c).cast(pl.Utf8).str.strip_chars() != ""))
-                    .then(True)
-                    .otherwise(False)
-                    for c in data.columns
+                    pl.col(c).is_not_null() & (pl.col(c).cast(pl.Utf8).str.strip_chars() != "")
+                    for c in cols_existentes
                 )
             )
-
+            
             rows = data.to_dicts()
 
             Logger.add_to_log("info", "Columnas de los datos")
@@ -259,7 +277,7 @@ class ExcelService:
                 "beneficiarios_nuevos": 0,
                 "errores_validacion": 0
             }
-
+            Logger.add_to_log("info", stats)
             for idx, row in enumerate(rows):
                 curp = row.get("Curp") or None
                 rfc  = row.get("RFC") or None
@@ -304,7 +322,7 @@ class ExcelService:
                 actividad           = ExcelService.limpiar_texto(row.get("Actividad"))
                 nombre_comercial    = ExcelService.limpiar_texto(row.get("Nombre Comercial"))
                 razon_social        = ExcelService.limpiar_texto(row.get("Razón Social"))
-
+                
                 # ==============================
                 # Grupo 3 - Apoyos
                 # ==============================
@@ -313,7 +331,7 @@ class ExcelService:
 
                 dependencia = row.get("Dependencia")
                 id_dependencia = dependencias_map.get(dependencia.upper().rstrip()) if dependencia else None
-
+    
 
                 if id_dependencia != id_dependencia_user:
                     Logger.add_to_log("warn", "No puedes cargar archivos de esa dependencia")
@@ -472,7 +490,6 @@ class ExcelService:
                     if not row["fecha_nac_vacia_original"]:
                         validacion_errores["Fecha de Nacimiento"] = "Error en formato"
                         msg_error["Fecha de Nacimiento"] = "El formato de fecha no es el correcto"
-                        
                 if not id_sexo:
                     if not row["sexo_vacio_original"]:
                         validacion_errores["Sexo"] = row.get("Sexo")
@@ -537,20 +554,23 @@ class ExcelService:
                 
                 if validacion_errores:
                     stats["errores_validacion"] += 1
+                    Logger.add_to_log("warn", f"Error {validacion_errores}")
                     for validador in validacion_errores:
                         
                         error_detail = {
                             "row_index": idx + 2,
                             "curp": row.get("Curp"),
                             "nombre_completo": f"{row.get('Nombre', '')} {row.get('Apellido Paterno', '')} {row.get('Apellido Materno', '')}".strip(),
-                            "error": msg_error[validador] or "Error de validación en campos obligatorios",
+                            "error": msg_error.get(validador, "Error de validación en campos obligatorios"),
                             "campos_invalidos": validador,
                             "valor": validacion_errores[validador],
                             "data": row
                         }
+                        
+                        
                         rows_errors.append(error_detail)
                     continue
-
+                
                 # ==========================================================
                 # ✅ NUEVO COMPORTAMIENTO:
                 #   SIEMPRE crear beneficiario nuevo (sin buscar en BD, sin cache)
