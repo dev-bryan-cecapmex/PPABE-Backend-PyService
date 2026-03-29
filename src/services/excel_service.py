@@ -116,6 +116,7 @@ class ExcelService:
             Logger.add_to_log("info", f"Dependencia:{id_dependencia_user}")
             
             id_historia_carga = ExcelService.generate_sequential_uuid()
+            HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)
             Logger.add_to_log("info", f"Id de Carga: {id_historia_carga}")
 
             # 1. Leer el Excel SIN schema_overrides
@@ -277,7 +278,7 @@ class ExcelService:
                 "beneficiarios_nuevos": 0,
                 "errores_validacion": 0
             }
-            Logger.add_to_log("info", stats)
+            
             for idx, row in enumerate(rows):
                 curp = row.get("Curp") or None
                 rfc  = row.get("RFC") or None
@@ -343,12 +344,14 @@ class ExcelService:
 
                 subprograma = row.get("Subprograma")
                 id_subprograma = subprograma_map.get((subprograma.upper().rstrip(), id_programa)) if subprograma and id_programa else None
-
-                # Logger.add_to_log("info", subprograma)
-                # Logger.add_to_log("info", id_programa)
-                # Logger.add_to_log("info", id_subprograma)
+                
+                
                 componente = row.get("Componente")
                 id_componente = componentes_map.get((componente.upper().rstrip(), id_subprograma)) if componente and id_subprograma else None
+                
+                Logger.add_to_log("info", f"Componente {componente}")
+                Logger.add_to_log("info", id_componente)
+                Logger.add_to_log("info", id_subprograma)
 
                 accion = row.get("Accion")
                 id_acciones = acciones_map.get(accion.upper().rstrip()) if accion else None
@@ -523,7 +526,7 @@ class ExcelService:
                 
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
-                elif  telefono_2 and len(telefono) != 10:
+                elif  telefono_2 and len(telefono_2) != 10:
                     validacion_errores["Telefono 2"] = row["Telefono 2"]
                     msg_error["Telefono 2"] = "Error en el segundo numero telefónico"
                
@@ -554,7 +557,7 @@ class ExcelService:
                 
                 if validacion_errores:
                     stats["errores_validacion"] += 1
-                    Logger.add_to_log("warn", f"Error {validacion_errores}")
+                   
                     for validador in validacion_errores:
                         
                         error_detail = {
@@ -776,7 +779,9 @@ class ExcelService:
                 try:
                     Logger.add_to_log("info", f"💾 🗄️ Insertando {len(apoyosIntegral_to_insert)} Apoyos Integrales nuevos ...")
                     ApoyoIntegralService.bulk_insert(apoyosIntegral_to_insert, batch_size=5000, commit_every_batches=1)
-                    HistoriaCargaService.insertCarga(id_historia_carga, id_user, id_dependencia_user)
+                    
+                    HistoriaCargaService.updateEstatusCarga(id_historia_carga, estatus="EXITOSA")
+                    
                     Logger.add_to_log("debug", f"ID Carga: {id_historia_carga}")
                     Logger.add_to_log("info", f"✅ 💾 {len(apoyosIntegral_to_insert)} beneficiarios insertados exitosamente")
                 except Exception as e:
