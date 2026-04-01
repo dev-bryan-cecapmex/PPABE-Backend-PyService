@@ -522,9 +522,9 @@ class ExcelService:
                 
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
-                elif  telefono_2 and len(telefono_2) != 10:
-                    validacion_errores["Telefono 2"] = row["Telefono 2"]
-                    msg_error["Telefono 2"] = "Error en el segundo numero telefónico"
+                # elif  telefono_2 and len(telefono_2) != 10:
+                #     validacion_errores["Telefono 2"] = row["Telefono 2"]
+                #     msg_error["Telefono 2"] = "Error en el segundo numero telefónico"
                
                     
                 if not correo:
