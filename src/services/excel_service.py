@@ -348,10 +348,6 @@ class ExcelService:
                 
                 componente = row.get("Componente")
                 id_componente = componentes_map.get((componente.upper().rstrip(), id_subprograma)) if componente and id_subprograma else None
-                
-                Logger.add_to_log("info", f"Componente {componente}")
-                Logger.add_to_log("info", id_componente)
-                Logger.add_to_log("info", id_subprograma)
 
                 accion = row.get("Accion")
                 id_acciones = acciones_map.get(accion.upper().rstrip()) if accion else None
