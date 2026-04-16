@@ -226,7 +226,7 @@ class SearchService:
             return {nombre.upper().strip(): id_tben for nombre, id_tben in tipos_beneficiarios}
 
     @staticmethod
-    def get_carpeta_beneficiarios_map():
+    def get_carpeta_beneficiarios_map(id_dependencia_user):
         """Obtiene mapa de carpetas beneficiarios desde cache optimizado."""
         try:
             catalogs = cache_service.get_catalogs()
@@ -242,7 +242,10 @@ class SearchService:
                     CarpetaBeneficiarios.idDependencia,
                     CarpetaBeneficiarios.estado,
                 )
-                .filter(CarpetaBeneficiarios.deleted == 0)
+                .filter(
+                    CarpetaBeneficiarios.deleted == 0,
+                    CarpetaBeneficiarios.idDependencia == id_dependencia_user
+                        )
                 .all()
             )
             return {

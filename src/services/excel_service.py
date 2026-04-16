@@ -251,7 +251,7 @@ class ExcelService:
                 maps["componentes_map"] = SearchService.get_componentes_map()
                 maps["acciones_map"] = SearchService.get_acciones_map()
                 maps["tipos_beneficiarios_map"] = SearchService.get_tipos_beneficiarios_map()
-                maps["carpetas_beneficiarios_map"] = SearchService.get_carpeta_beneficiarios_map()
+                maps["carpetas_beneficiarios_map"] = SearchService.get_carpeta_beneficiarios_map(id_dependencia_user)
 
             # sacar refs locales
             sexos_map = maps["sexos_map"]
