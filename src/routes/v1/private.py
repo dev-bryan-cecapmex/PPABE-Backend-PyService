@@ -144,6 +144,7 @@ def getTemplate():
                 [{"id": d.id, "nombre": d.nombre}] if (d := CatalogosService.get_dependencia(id_dependencia)) else []
             ),
             "Programa": [{"id": p.id, "nombre": p.nombre} for p in CatalogosService.get_programas(id_dependencia, anio)],
+            "Subprograma": [{"id": s.id, "nombre": s.nombre} for s in CatalogosService.get_subprogramas(id_dependencia, anio)],
             "Componente": [{"id": c.id, "nombre": c.nombre} for c in CatalogosService.get_componentes(id_dependencia, anio)],
             "Accion": [{"id": a.id, "nombre": a.nombre} for a in CatalogosService.get_acciones()],
             "TipoBeneficio": [{"id": tb.id, "nombre": tb.nombre} for tb in CatalogosService.get_tipos_beneficios()],

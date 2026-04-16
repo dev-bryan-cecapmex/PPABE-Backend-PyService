@@ -904,6 +904,7 @@ class ExcelService:
             "Sexo": "Sexo",
             "Estado Civil": "EstadoCivil",
             "Programa": "Programa",
+             "Subprograma": "Subprograma",
             "Componente": "Componente",
             "Accion": "Accion",
             "Tipo de Beneficio": "TipoBeneficio",

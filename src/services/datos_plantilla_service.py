@@ -52,6 +52,24 @@ class CatalogosService:
         )
 
     @staticmethod
+    def get_subprogramas(id_dependencia, anio):
+        return (
+            db.session.query(Subprogramas.id, Subprogramas.nombre)
+            .join(
+                DependenciaProgramaAnio,
+                Subprogramas.idPrograma == DependenciaProgramaAnio.idPrograma
+            )
+            .filter(
+                DependenciaProgramaAnio.idDependencia == id_dependencia,
+                DependenciaProgramaAnio.anio == anio,
+                Subprogramas.deleted == False
+            )
+            .all()
+        )
+
+
+
+    @staticmethod
     def get_componentes(id_dependencia, anio):
         return (
             db.session.query(Componentes.id, Componentes.nombre)
