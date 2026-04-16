@@ -505,7 +505,7 @@ class ExcelService:
                         validacion_errores["Estado Civil"] = row.get("Estado Civil")
 
                 if not id_estado:
-                    validacion_errores["Estado"] = row.get("Estado (catálogo)")
+                    validacion_errores["Estado"] = row.get("Estado")
 
                 if not id_municipio:
                     validacion_errores["Municipio"] = row.get("Municipio Dirección")
