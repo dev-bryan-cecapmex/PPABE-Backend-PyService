@@ -181,8 +181,8 @@ class ExcelService:
             
             COLS_CLAVE = [
                 "Curp", "RFC", "Nombre", "Apellido Paterno", "Apellido Materno",
-                "Fecha de Nacimiento", "Estado", "Estado Civil", "Sexo",
-                "Calle", "Numero", "Colonia", "Municipio Dirección",
+                "Fecha de Nacimiento", "Estado (Nacimiento)", "Estado Civil", "Sexo",
+                "Calle", "Numero", "Colonia", "Municipio (Dirección)",
                 "Telefono", "Telefono 2", "Correo",
                 "Dependencia", "Programa", "Subprograma", "Componente",
                 "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
@@ -300,11 +300,11 @@ class ExcelService:
                 calle = row.get("Calle")
                 numero = row.get("Numero")
 
-                estado = row.get("Estado")
+                estado = row.get("Estado (Nacimiento)")
                 id_estado = estados_map.get(estado.upper().rstrip()) if estado else None
                 
 
-                municipio = row.get("Municipio Dirección")
+                municipio = row.get("Municipio (Dirección)")
                 raw_value = municipios_map.get(municipio.upper().rstrip()) if municipio else None
                 id_municipio = raw_value[0] if isinstance(raw_value, list) else raw_value
 
@@ -505,10 +505,10 @@ class ExcelService:
                         validacion_errores["Estado Civil"] = row.get("Estado Civil")
 
                 if not id_estado:
-                    validacion_errores["Estado"] = row.get("Estado")
+                    validacion_errores["Estado (Nacimiento)"] = row.get("Estado (Nacimiento)")
 
                 if not id_municipio:
-                    validacion_errores["Municipio"] = row.get("Municipio Dirección")
+                    validacion_errores["Municipio (Dirección)"] = row.get("Municipio (Dirección)")
 
                 if not colonia:
                     validacion_errores["Colonia"] = "Celda vacía"
@@ -875,8 +875,8 @@ class ExcelService:
         # ---------- Encabezados visibles (una sola fila) ----------
         headers = [
             "Curp", "Nombre", "Apellido Paterno", "Apellido Materno",
-            "Fecha de Nacimiento", "Estado", "Estado Civil", "Sexo",
-            "Calle", "Numero", "Colonia", "Municipio Dirección",
+            "Fecha de Nacimiento", "Estado (Nacimiento)", "Estado Civil", "Sexo",
+            "Calle", "Numero", "Colonia", "Municipio (Dirección)",
             "Telefono", "Telefono 2", "Correo", "Dependencia","Programa", "Subprograma", "Componente",
             "Accion", "Fecha de Registro", "Monto", "Tipo de Beneficio",
             "RFC", "Regimen Capital", "Actividad", "Nombre Comercial",
@@ -899,12 +899,12 @@ class ExcelService:
 
         # Campos que llevan listas (catálogos)
         catalog_fields = {
-            "Estado": "Estado",
-            "Municipio Dirección": "Municipio",
+            "Estado (Nacimiento)": "Estado",
+            "Municipio (Dirección)": "Municipio",
             "Sexo": "Sexo",
             "Estado Civil": "EstadoCivil",
             "Programa": "Programa",
-             "Subprograma": "Subprograma",
+            "Subprograma": "Subprograma",
             "Componente": "Componente",
             "Accion": "Accion",
             "Tipo de Beneficio": "TipoBeneficio",

@@ -20,13 +20,13 @@ class Config:
         "Nombre Comercial":"nombreComercial",
         "Razón Social":"razonSocial",
     }
-    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado','Estado Civil','Municipio Dirección','Colonia','Calle','Numero']
+    GROUP_TWO_KEYS = ['Correo','Telefono','Telefono 2','Estado (Nacimiento)','Estado Civil','Municipio (Dirección)','Colonia','Calle','Numero']
     COLUMN_MAP_GROUP_TWO = {
         'Correo':'correo',
         'Telefono':'telefono1',
         'Telefono 2':'telefono2',
-        'Estado':'idEstado',
-        'Municipio Dirección':'idMunicipio',
+        'Estado (Nacimiento)':'idEstado',
+        'Municipio (Dirección)':'idMunicipio',
         'Colonia':'idColonia',
         'Calle':'calle',
         'Numero':'numero',
@@ -52,13 +52,13 @@ class Config:
         "Apellido Paterno" :pl.Utf8,
         "Apellido Materno" :pl.Utf8,
         "Fecha de Nacimiento":pl.Utf8,
-        "Estado" :pl.Utf8,
+        "Estado (Nacimiento)" :pl.Utf8,
         "Estado Civil" :pl.Utf8,
         "Sexo":pl.Utf8,
         "Calle":pl.Utf8,
         "Numero" :pl.Utf8,
         "Colonia":pl.Utf8,
-        "Municipio Dirección":pl.Utf8,
+        "Municipio (Dirección)":pl.Utf8,
         "Telefono" :pl.Utf8,
         "Telefono 2" :pl.Utf8,
         "Correo":pl.Utf8,
@@ -86,8 +86,8 @@ class Config:
         'Fecha de Nacimiento', 
         'Estado Civil', 
         'Sexo',
-        'Estado', 
-        'Municipio Dirección',
+        'Estado (Nacimiento)', 
+        'Municipio (Dirección)',
         'Colonia', 
         'Calle', 
         'Numero', 
@@ -119,8 +119,8 @@ class Config:
         "Fecha de Nacimiento":              "fNacimiento",
         "Estado Civil":                     "estado_civil",
         "Sexo":                             "idSexo",           # lookup catálogo → también llena `sexo`
-        "Estado":                           "idEstado",         # lookup catálogo → también llena `estado`
-        "Municipio Dirección":   "idMunicipio",      # lookup catálogo → también llena `municipio`
+        "Estado (Nacimiento)":                           "idEstado",         # lookup catálogo → también llena `estado`
+        "Municipio (Dirección)":   "idMunicipio",      # lookup catálogo → también llena `municipio`
         "Colonia":                          "colonia",
         "Calle":                            "calle",
         "Numero":                           "numero",
@@ -153,13 +153,13 @@ class Config:
         "Apellido Paterno", 
         "Apellido Materno",
         "Fecha de Nacimiento", 
-        "Estado", 
+        "Estado (Nacimiento)", 
         "Estado Civil", 
         "Sexo",
         "Calle", 
         "Numero", 
         "Colonia", 
-        "Municipio Dirección",
+        "Municipio (Dirección)",
         "Telefono", 
         "Telefono 2", 
         "Correo",
