@@ -22,7 +22,7 @@ def create_app():
     origins = app.config["IP_SERVER_FRONT"]
 
     # print(f"🌎 Iniciando entorno: {env}")
-    print(f"🔗 Orígenes permitidos: {origins}")
+    print(f"Origenes permitidos: {origins}")
 
     # --- Configurar CORS usando los dominios del .env ---
     CORS(
@@ -41,11 +41,11 @@ def create_app():
     
     with app.app_context():
         try:
-            print("⚡ Inicializando caché de catálogos...")
+            print("Inicializando cache de catalogos...")
             SearchService.force_refresh_cache()
-            print("✔ Caché inicial cargada correctamente.")
+            print("Cache inicial cargada correctamente.")
         except Exception as ex:
-            print("❌ ERROR cargando caché inicial:", ex)
+            print("ERROR cargando cache inicial; continuando sin cache inicial:", ex)
 
     return app
 

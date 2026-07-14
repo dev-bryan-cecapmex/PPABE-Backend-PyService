@@ -1,49 +1,27 @@
-# Etapa base: Rocky Linux 9.3
 FROM rockylinux:9.3
 
-# Variables de entorno para no generar pyc ni buffer
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app
 
-# Forzar la ruta global para encontrar gunicorn y pip
-ENV PATH="/usr/local/bin:${PATH}"
+WORKDIR /app
 
-# Actualizar sistema e instalar dependencias de compilación
 RUN dnf -y update && \
-    dnf -y install gcc make openssl-devel bzip2-devel libffi-devel zlib-devel wget tar && \
+    dnf -y install python3 python3-pip python3-devel gcc make openssl-devel bzip2-devel libffi-devel zlib-devel wget tar && \
     dnf clean all && \
     rm -rf /var/cache/dnf /tmp/*
 
-# Instalar Python 3.13.7 desde fuente
-WORKDIR /opt
-RUN wget https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz && \
-    tar -xzf Python-3.13.7.tgz && \
-    cd Python-3.13.7 && \
-    ./configure --enable-optimizations && \
-    make altinstall && \
-    rm -rf /opt/Python-3.13.7*
+COPY requirements.txt ./
 
-# Crear directorio de la app
-WORKDIR /app
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r requirements.txt gunicorn==23.0.0
 
-# Copiar requirements y dependencias
-COPY requirements.txt .
+COPY . ./
 
-# Instalar dependencias globales con el pip correcto de Python 3.13
-RUN python3.13 -m ensurepip && \
-    python3.13 -m pip install --upgrade pip && \
-    python3.13 -m pip install --no-cache-dir -r requirements.txt
-
-# Copiar código fuente
-COPY src /app/src
-COPY index.py /app
-COPY config.py /app
-
-# Asegurar que el servicio encuentre el paquete src
-ENV PYTHONPATH=/app/src
-
-# Exponer puerto
 EXPOSE 4001
 
-# Volvemos al ejecutable nativo apuntando a la ruta del PATH corregida
-CMD ["gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "4", "--timeout", "120"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4001/healthz', timeout=3)" || exit 1
+
+CMD ["gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "2", "--timeout", "120"]

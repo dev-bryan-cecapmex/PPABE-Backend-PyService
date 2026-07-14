@@ -3,17 +3,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ppabe-pyservice:latest
     container_name: api-ppabe-python
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: /app
+      PORT: 4001
     ports:
       - "4001:4001"
     volumes:
-      - .:/app
+      - .:/app:z
     working_dir: /app
-    # Llamamos a gunicorn directamente usando su binario absoluto en /usr/local/bin
-    command: /usr/local/bin/gunicorn --bind 0.0.0.0:4001 index:app --workers 4 --timeout 120
+    command: ["gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "2", "--timeout", "120"]
 
 networks:
   default:
