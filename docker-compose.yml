@@ -1,40 +1,21 @@
 version: "3.9"
-
+ 
 services:
   api-pyservice:
     build:
       context: .
       dockerfile: Dockerfile
-
-    container_name: api-pyservice
-    restart: unless-stopped
-
+    container_name: api-ppabe-python
+    restart: always
     env_file:
       - .env
-
     ports:
       - "4001:4001"
-
     volumes:
-      # 🔥 MONTA TODO EL PROYECTO → git pull = cambios inmediatos
       - .:/app
-
-      # 🔥 Asegura el .env dentro del contenedor
-      - ./.env:/app/.env
-
-    environment:
-      # 🔥 Flask autoreload + modo desarrollo
-      FLASK_APP: index.py
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
-      FLASK_RUN_HOST: 0.0.0.0
-      FLASK_RUN_PORT: 4001
-      PYTHONPATH: /app/src
-
-    command: flask run --reload
-
-    networks:
-      - backend_net
-
+    working_dir: /app
+    command: gunicorn --bind 0.0.0.0:4001 index:app --workers 4 --timeout 120
+ 
 networks:
-  backend_net:
+  default:
+    driver: bridge
