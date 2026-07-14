@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api-pyservice:
     build:
@@ -14,8 +12,8 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    # Corregido: ejecutamos gunicorn como módulo de Python para asegurar que encuentre el ejecutable
-    command: python3.13 -m gunicorn --bind 0.0.0.0:4001 index:app --workers 4 --timeout 120
+    # Llamamos a gunicorn directamente usando su binario absoluto en /usr/local/bin
+    command: /usr/local/bin/gunicorn --bind 0.0.0.0:4001 index:app --workers 4 --timeout 120
 
 networks:
   default:

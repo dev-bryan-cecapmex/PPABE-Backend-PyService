@@ -5,6 +5,9 @@ FROM rockylinux:9.3
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Forzar la ruta global para encontrar gunicorn y pip
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Actualizar sistema e instalar dependencias de compilación
 RUN dnf -y update && \
     dnf -y install gcc make openssl-devel bzip2-devel libffi-devel zlib-devel wget tar && \
@@ -26,10 +29,10 @@ WORKDIR /app
 # Copiar requirements y dependencias
 COPY requirements.txt .
 
-# Instalar dependencias de Python
+# Instalar dependencias globales con el pip correcto de Python 3.13
 RUN python3.13 -m ensurepip && \
     python3.13 -m pip install --upgrade pip && \
-    pip3.13 install --no-cache-dir -r requirements.txt
+    python3.13 -m pip install --no-cache-dir -r requirements.txt
 
 # Copiar código fuente
 COPY src /app/src
@@ -42,5 +45,5 @@ ENV PYTHONPATH=/app/src
 # Exponer puerto
 EXPOSE 4001
 
-# Comando final para producción (corregido usando el formato de módulo de Python)
-CMD ["python3.13", "-m", "gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "4", "--timeout", "120"]
+# Volvemos al ejecutable nativo apuntando a la ruta del PATH corregida
+CMD ["gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "4", "--timeout", "120"]
