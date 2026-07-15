@@ -1,45 +1,54 @@
 import logging
-import os
 import traceback
+from pathlib import Path
+
 
 class Logger:
-    
-    def __set_logger(self):
-        log_directory = 'src/utils/log'
-        log_filename = 'app.log'
+    @staticmethod
+    def _get_log_path():
+        log_dir = Path(__file__).resolve().parent / "log"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        return log_dir / "app.log"
 
-        logger = logging.getLogger(__name__)
+    @staticmethod
+    def __set_logger():
+        log_path = Logger._get_log_path()
+        logger = logging.getLogger("ppabe_logger")
         logger.setLevel(logging.DEBUG)
+        logger.propagate = False
 
-        log_path = os.path.join(log_directory, log_filename)
-        file_handler = logging.FileHandler(log_path, encoding='utf-8')
-        file_handler.setLevel(logging.DEBUG)
-
-        formatter = logging.Formatter('%(asctime)s | %(levelname)s | %(message)s', "%Y-%m-%d %H:%M:%S")
-        file_handler.setFormatter(formatter)
-
-        if (logger.hasHandlers()):
+        if logger.hasHandlers():
             logger.handlers.clear()
 
+        file_handler = logging.FileHandler(log_path, encoding="utf-8")
+        file_handler.setLevel(logging.DEBUG)
+
+        formatter = logging.Formatter(
+            "%(asctime)s | %(levelname)s | %(message)s",
+            "%Y-%m-%d %H:%M:%S",
+        )
+        file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
         return logger
-    
+
     @classmethod
     def add_to_log(cls, level, message):
         try:
-            logger = cls.__set_logger(cls)
+            logger = cls.__set_logger()
 
-            if (level == "critical"):
+            if level == "critical":
                 logger.critical(message)
-            elif (level == "debug"):
+            elif level == "debug":
                 logger.debug(message)
-            elif (level == "error"):
+            elif level == "error":
                 logger.error(message)
-            elif (level == "info"):
+            elif level == "info":
                 logger.info(message)
-            elif (level == "warn"):
-                logger.warn(message)
+            elif level == "warn":
+                logger.warning(message)
+            else:
+                logger.info(message)
         except Exception as ex:
             print(traceback.format_exc())
             print(ex)

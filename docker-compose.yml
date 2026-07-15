@@ -5,33 +5,28 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-
+    image: ppabe-pyservice:latest
     container_name: api-pyservice
     restart: unless-stopped
 
     env_file:
       - .env
 
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPATH: /app
+      FLASK_ENV: production
+
     ports:
       - "4001:4001"
 
     volumes:
-      # 🔥 MONTA TODO EL PROYECTO → git pull = cambios inmediatos
       - .:/app
+      - ./.env:/app/.env:ro
+      - ./logs:/app/src/utils/log
 
-      # 🔥 Asegura el .env dentro del contenedor
-      - ./.env:/app/.env
-
-    environment:
-      # 🔥 Flask autoreload + modo desarrollo
-      FLASK_APP: index.py
-      FLASK_ENV: development
-      FLASK_DEBUG: 1
-      FLASK_RUN_HOST: 0.0.0.0
-      FLASK_RUN_PORT: 4001
-      PYTHONPATH: /app/src
-
-    command: flask run --reload
+    command: ["gunicorn", "--bind", "0.0.0.0:4001", "index:app", "--workers", "2", "--timeout", "120"]
 
     networks:
       - backend_net
