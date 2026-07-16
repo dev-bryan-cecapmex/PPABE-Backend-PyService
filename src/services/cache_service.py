@@ -370,6 +370,107 @@ class CacheService:
             }
             return MappingProxyType(snapshot)  # inmutable al 100%
 
+    def get_catalog(self, catalog_type: str) -> Dict[str, Any]:
+        """
+        Compatibilidad con el API legacy: devuelve un catálogo cargado ya indexado.
+        """
+        with self._lock:
+            return dict(self._catalogs_cache.get(catalog_type, {}))
+
+    def get_catalogs(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Compatibilidad con el API legacy usada por SearchService.
+        Devuelve mapas simples por catálogo, listos para búsquedas por nombre/id.
+        """
+        with self._lock:
+            result: Dict[str, Dict[str, Any]] = {}
+
+            for catalog_type, entry in self._catalogs_cache.items():
+                rows = entry.get("rows", []) or []
+                if not rows:
+                    result[catalog_type] = {}
+                    continue
+
+                if catalog_type in {"sexos", "estados", "estados_civiles", "dependencias", "acciones", "tipos_beneficiarios"}:
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        if not name:
+                            continue
+                        normalized_name = self._norm_name(name)
+                        if normalized_name:
+                            mapped[normalized_name] = row.get("id")
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "municipios":
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        if not name:
+                            continue
+                        normalized_name = self._norm_name(name)
+                        if normalized_name:
+                            mapped[normalized_name] = [row.get("id")]
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "colonias":
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        if not name:
+                            continue
+                        normalized_name = self._norm_name(name)
+                        if normalized_name:
+                            mapped[normalized_name] = [row.get("id"), row.get("idMunicipio")]
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "programas":
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        id_dependencia = row.get("idDependencia")
+                        if not name or id_dependencia is None:
+                            continue
+                        mapped[(self._norm_name(name), id_dependencia)] = row.get("id")
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "subprogramas":
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        id_programa = row.get("idPrograma")
+                        if not name or id_programa is None:
+                            continue
+                        mapped[(self._norm_name(name), id_programa)] = row.get("id")
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "componentes":
+                    mapped = {}
+                    for row in rows:
+                        name = row.get("nombre") or row.get("Nombre")
+                        id_subprograma = row.get("idSubPrograma")
+                        if not name or id_subprograma is None:
+                            continue
+                        mapped[(self._norm_name(name), id_subprograma)] = row.get("id")
+                    result[catalog_type] = mapped
+
+                elif catalog_type == "carpetas_beneficiarios":
+                    mapped = {}
+                    for row in rows:
+                        key = (row.get("mes"), row.get("anio"), row.get("idDependencia"))
+                        if key[0] is None or key[1] is None or key[2] is None:
+                            continue
+                        mapped[key] = {
+                            "id": row.get("id"),
+                            "estado": row.get("estado")
+                        }
+                    result[catalog_type] = mapped
+
+                else:
+                    result[catalog_type] = entry.get("by_name", {})
+
+            return result
+
     # -------------------------
     # Jobs (cache por sesión/ejecución)
     # -------------------------
