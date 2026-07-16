@@ -294,6 +294,24 @@ class CacheService:
             return ""
         return str(value).strip().lower()
 
+    @staticmethod
+    def _model_to_dict(row: Any) -> Dict[str, Any]:
+        """Convierte un modelo SQLAlchemy a dict sin depender del nombre exacto del método."""
+        if row is None:
+            return {}
+
+        if hasattr(row, "to_dict") and callable(getattr(row, "to_dict")):
+            return row.to_dict()
+        if hasattr(row, "do_dict") and callable(getattr(row, "do_dict")):
+            return row.do_dict()
+
+        data = {}
+        for key in getattr(row, "__dict__", {}).keys():
+            if key.startswith("_"):
+                continue
+            data[key] = getattr(row, key)
+        return data
+
     # -------------------------
     # DB fetch (ajusta si tu SP cambia)
     # -------------------------
@@ -305,18 +323,18 @@ class CacheService:
             raise RuntimeError("No hay contexto de aplicación activo para consultar catálogos")
 
         catalog_map = {
-            "dependencias": lambda: [row.to_dict() for row in Dependencias.query.filter(Dependencias.deleted == 0).all()],
-            "programas": lambda: [row.to_dict() for row in Programas.query.filter(Programas.deleted == 0).all()],
-            "subprogramas": lambda: [row.to_dict() for row in Subprogramas.query.filter(Subprogramas.deleted == 0).all()],
-            "componentes": lambda: [row.to_dict() for row in Componentes.query.filter(Componentes.deleted == 0).all()],
-            "acciones": lambda: [row.to_dict() for row in Acciones.query.filter(Acciones.deleted == 0).all()],
-            "estados": lambda: [row.to_dict() for row in Estados.query.filter(Estados.deleted == 0).all()],
-            "municipios": lambda: [row.to_dict() for row in Municipios.query.filter(Municipios.deleted == 0).all()],
-            "colonias": lambda: [row.to_dict() for row in Colonias.query.filter(Colonias.deleted == 0).all()],
-            "sexos": lambda: [row.to_dict() for row in Sexos.query.filter(Sexos.deleted == 0).all()],
-            "estados_civiles": lambda: [row.to_dict() for row in EstadosCiviles.query.filter(EstadosCiviles.deleted == 0).all()],
-            "tipos_beneficiarios": lambda: [row.to_dict() for row in TiposBeneficiarios.query.filter(TiposBeneficiarios.deleted == 0).all()],
-            "carpetas_beneficiarios": lambda: [row.to_dict() for row in CarpetaBeneficiarios.query.filter(CarpetaBeneficiarios.deleted == 0).all()],
+            "dependencias": lambda: [self._model_to_dict(row) for row in Dependencias.query.filter(Dependencias.deleted == 0).all()],
+            "programas": lambda: [self._model_to_dict(row) for row in Programas.query.filter(Programas.deleted == 0).all()],
+            "subprogramas": lambda: [self._model_to_dict(row) for row in Subprogramas.query.filter(Subprogramas.deleted == 0).all()],
+            "componentes": lambda: [self._model_to_dict(row) for row in Componentes.query.filter(Componentes.deleted == 0).all()],
+            "acciones": lambda: [self._model_to_dict(row) for row in Acciones.query.filter(Acciones.deleted == 0).all()],
+            "estados": lambda: [self._model_to_dict(row) for row in Estados.query.filter(Estados.deleted == 0).all()],
+            "municipios": lambda: [self._model_to_dict(row) for row in Municipios.query.filter(Municipios.deleted == 0).all()],
+            "colonias": lambda: [self._model_to_dict(row) for row in Colonias.query.filter(Colonias.deleted == 0).all()],
+            "sexos": lambda: [self._model_to_dict(row) for row in Sexos.query.filter(Sexos.deleted == 0).all()],
+            "estados_civiles": lambda: [self._model_to_dict(row) for row in EstadosCiviles.query.filter(EstadosCiviles.deleted == 0).all()],
+            "tipos_beneficiarios": lambda: [self._model_to_dict(row) for row in TiposBeneficiarios.query.filter(TiposBeneficiarios.deleted == 0).all()],
+            "carpetas_beneficiarios": lambda: [self._model_to_dict(row) for row in CarpetaBeneficiarios.query.filter(CarpetaBeneficiarios.deleted == 0).all()],
         }
 
         if catalog_type not in catalog_map:
