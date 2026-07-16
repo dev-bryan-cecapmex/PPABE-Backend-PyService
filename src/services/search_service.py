@@ -273,34 +273,31 @@ class SearchService:
     @staticmethod
     def get_cache_stats():
         """Obtiene estadísticas del cache para monitoring."""
-        return cache_service.get_cache_stats()
+        return cache_service.get_stats()
 
     @staticmethod
     def force_refresh_cache():
-        """Fuerza refresco del cache (útil para testing o actualizaciones manuales)."""
-        cache_service.force_refresh()
+        """Fuerza refresco del cache de catálogos."""
+        cache_service.force_refresh_global_catalogs(["dependencias", "programas", "subprogramas", "componentes", "acciones", "estados", "municipios", "colonias", "sexos", "estados_civiles", "tipos_beneficiarios", "carpetas_beneficiarios"])
 
     @staticmethod
     def individual_refresh_cache(type_catalog):
-        
         actions = {
-            '1': cache_service.refresh_dependencias_cache,
-            '2': cache_service.refresh_programas_cache,
-            '3': cache_service.refresh_subprogramas_cache,
-            '4': cache_service.refresh_componentes_cache,
-            '5': cache_service.refresh_acciones_cache,
-            '6': cache_service.refresh_estados_cache,
-            '7': cache_service.refresh_municipios_cache,
-            '8': cache_service.refresh_colonias_cache,
-            '9': cache_service.refresh_sexos_cache,
-            '10': cache_service.refresh_estados_civiles_cache,
-            '11': cache_service.refresh_tipos_beneficiarios_cache,
-            '12': cache_service.refresh_carpetas_beneficiarios_cache,
-            '13': cache_service.refresh_beneficiarios_cache,
+            '1': lambda: cache_service.force_refresh_global_catalogs(["dependencias"]),
+            '2': lambda: cache_service.force_refresh_global_catalogs(["programas"]),
+            '3': lambda: cache_service.force_refresh_global_catalogs(["subprogramas"]),
+            '4': lambda: cache_service.force_refresh_global_catalogs(["componentes"]),
+            '5': lambda: cache_service.force_refresh_global_catalogs(["acciones"]),
+            '6': lambda: cache_service.force_refresh_global_catalogs(["estados"]),
+            '7': lambda: cache_service.force_refresh_global_catalogs(["municipios"]),
+            '8': lambda: cache_service.force_refresh_global_catalogs(["colonias"]),
+            '9': lambda: cache_service.force_refresh_global_catalogs(["sexos"]),
+            '10': lambda: cache_service.force_refresh_global_catalogs(["estados_civiles"]),
+            '11': lambda: cache_service.force_refresh_global_catalogs(["tipos_beneficiarios"]),
+            '12': lambda: cache_service.force_refresh_global_catalogs(["carpetas_beneficiarios"]),
         }
 
         if type_catalog not in actions:
             raise ValueError(f"El tipo de catálogo '{type_catalog}' no existe.")
 
-        # Ejecutar la acción correspondiente
         actions[type_catalog]()
