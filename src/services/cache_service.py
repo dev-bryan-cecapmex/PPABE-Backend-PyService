@@ -225,7 +225,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from types import MappingProxyType
 
-from flask import current_app
+from flask import has_app_context
 from sqlalchemy import text
 
 from ..database.connection import db
@@ -290,11 +290,12 @@ class CacheService:
         Por defecto: CALL sp_ListaPorCatalogo(:tipo)
         Ajusta aquí si tus catálogos se obtienen con otro SP.
         """
-        if current_app:
-            sql = text("CALL sp_ListaPorCatalogo(:tipo)")
-            result = db.session.execute(sql, {"tipo": catalog_type})
-            return [dict(r) for r in result.mappings()]
-        raise RuntimeError("No hay contexto de aplicación activo para consultar catálogos")
+        if not has_app_context():
+            raise RuntimeError("No hay contexto de aplicación activo para consultar catálogos")
+
+        sql = text("CALL sp_ListaPorCatalogo(:tipo)")
+        result = db.session.execute(sql, {"tipo": catalog_type})
+        return [dict(r) for r in result.mappings()]
 
     def _index_catalog(self, rows):
         """
@@ -434,20 +435,15 @@ class CacheService:
         """
         Refresh global ATÓMICO (no rompe jobs en curso).
         """
-        from flask import Flask
-
         Logger.add_to_log("info", "🔄 Forzando refresco global de catálogos (ATÓMICO)...")
         try:
             self.refresh_catalogs_cache(catalog_types)
         except RuntimeError as ex:
-            if "application context" in str(ex).lower():
-                app = current_app._get_current_object() if current_app else None
-                if app is None:
-                    raise
-                with app.app_context():
-                    self.refresh_catalogs_cache(catalog_types)
-            else:
+            if "application context" not in str(ex).lower():
                 raise
+            if not has_app_context():
+                raise RuntimeError("No hay contexto de aplicación activo para refrescar cache")
+            self.refresh_catalogs_cache(catalog_types)
         Logger.add_to_log("info", "✅ Refresco global de catálogos finalizado")
 
     def get_stats(self) -> Dict[str, Any]:
