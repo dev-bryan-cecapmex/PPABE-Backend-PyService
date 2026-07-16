@@ -229,6 +229,18 @@ from flask import has_app_context
 from sqlalchemy import text
 
 from ..database.connection import db
+from ..models.dependencias import Dependencias
+from ..models.programas import Programas
+from ..models.subprogramas import Subprogramas
+from ..models.componentes import Componentes
+from ..models.sexos import Sexos
+from ..models.estados import Estados
+from ..models.municipios import Municipios
+from ..models.colonias import Colonias
+from ..models.estados_civiles import EstadosCiviles
+from ..models.acciones import Acciones
+from ..models.tipos_beneficios import TiposBeneficiarios
+from ..models.carpeta_beneficiarios import CarpetaBeneficiarios
 from ..utils.Logger import Logger
 
 
@@ -287,15 +299,30 @@ class CacheService:
     # -------------------------
     def _fetch_catalog_rows(self, catalog_type: str):
         """
-        Por defecto: CALL sp_ListaPorCatalogo(:tipo)
-        Ajusta aquí si tus catálogos se obtienen con otro SP.
+        Carga catálogos desde tablas reales. Si existe un SP compatible, se puede migrar aquí más adelante.
         """
         if not has_app_context():
             raise RuntimeError("No hay contexto de aplicación activo para consultar catálogos")
 
-        sql = text("CALL sp_ListaPorCatalogo(:tipo)")
-        result = db.session.execute(sql, {"tipo": catalog_type})
-        return [dict(r) for r in result.mappings()]
+        catalog_map = {
+            "dependencias": lambda: [row.to_dict() for row in Dependencias.query.filter(Dependencias.deleted == 0).all()],
+            "programas": lambda: [row.to_dict() for row in Programas.query.filter(Programas.deleted == 0).all()],
+            "subprogramas": lambda: [row.to_dict() for row in Subprogramas.query.filter(Subprogramas.deleted == 0).all()],
+            "componentes": lambda: [row.to_dict() for row in Componentes.query.filter(Componentes.deleted == 0).all()],
+            "acciones": lambda: [row.to_dict() for row in Acciones.query.filter(Acciones.deleted == 0).all()],
+            "estados": lambda: [row.to_dict() for row in Estados.query.filter(Estados.deleted == 0).all()],
+            "municipios": lambda: [row.to_dict() for row in Municipios.query.filter(Municipios.deleted == 0).all()],
+            "colonias": lambda: [row.to_dict() for row in Colonias.query.filter(Colonias.deleted == 0).all()],
+            "sexos": lambda: [row.to_dict() for row in Sexos.query.filter(Sexos.deleted == 0).all()],
+            "estados_civiles": lambda: [row.to_dict() for row in EstadosCiviles.query.filter(EstadosCiviles.deleted == 0).all()],
+            "tipos_beneficiarios": lambda: [row.to_dict() for row in TiposBeneficiarios.query.filter(TiposBeneficiarios.deleted == 0).all()],
+            "carpetas_beneficiarios": lambda: [row.to_dict() for row in CarpetaBeneficiarios.query.filter(CarpetaBeneficiarios.deleted == 0).all()],
+        }
+
+        if catalog_type not in catalog_map:
+            raise ValueError(f"Catálogo no soportado: {catalog_type}")
+
+        return catalog_map[catalog_type]()
 
     def _index_catalog(self, rows):
         """
