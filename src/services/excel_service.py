@@ -532,7 +532,8 @@ class ExcelService:
 
                 if not monto:
                     validacion_errores["Monto"] = "Celda vacía"
-                elif isinstance(monto, str):
+                
+                if isinstance(row.get("Monto"), str):
                     validacion_errores["Monto"] = "El monto debe ser numérico"
                     
                 if not id_tipo_beneficiario:
