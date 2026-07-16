@@ -1,5 +1,11 @@
 import os
-from dotenv import dotenv_values
+from pathlib import Path
+
+from dotenv import dotenv_values, load_dotenv
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = BASE_DIR / ".env"
 
 
 def validate_env(required_vars=None):
@@ -7,7 +13,8 @@ def validate_env(required_vars=None):
 
     print("\nValidando variables del entorno...")
 
-    env_values = {**dotenv_values('.env'), **os.environ}
+    load_dotenv(dotenv_path=ENV_PATH, override=False)
+    env_values = {**dotenv_values(ENV_PATH), **os.environ}
     required_vars = required_vars or ["ENVIRONMENT", "IP_SERVER_FRONT"]
 
     missing = []
