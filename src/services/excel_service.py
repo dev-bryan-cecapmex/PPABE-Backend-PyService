@@ -517,8 +517,8 @@ class ExcelService:
                 if not telefono:
                     validacion_errores["Telefono"] = "Celda vacía"
                 
-                # elif len(telefono) != 10:
-                #     validacion_errores["Telefono"] = "El teléfono principal debe tener 10 dígitos."
+                elif len(telefono) != 10:
+                    validacion_errores["Telefono"] = "El teléfono principal debe tener 10 dígitos."
                 
                 if not telefono_2 :
                     row["Telefono 2"] = 1111111111
